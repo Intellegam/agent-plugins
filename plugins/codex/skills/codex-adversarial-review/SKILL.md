@@ -5,6 +5,8 @@ description: Use when the user asks to "challenge this", "stress test this", "ad
 
 # Adversarial Review with Codex
 
+Read the `collaborating-with-codex` skill first for tool reference and general guidelines.
+
 An adversarial review goes beyond correctness — it challenges whether the approach is right, what assumptions it depends on, and where the design fails under real-world conditions. Use the `codex` tool (not `codex-review`) since this needs a custom prompt.
 
 ## When to use
