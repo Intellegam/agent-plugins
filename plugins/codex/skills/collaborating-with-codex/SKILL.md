@@ -10,8 +10,8 @@ Codex is an external AI agent that serves as a collaborative partner. Use it to 
 ## Tools
 
 - `codex` — Start new session (read-only by default, `writable: true` for file writes and commands)
-- `codex-reply` — Continue session with prior context
-- `codex-review` — Code review on file changes (not for plan/architecture review)
+- `codex-reply` — Continue session with prior context (pass `cwd` if resuming across MCP reconnections)
+- `codex-review` — Code review on file changes (ephemeral — no session ID, cannot be resumed)
 
 ### codex-review modes
 
@@ -22,24 +22,48 @@ Codex is an external AI agent that serves as a collaborative partner. Use it to 
 | `commit`      | `commit` (SHA)          | `mode: "commit", commit: "abc123"`                  |
 | `custom`      | `prompt` (instructions) | `mode: "custom", prompt: "Focus on error handling"` |
 
-All modes accept an optional `cwd` parameter.
+All modes accept an optional `cwd` parameter. For plan/architecture review, use `codex` instead.
+
+## Prompting Codex
+
+Match the prompt style to the intent:
+
+- **Open-ended exploration** — keep prompts broad. "What do you think of this approach?" or "Review this module and tell me what stands out" is fine when you want Codex to surface things you didn't think to ask about.
+- **Scoped tasks** (diagnosis, implementation, specific review) — be specific about the task, what "done" looks like, and constraints. Use XML blocks when the prompt has multiple concerns:
+
+```
+<task>Diagnose why POST /api/upload returns 413 for files under the 10MB limit.</task>
+<output_contract>Return: root cause, evidence, and a fix recommendation.</output_contract>
+<grounding_rules>Only cite code paths you can trace. Mark inferences explicitly.</grounding_rules>
+```
+
+**Useful blocks for scoped tasks** (use only what the task needs):
+
+- `<task>` — the concrete job and relevant context
+- `<output_contract>` — expected shape and brevity of the response
+- `<grounding_rules>` — require evidence-based claims (for reviews, research, diagnosis)
+- `<verification>` — require Codex to verify its own answer (for implementation, debugging)
+
+**Anti-patterns to avoid:**
+
+- Mixing multiple unrelated tasks in one prompt — split into separate sessions
+- Sharing your conclusions before letting Codex form its own view (anchoring bias)
 
 ## Scenarios
 
 ### Planning & Architecture
 
-For non-trivial tasks, always validate plans with Codex before presenting to the user:
+For non-trivial tasks, validate plans with Codex before presenting to the user:
 
 1. **Form your own analysis first** — draft independently to avoid anchoring bias
 2. **Get Codex's independent view** — share the problem context and constraints via `codex`, let Codex form its own approach
 3. **Compare and converge** — iterate via `codex-reply`, challenge differences, refine until aligned
 4. **Present to user** — the plan should reflect the joint conclusion
 
-Always validate plans with Codex before presenting to the user.
-
 ### Code Review
 
 Use `codex-review` for external correctness review of code changes. Pick the mode matching what you want reviewed (uncommitted changes, branch diff, or specific commit).
+After receiving findings, critically evaluate each one — not every finding warrants action and codex could always make a mistake too. Distinguish quick patches from deeper architectural issues and prioritize accordingly.
 
 ## Writable Mode
 
