@@ -11,7 +11,7 @@ Codex is an external AI agent that serves as a collaborative partner. Use it to 
 
 - `codex` — Start new session (read-only by default, `writable: true` for file writes and commands)
 - `codex-reply` — Continue session with prior context (pass `cwd` if resuming across MCP reconnections)
-- `codex-review` — Code review on file changes (ephemeral — no session ID, cannot be resumed)
+- `codex-review` — Code review on file changes (returns session ID, can be continued with `codex-reply`)
 - `codex-result` — Poll for async job status/result (supports `waitMs` for long-polling)
 - `codex-cancel` — Cancel a running async job
 
@@ -27,7 +27,7 @@ codex-result({ jobId: "job-1", waitMs: 30000 })
 → { status: "succeeded", output: "...", done: true }
 ```
 
-Jobs are connection-scoped and retained for 1 hour after completion.
+Jobs are connection-scoped — they persist for the lifetime of the MCP process.
 
 ### codex-review modes
 
