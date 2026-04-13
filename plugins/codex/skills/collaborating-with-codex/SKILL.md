@@ -12,22 +12,22 @@ Codex is an external AI agent that serves as a collaborative partner. Use it to 
 - `codex` — Start new session (read-only by default, `writable: true` for file writes and commands)
 - `codex-reply` — Continue session with prior context (pass `cwd` if resuming across MCP reconnections)
 - `codex-review` — Code review on file changes (returns session ID, can be continued with `codex-reply`)
-- `codex-result` — Poll for async job status/result (supports `waitMs` for long-polling)
-- `codex-cancel` — Cancel a running async job
+- `codex-result` — Poll for latest turn status/result on a session (supports `waitMs` for long-polling)
+- `codex-cancel` — Cancel the active turn on a session
 
 ### Async mode
 
-All three primary tools (`codex`, `codex-reply`, `codex-review`) accept `async: true` to return immediately with a job ID instead of blocking. Use async mode when you have other work to do in parallel — e.g., running tests, editing files, or consulting other tools while Codex thinks. If you would just poll `codex-result` in a loop with nothing else to do, use sync (the default) instead.
+All three primary tools (`codex`, `codex-reply`, `codex-review`) accept `async: true` to return a `sessionId` immediately instead of blocking. Use async mode when you have other work to do in parallel — e.g., running tests, editing files, or consulting other tools while Codex thinks. If you would just poll `codex-result` in a loop with nothing else to do, use sync (the default) instead.
 
 ```
 codex({ prompt: "Complex analysis", async: true })
-→ { jobId: "job-1", status: "starting", sessionId: "..." }
+→ { sessionId: "019a...", status: "starting" }
 
-codex-result({ jobId: "job-1", waitMs: 30000 })
-→ { status: "succeeded", output: "...", done: true }
+codex-result({ sessionId: "019a...", waitMs: 30000 })
+→ { sessionId: "019a...", status: "succeeded", output: "...", done: true }
 ```
 
-Jobs are connection-scoped — they persist for the lifetime of the MCP process.
+`sessionId` is the only user-facing identifier — it works for `codex-reply`, `codex-result`, and `codex-cancel`.
 
 ### codex-review modes
 
