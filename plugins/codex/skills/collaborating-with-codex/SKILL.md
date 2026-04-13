@@ -12,7 +12,7 @@ Codex is an external AI agent that serves as a collaborative partner. Use it to 
 - `codex` — Start new session (read-only by default, `writable: true` for file writes and commands)
 - `codex-reply` — Continue session with prior context (pass `cwd` if resuming across MCP reconnections)
 - `codex-review` — Code review on file changes (returns session ID, can be continued with `codex-reply`)
-- `codex-result` — Poll for latest turn status/result on a session (supports `waitMs` for long-polling)
+- `codex-result` — Get latest turn status/result on a session (`wait: true` blocks until done)
 - `codex-cancel` — Cancel the active turn on a session
 
 ### Async mode
@@ -23,7 +23,7 @@ All three primary tools (`codex`, `codex-reply`, `codex-review`) accept `async: 
 codex({ prompt: "Complex analysis", async: true })
 → { sessionId: "019a...", status: "starting" }
 
-codex-result({ sessionId: "019a...", waitMs: 30000 })
+codex-result({ sessionId: "019a...", wait: true })
 → { sessionId: "019a...", status: "succeeded", output: "...", done: true }
 ```
 
