@@ -12,6 +12,22 @@ Codex is an external AI agent that serves as a collaborative partner. Use it to 
 - `codex` — Start new session (read-only by default, `writable: true` for file writes and commands)
 - `codex-reply` — Continue session with prior context (pass `cwd` if resuming across MCP reconnections)
 - `codex-review` — Code review on file changes (ephemeral — no session ID, cannot be resumed)
+- `codex-result` — Poll for async job status/result (supports `waitMs` for long-polling)
+- `codex-cancel` — Cancel a running async job
+
+### Async mode
+
+All three primary tools (`codex`, `codex-reply`, `codex-review`) accept `async: true` to return immediately with a job ID instead of blocking. Use async mode when you have other work to do in parallel — e.g., running tests, editing files, or consulting other tools while Codex thinks. If you would just poll `codex-result` in a loop with nothing else to do, use sync (the default) instead.
+
+```
+codex({ prompt: "Complex analysis", async: true })
+→ { jobId: "job-1", status: "starting", sessionId: "..." }
+
+codex-result({ jobId: "job-1", waitMs: 30000 })
+→ { status: "succeeded", output: "...", done: true }
+```
+
+Jobs are connection-scoped and retained for 1 hour after completion.
 
 ### codex-review modes
 
@@ -83,3 +99,4 @@ Default to read-only. Only grant write access when there is a clear need.
 - Continue existing sessions via `codex-reply` rather than starting new ones
 - Synthesize conclusions — present a joint recommendation, not raw Codex output
 - Match effort to complexity — skip Codex for simple, straightforward changes
+- Use `async: true` only when you have meaningful parallel work to do while Codex runs. Default to sync — polling with nothing else to do is worse than blocking
