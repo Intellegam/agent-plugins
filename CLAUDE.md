@@ -26,3 +26,4 @@ claude-plugins/
 
 - Plugin versions must be updated in both `plugin.json` and `marketplace.json`
 - MCP servers are separate repos (e.g., `codex-mcp`) referenced via GitHub
+- The codex plugin's `.mcp.json` pins to a git tag (`#v{version}`). When releasing a new codex-mcp version, update the tag pin in `.mcp.json` and bump the plugin version to force a cache refresh
