@@ -1,6 +1,6 @@
 ---
 name: collaborating-with-codex
-description: Use whenever entering plan mode, discussing architecture, designing a solution, or before presenting a plan to the user. Also use when asked to "consult codex", "get a second opinion", "validate this plan", or "have codex review". Guides collaboration with OpenAI Codex for brainstorming, plan validation, and code review.
+description: Use whenever entering plan mode, discussing architecture, designing a solution, or before presenting a plan to the user. Also use when asked to "consult codex", "ask codex", "get a second opinion", "validate this plan", "have codex review", or "run it by codex". Guides collaboration with OpenAI Codex for brainstorming, plan validation, and code review.
 ---
 
 # Codex Collaboration Guidelines
@@ -28,6 +28,23 @@ codex-result({ sessionId: "019a...", wait: true })
 ```
 
 `sessionId` is the only user-facing identifier — it works for `codex-reply`, `codex-result`, and `codex-cancel`.
+
+### Parallel sessions
+
+Multiple async sessions can run at the same time. Each session is independent, so there is no contention between them.
+
+```
+codex-review({ mode: "base", base: "main", cwd: "/repo", async: true })
+→ { sessionId: "aaa..." }
+
+codex-review({ mode: "custom", prompt: "Focus on security", cwd: "/repo", async: true })
+→ { sessionId: "bbb..." }
+
+codex-result({ sessionId: "aaa...", wait: true })
+codex-result({ sessionId: "bbb...", wait: true })
+```
+
+This works for any combination of `codex`, `codex-reply`, and `codex-review`. Use parallel sessions when multiple independent perspectives or tasks would improve coverage.
 
 ### codex-review modes
 

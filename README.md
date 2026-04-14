@@ -13,6 +13,7 @@ Internal Claude Code plugins for the Intellegam workspace.
 OpenAI Codex collaboration MCP server for brainstorming, plan validation, and code review with an external AI agent.
 
 **Includes:**
+
 - MCP server configuration (references `github:Intellegam/codex-mcp`)
 - `collaborating-with-codex` skill with collaboration guidelines
 
@@ -26,7 +27,7 @@ Add the marketplace to your project's `.claude/settings.json`:
     "intellegam-claude-plugins": {
       "source": {
         "source": "github",
-        "repo": "intellegam/claude-plugins",
+        "repo": "intellegam/claude-plugins"
       }
     }
   },
