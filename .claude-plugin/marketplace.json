@@ -12,7 +12,7 @@
       "name": "codex",
       "source": "./plugins/codex",
       "description": "OpenAI Codex MCP integration for external AI agent collaboration. Enables brainstorming, plan validation, and code review.",
-      "version": "3.2.2",
+      "version": "3.2.3",
       "keywords": ["codex", "mcp", "collaboration", "review", "external-agent"]
     }
   ]
