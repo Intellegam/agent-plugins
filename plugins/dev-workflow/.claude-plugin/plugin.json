@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Language-agnostic dev workflow: setup consultant, pre-commit checks, multi-perspective code review, and documentation sync. Repos parameterize it via a Dev Workflow Contract in CLAUDE.md.",
   "author": {
     "name": "Intellegam",

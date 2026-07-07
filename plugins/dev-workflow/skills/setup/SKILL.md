@@ -36,7 +36,7 @@ Present findings in three groups:
 
 For each item: what, why (with evidence citation), and what applying it would change. Propose — never adopt silently. Anything touching branch/release policy, security, or hooks is always proposed, never auto-applied.
 
-If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. The same applies to CLAUDE.md content duplicating any plugin skill (e.g. a copy of the `agent-behavior` guidelines). De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
+If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. The same applies to CLAUDE.md content duplicating a skill this plugin actually ships (check the plugin's skill list) — never recommend removing content whose only copy lives in the repo. De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
 
 If the plugin itself isn't enabled in the repo's `.claude/settings.json` yet, recommend the `enabledPlugins` entry — together with the `extraKnownMarketplaces` entry if the marketplace is missing too (an enabled plugin from an unknown marketplace won't load on a fresh checkout). Apply only with explicit user acceptance (it's a settings edit).
 
