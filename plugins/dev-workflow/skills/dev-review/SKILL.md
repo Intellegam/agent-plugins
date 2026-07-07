@@ -64,7 +64,7 @@ First, spawn sub-agents in parallel:
 
 Then, run correctness review:
 
-6. External review via `codex-review` MCP tool **if available** - an independent correctness perspective is valuable, so prefer it. If unavailable, use the `dev-workflow:dev-correctness-reviewer` agent instead; the workflow must work without Codex.
+6. `codex-review` MCP tool - external correctness perspective. If unavailable, notify user and use the `dev-workflow:dev-correctness-reviewer` agent as fallback.
 
 ### 3. Collect & Classify
 
@@ -117,5 +117,6 @@ If the user provides feedback about issues the review missed, offer to add them 
 
 ## Notes
 
+- Codex review is valuable - always try it first
 - Sub-agents consult the contract's Review Inputs and `CLAUDE.md`
 - Focus on current changes, but read context as needed
