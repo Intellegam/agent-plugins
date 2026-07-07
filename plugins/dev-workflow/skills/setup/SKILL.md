@@ -20,6 +20,7 @@ Gather evidence before recommending anything. Look at:
 - **Existing Claude assets**: `CLAUDE.md` (does a contract block exist? which version?), `.claude/skills/`, `.claude/agents/`, `.claude/settings.json` hooks
 - **Docs**: code standards, testing guidelines, architecture docs — candidates for Review Inputs
 - **Repo shape signals**: upstream remotes or fork markers, `custom/` directories, monorepo/workspace layout, generated code, infra-as-code — anything that suggests repo-specific reviewers or situational checks
+- **Git history**: recently deleted or moved workflow assets (`git status`, `git log` on `.claude/`, CLAUDE.md) — repos migrating from a local workflow to this plugin often carry the strongest evidence in just-removed files
 
 Use Explore agents for broad scans if available (otherwise search directly); read key files directly. Every later recommendation must cite evidence found here (a file path or observed pattern). If you can't cite evidence, don't recommend it.
 
@@ -35,7 +36,9 @@ Present findings in three groups:
 
 For each item: what, why (with evidence citation), and what applying it would change. Propose — never adopt silently. Anything touching branch/release policy, security, or hooks is always proposed, never auto-applied.
 
-If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication — the skill itself never edits outside the markers.
+If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
+
+Do **not** recommend reviewers or checks the plugin already provides: the workflow ships quality, test, and correctness reviewers (spawned by `dev-workflow:dev-review`) and a doc-drift reviewer (`dev-workflow:dev-sync-reviewer`, spawned by `dev-workflow:dev-sync`). Additional Reviewers are for concerns beyond these — e.g. fork maintenance, framework conventions, domain-specific rules.
 
 ## Phase 3: Apply
 
@@ -87,11 +90,12 @@ Rules:
 
 - Omit sections that don't apply (e.g. no Additional Reviewers) rather than leaving placeholders.
 - A repo may have no typecheck (e.g. plain JS) — drop the line, don't invent a command.
-- Fused toolchains (Ruff, Biome/Ultracite) may not split format from lint: merging lines is fine (`Format + Lint: \`bun run fix\``). Required Check commands are expected to auto-fix/mutate the working tree where the tool supports it — record the mutating form even when CI runs check-mode (`ruff format`, not `ruff format --check`).
+- Fused toolchains (Ruff, Biome/Ultracite) may not split format from lint: prefer a merged line when one command owns both (`Format + Lint: \`bun run fix\``); keep them split when CI runs them as separate steps. Required Check commands are expected to auto-fix/mutate the working tree where the tool supports it — record the mutating form even when CI runs check-mode (`ruff format`, not `ruff format --check`).
+- Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI (e.g. `Security: \`uv run bandit ...\``) — Situational is only for conditional checks.
 - For **Test**, prefer the suite that gates every PR in CI. If that suite needs provisioning (services, secrets), record the closest locally-runnable subset (e.g. a marker/filter) and ask the user which to use. Slow or environment-dependent suites (E2E against ephemeral infra) go under Situational Checks.
 - A Situational Check's action may be "watch the `<name>` CI check on the PR" when the check is CI-only (too heavy or environment-bound to run locally).
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`).
 - **Review Inputs** takes arbitrary labeled entries — register any doc reviewers should read (documentation guidelines, architecture, fork-maintenance rules, ...), not just code/testing standards.
-- **Additional Reviewers** means beyond the workflow's baseline set (quality, test, correctness reviewers spawned by dev-review). Only list repo-specific ones; omit the section if there are none.
+- **Additional Reviewers** means beyond the plugin's built-in set (quality, test, and correctness reviewers spawned by dev-review; doc-drift reviewer spawned by dev-sync). Only list repo-specific ones; omit the section if there are none.
 - Place the block after the repo's overview/commands sections (or at the end of CLAUDE.md if unsure) — never before `@import` lines at the top.
 - Keep the block compact: it is always-on context for every session in the repo.
