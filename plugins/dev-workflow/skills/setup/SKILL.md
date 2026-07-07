@@ -56,7 +56,7 @@ Use AskUserQuestion to let the user accept/reject per group (or item for content
 If a contract block already exists:
 
 1. Compare its version marker against the current schema version (below).
-2. Same version → validate contents: do the commands still exist in the manifests? Do referenced docs/agents still exist? Report drift. Also normalize legacy cosmetics from earlier plugin releases (e.g. a `## Dev Workflow Contract` heading → the neutral heading) — cosmetic normalization doesn't require a version bump.
+2. Same version → validate contents: do the commands still exist in the manifests? Do referenced docs/agents still exist? Also normalize legacy cosmetics from earlier plugin releases (e.g. a `## Dev Workflow Contract` heading → the neutral heading, or a heading sitting outside the markers → move it inside; the heading is part of the managed region) — cosmetic normalization doesn't require a version bump. Report drift, then offer to fix it via the normal Apply flow (in a dry run, report only).
 3. Older version → show the diff between current block and migrated block, ask, then rewrite the block in place.
 
 ## Contract Schema (v1)
