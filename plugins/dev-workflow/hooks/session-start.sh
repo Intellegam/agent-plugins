@@ -6,6 +6,7 @@
 # get their instructions from their agent definitions).
 cat > /dev/null  # drain stdin
 cat <<'EOF'
+<dev-workflow>
 The dev-workflow plugin is active. For coding tasks, follow this workflow. Repo-specific commands and policy come from CLAUDE.md and its contract block (`dev-workflow-contract` markers) — where those are concrete, they win.
 
 ### 1. Explore & Plan
@@ -39,4 +40,5 @@ Follow Conventional Commits unless the repo says otherwise. Offer push/PR option
 After a PR is opened, run the repo's PR-triage workflow if it has one.
 
 If the repo has no contract block in CLAUDE.md, offer `/dev-workflow:setup`.
+</dev-workflow>
 EOF

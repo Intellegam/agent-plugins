@@ -38,7 +38,7 @@ For each item: what, why (with evidence citation), and what applying it would ch
 
 If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. The same applies to CLAUDE.md content duplicating any plugin skill (e.g. a copy of the `agent-behavior` guidelines). De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
 
-If the plugin itself isn't enabled in the repo's `.claude/settings.json` yet, recommend the `enabledPlugins` entry — but apply it only with explicit user acceptance (it's a settings edit).
+If the plugin itself isn't enabled in the repo's `.claude/settings.json` yet, recommend the `enabledPlugins` entry — together with the `extraKnownMarketplaces` entry if the marketplace is missing too (an enabled plugin from an unknown marketplace won't load on a fresh checkout). Apply only with explicit user acceptance (it's a settings edit).
 
 Do **not** recommend reviewers or checks the plugin already provides: the workflow ships quality, test, and correctness reviewers (spawned by `dev-workflow:dev-review`) and a doc-drift reviewer (`dev-workflow:dev-sync-reviewer`, spawned by `dev-workflow:dev-sync`). Additional Reviewers are for concerns beyond these — e.g. fork maintenance, framework conventions, domain-specific rules.
 
@@ -46,16 +46,17 @@ Do **not** recommend reviewers or checks the plugin already provides: the workfl
 
 Use AskUserQuestion to let the user accept/reject per group (or item for contentious ones). Then:
 
-1. Write or update **only** the contract block in CLAUDE.md (see schema below). Never restructure or reformat content outside the markers.
+1. Write or update the contract block in CLAUDE.md (see schema below). Beyond the markers, touch only what the user explicitly accepted (de-duplication edits, settings entries) — never restructure or reformat anything else.
 2. Create accepted reviewer agents in `.claude/agents/` (keep them focused: one concern per reviewer, with a description saying when dev-review should spawn it).
-3. Report what was applied and what was skipped.
+3. Apply accepted settings edits (`enabledPlugins` / `extraKnownMarketplaces`) in `.claude/settings.json`.
+4. Report what was applied and what was skipped.
 
 ## Re-runs: validate & migrate
 
 If a contract block already exists:
 
 1. Compare its version marker against the current schema version (below).
-2. Same version → validate contents: do the commands still exist in the manifests? Do referenced docs/agents still exist? Report drift.
+2. Same version → validate contents: do the commands still exist in the manifests? Do referenced docs/agents still exist? Report drift. Also normalize legacy cosmetics from earlier plugin releases (e.g. a `## Dev Workflow Contract` heading → the neutral heading) — cosmetic normalization doesn't require a version bump.
 3. Older version → show the diff between current block and migrated block, ask, then rewrite the block in place.
 
 ## Contract Schema (v1)
