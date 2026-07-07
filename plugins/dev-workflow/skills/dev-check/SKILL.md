@@ -51,9 +51,18 @@ Run the contract's **Situational Checks** whose conditions match the change (at 
 
 Use judgment. Skip if tests already cover it, add others if the situation calls for it.
 
+## Drift Guard
+
+The contract is the baseline, not a cage. Each run, glance at the repo's CI surfaces (CI workflow files, manifest scripts/tasks) — a cheap heuristic scan, not a CI interpreter. If CI gates a check the contract doesn't list:
+
+- **Run it** when it's clearly a safe local command (a lint/typecheck/test-style script)
+- **Flag it** when it's ambiguous, secrets-dependent, or CI-only
+
+Either way, report the contract as **stale** — visibly, before any commit/PR — and recommend updating the block (via `dev-workflow:dev-sync` or `dev-workflow:setup`). This is also open-ended in the other direction: think about what validation the change itself calls for, listed or not.
+
 ## Output
 
-Summarize results, report what was fixed, confirm all checks pass.
+Summarize results, report what was fixed, confirm all checks pass. Include any contract-drift findings.
 
 ## Next Step
 

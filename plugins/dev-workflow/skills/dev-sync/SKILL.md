@@ -37,7 +37,7 @@ Based on what changed, check if related documentation needs updates:
 | Public APIs          | Are docstrings/API docs present and accurate?                                        |
 | Component behavior   | Does the repo's documentation reflect current code?                                  |
 | Claude skills/agents | Do `.claude/skills/` and `.claude/agents/` still accurately describe behavior?       |
-| Contract             | Do the Dev Workflow Contract's commands, docs paths, and reviewers still exist?      |
+| Contract             | Do the Dev Workflow Contract's commands, docs paths, and reviewers still exist? Does CI gate checks the contract doesn't list (or did `dev-check` flag drift)? Update the block accordingly — dev-sync owns contract repair |
 | Placement            | Does each added paragraph serve THIS doc's target reader and the task this doc owns? |
 
 **Guidelines**: Apply the repo's documentation standards if declared under Review Inputs in the Dev Workflow Contract.
