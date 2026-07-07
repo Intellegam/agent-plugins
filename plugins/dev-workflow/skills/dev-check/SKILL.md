@@ -1,6 +1,6 @@
 ---
 name: dev-check
-description: This skill MUST be used before committing changes and after completing implementation work. Proactively run this (1) before any git commit, (2) after a plan has been fully implemented, (3) when a coding task is complete. Also use when user asks to "run checks", "format and lint", "run tests", or "validate code".
+description: This skill MUST be used before committing changes and after completing implementation work. Proactively run this (1) before any git commit, (2) after a plan has been fully implemented, (3) when a coding task is complete. Also use when user asks to "run checks", "format and lint", "run tests", "validate code", or names the repo's check tools directly (e.g. "run ruff", "run biome", "run the type check").
 ---
 
 # Pre-Commit Checks

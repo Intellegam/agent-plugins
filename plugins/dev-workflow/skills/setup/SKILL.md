@@ -24,7 +24,7 @@ Gather evidence before recommending anything. Look at:
 
 Use Explore agents for broad scans if available (otherwise search directly); read key files directly. Every later recommendation must cite evidence found here (a file path or observed pattern). If you can't cite evidence, don't recommend it.
 
-Also check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md` (e.g. `CLAUDE.md → AGENTS.md`, or `AGENTS.md → CLAUDE.md`): the contract write lands in the physical target and fans out to every consumer of the linked file (e.g. Codex reads AGENTS.md) — surface this before applying.
+Also check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md` (e.g. `CLAUDE.md → AGENTS.md`, or `AGENTS.md → CLAUDE.md`): the contract write lands in the physical target and fans out to every consumer of the linked file (e.g. Codex reads AGENTS.md). Always write the physical file — never retarget — and name the fan-out in your report (interactive runs: before applying).
 
 ## Phase 2: Recommend
 
@@ -36,7 +36,9 @@ Present findings in three groups:
 
 For each item: what, why (with evidence citation), and what applying it would change. Propose — never adopt silently. Anything touching branch/release policy, security, or hooks is always proposed, never auto-applied.
 
-If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
+If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. The same applies to CLAUDE.md content duplicating any plugin skill (e.g. a copy of the `agent-behavior` guidelines). De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
+
+If the plugin itself isn't enabled in the repo's `.claude/settings.json` yet, recommend the `enabledPlugins` entry — together with the `extraKnownMarketplaces` entry if the marketplace is missing too (an enabled plugin from an unknown marketplace won't load on a fresh checkout). Apply only with explicit user acceptance (it's a settings edit).
 
 Do **not** recommend reviewers or checks the plugin already provides: the workflow ships quality, test, and correctness reviewers (spawned by `dev-workflow:dev-review`) and a doc-drift reviewer (`dev-workflow:dev-sync-reviewer`, spawned by `dev-workflow:dev-sync`). Additional Reviewers are for concerns beyond these — e.g. fork maintenance, framework conventions, domain-specific rules.
 
@@ -44,25 +46,30 @@ Do **not** recommend reviewers or checks the plugin already provides: the workfl
 
 Use AskUserQuestion to let the user accept/reject per group (or item for contentious ones). Then:
 
-1. Write or update **only** the contract block in CLAUDE.md (see schema below). Never restructure or reformat content outside the markers.
+1. Write or update the contract block in CLAUDE.md (see schema below). Beyond the markers, touch only what the user explicitly accepted (de-duplication edits, settings entries) — never restructure or reformat anything else.
 2. Create accepted reviewer agents in `.claude/agents/` (keep them focused: one concern per reviewer, with a description saying when dev-review should spawn it).
-3. Report what was applied and what was skipped.
+3. Apply accepted settings edits (`enabledPlugins` / `extraKnownMarketplaces`) in `.claude/settings.json`.
+4. Report what was applied and what was skipped.
 
 ## Re-runs: validate & migrate
 
 If a contract block already exists:
 
 1. Compare its version marker against the current schema version (below).
-2. Same version → validate contents: do the commands still exist in the manifests? Do referenced docs/agents still exist? Report drift.
+2. Same version → validate contents: do the commands still exist in the manifests? Do referenced docs/agents still exist? Also normalize legacy cosmetics from earlier plugin releases (e.g. a `## Dev Workflow Contract` heading → the neutral heading, or a heading sitting outside the markers → move it inside; the heading is part of the managed region) — cosmetic normalization doesn't require a version bump. Report drift, then offer to fix it via the normal Apply flow (in a dry run, report only).
 3. Older version → show the diff between current block and migrated block, ask, then rewrite the block in place.
 
 ## Contract Schema (v1)
 
-The contract lives in the repo's CLAUDE.md inside bounded markers. Everything between the markers is owned by this skill; everything outside is owned by the repo.
+The contract lives in the repo's CLAUDE.md inside bounded markers. The **markers are authoritative**, not the heading: the visible heading should stay neutral and generally useful (`## Commands & Checks` by default, or an existing heading like `## Common Commands`) — these facts serve every session, not just workflow runs. Everything between the markers is owned by this skill; everything outside is owned by the repo.
 
 ```markdown
 <!-- dev-workflow-contract:v1:start -->
-## Dev Workflow Contract
+## Commands & Checks
+
+### Run
+
+- `<command>` - <what it starts/does, e.g. run the app locally>
 
 ### Required Checks
 
@@ -89,10 +96,11 @@ The contract lives in the repo's CLAUDE.md inside bounded markers. Everything be
 
 Rules:
 
-- Omit sections that don't apply (e.g. no Additional Reviewers) rather than leaving placeholders.
+- Omit sections that don't apply (e.g. no Additional Reviewers) rather than leaving placeholders. `Run` is optional convenience content — everyday commands (start the app, install deps) that belong with the check commands.
+- Repos may add extra subsections inside the block; **preserve any subsections you don't recognize** when migrating or validating — never drop repo-added content.
 - A repo may have no typecheck (e.g. plain JS) — drop the line, don't invent a command.
 - Fused toolchains (Ruff, Biome/Ultracite) may not split format from lint: prefer a merged line when one command owns both, e.g. a single `Format + Lint:` entry pointing at `bun run fix`; keep them split when CI runs them as separate steps. Required Check commands are expected to auto-fix/mutate the working tree where the tool supports it — record the mutating form even when CI runs check-mode (`ruff format`, not `ruff format --check`).
-- Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI **and** applies regardless of which files changed (e.g. a `Security:` line for a SAST scan) — path-conditional gates stay Situational. Record the exact command form CI fails on, not a variant.
+- Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI **and** can fail regardless of which files changed (e.g. a `Security:` line for a SAST scan). Checks that run on every PR but only fail on specific changes (lockfile validation) stay Situational. Record the exact command form CI fails on, not a variant.
 - For **Test**, prefer the suite that gates every PR in CI. If a meaningfully different locally-runnable subset exists (e.g. a marker/filter), ask the user which to record; if the command is textually identical but environment-dependent (tests expect a local database), record it as-is and note the requirement. Slow or environment-dependent extra suites (E2E against ephemeral infra) go under Situational Checks.
 - A Situational Check's action need not be a shell command: "watch the `<name>` CI check on the PR" (for CI-only checks) or "run the `<name>` skill/agent" (for available validation tooling) are both valid.
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
