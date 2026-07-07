@@ -45,7 +45,7 @@ Before spawning reviewers, prepare minimal context. Include:
 
 - **Goal**: One sentence - what problem is being solved
 - **Constraints**: Hard requirements (if any)
-- **Scope**: Files changed (from git diff)
+- **Scope**: Files changed, **including the actual diff** — reviewers run with fresh context and no Bash, so paste the `git diff` output into their prompt; for very large diffs, include the per-file stat plus the hunks for the riskiest files and name the rest for reading
 - **Review Inputs**: the standards docs declared in the contract
 
 **Do NOT include**: Why specific solutions were chosen, alternatives considered, or reasoning. Reviewers should form independent opinions, not validate decisions.

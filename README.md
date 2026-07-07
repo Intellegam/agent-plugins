@@ -17,6 +17,18 @@ OpenAI Codex collaboration MCP server for brainstorming, plan validation, and co
 - MCP server configuration (references `github:Intellegam/codex-mcp`)
 - `collaborating-with-codex` skill with collaboration guidelines
 
+### dev-workflow
+
+Language-agnostic org dev workflow: a setup consultant plus a contract-driven validation chain (checks → review → docs sync).
+
+**Includes:**
+
+- `setup` skill — inspects a repo, recommends checks/reviewers with evidence, and installs the **Dev Workflow Contract** (a versioned marker block in CLAUDE.md) that parameterizes the other skills
+- `dev-check`, `dev-review`, `dev-sync` skills — risk-tiered validation chain with bounded review passes and root-cause reflection
+- `dev-coder` implementation agent + quality/test/correctness/sync reviewer agents
+
+Repos declare their commands, situational checks, standards docs, and repo-specific reviewers in the contract; run `/dev-workflow:setup` to onboard a repo.
+
 ## Installation
 
 Add the marketplace to your project's `.claude/settings.json`:
@@ -32,7 +44,8 @@ Add the marketplace to your project's `.claude/settings.json`:
     }
   },
   "enabledPlugins": {
-    "codex@intellegam-claude-plugins": true
+    "codex@intellegam-claude-plugins": true,
+    "dev-workflow@intellegam-claude-plugins": true
   }
 }
 ```

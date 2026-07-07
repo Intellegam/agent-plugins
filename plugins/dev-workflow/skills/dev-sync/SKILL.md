@@ -25,7 +25,7 @@ Ensure documentation and Claude components are in sync with code changes and tha
 
 ## Process
 
-Use the Task tool to launch the `dev-workflow:dev-sync-reviewer` agent to analyze what's out of sync or misplaced.
+For normal and high-risk runs, use the Task tool to launch the `dev-workflow:dev-sync-reviewer` agent to analyze what's out of sync or misplaced. For tiny runs, do the quick self-check yourself instead.
 
 ## What to Check
 
@@ -54,6 +54,8 @@ Use judgment. Not every code change needs doc updates. Focus on:
 - Content added to a doc whose reader does not need it (placement)
 
 ## Next Step
+
+**Before offering to commit**: if review or sync edited any files since the last `dev-check` pass, re-run the contract's Required Checks first — post-check edits must not reach a commit unchecked.
 
 Committing, pushing, or opening a PR is a genuine decision — when everything is in sync, use AskUserQuestion:
 
