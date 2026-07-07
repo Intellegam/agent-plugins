@@ -9,6 +9,17 @@
           }
         ]
       }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "general-purpose|claude|dev-coder|dev-workflow:dev-coder",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/subagent-start.sh"
+          }
+        ]
+      }
     ]
   }
 }
