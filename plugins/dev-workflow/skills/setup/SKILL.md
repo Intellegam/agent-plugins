@@ -73,7 +73,8 @@ The contract lives in the repo's CLAUDE.md inside bounded markers. Everything be
 
 ### Situational Checks
 
-- `<changed paths or condition>` → `<command or action>`
+- `<changed paths>` → `<command>`
+- <prose condition, e.g. "user-facing flow changed"> → <skill/agent to run, or CI check to watch>
 
 ### Review Inputs
 
@@ -91,11 +92,11 @@ Rules:
 - Omit sections that don't apply (e.g. no Additional Reviewers) rather than leaving placeholders.
 - A repo may have no typecheck (e.g. plain JS) — drop the line, don't invent a command.
 - Fused toolchains (Ruff, Biome/Ultracite) may not split format from lint: prefer a merged line when one command owns both, e.g. a single `Format + Lint:` entry pointing at `bun run fix`; keep them split when CI runs them as separate steps. Required Check commands are expected to auto-fix/mutate the working tree where the tool supports it — record the mutating form even when CI runs check-mode (`ruff format`, not `ruff format --check`).
-- Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI **and** applies regardless of which files changed (e.g. `Security: \`uv run bandit ...\``) — path-conditional gates stay Situational.
+- Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI **and** applies regardless of which files changed (e.g. a `Security:` line for a SAST scan) — path-conditional gates stay Situational. Record the exact command form CI fails on, not a variant.
 - For **Test**, prefer the suite that gates every PR in CI. If a meaningfully different locally-runnable subset exists (e.g. a marker/filter), ask the user which to record; if the command is textually identical but environment-dependent (tests expect a local database), record it as-is and note the requirement. Slow or environment-dependent extra suites (E2E against ephemeral infra) go under Situational Checks.
 - A Situational Check's action need not be a shell command: "watch the `<name>` CI check on the PR" (for CI-only checks) or "run the `<name>` skill/agent" (for available validation tooling) are both valid.
-- Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`).
+- Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
 - **Review Inputs** takes arbitrary labeled entries — register any doc reviewers should read (documentation guidelines, architecture, fork-maintenance rules, ...), not just code/testing standards.
 - **Additional Reviewers** means beyond the plugin's built-in set (quality, test, and correctness reviewers spawned by dev-review; doc-drift reviewer spawned by dev-sync). Only list repo-specific ones; omit the section if there are none.
-- Place the block after the repo's overview/commands sections (or at the end of CLAUDE.md if unsure) — never before `@import` lines at the top.
+- Place the block after the repo's overview/commands sections (or at the end of CLAUDE.md if unsure) — never before `@import` lines at the top, and never inside or between another tool's managed region (vendored standards sections, other marker blocks).
 - Keep the block compact: it is always-on context for every session in the repo.
