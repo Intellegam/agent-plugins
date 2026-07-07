@@ -24,7 +24,7 @@ Gather evidence before recommending anything. Look at:
 
 Use Explore agents for broad scans if available (otherwise search directly); read key files directly. Every later recommendation must cite evidence found here (a file path or observed pattern). If you can't cite evidence, don't recommend it.
 
-Also check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md` (e.g. `CLAUDE.md → AGENTS.md`, or `AGENTS.md → CLAUDE.md`): the contract write lands in the physical target and fans out to every consumer of the linked file (e.g. Codex reads AGENTS.md) — surface this before applying.
+Also check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md` (e.g. `CLAUDE.md → AGENTS.md`, or `AGENTS.md → CLAUDE.md`): the contract write lands in the physical target and fans out to every consumer of the linked file (e.g. Codex reads AGENTS.md). Always write the physical file — never retarget — and name the fan-out in your report (interactive runs: before applying).
 
 ## Phase 2: Recommend
 
@@ -36,7 +36,9 @@ Present findings in three groups:
 
 For each item: what, why (with evidence citation), and what applying it would change. Propose — never adopt silently. Anything touching branch/release policy, security, or hooks is always proposed, never auto-applied.
 
-If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
+If the repo already encodes checks elsewhere (a local `dev-check`-style skill, a prose workflow section in CLAUDE.md), the contract becomes the single source of truth: recommend updating those assets to point at the contract or removing the duplication. The same applies to CLAUDE.md content duplicating any plugin skill (e.g. a copy of the `agent-behavior` guidelines). De-duplication edits outside the markers are allowed in Apply — but only for items the user explicitly accepted; never silently.
+
+If the plugin itself isn't enabled in the repo's `.claude/settings.json` yet, recommend the `enabledPlugins` entry — but apply it only with explicit user acceptance (it's a settings edit).
 
 Do **not** recommend reviewers or checks the plugin already provides: the workflow ships quality, test, and correctness reviewers (spawned by `dev-workflow:dev-review`) and a doc-drift reviewer (`dev-workflow:dev-sync-reviewer`, spawned by `dev-workflow:dev-sync`). Additional Reviewers are for concerns beyond these — e.g. fork maintenance, framework conventions, domain-specific rules.
 
@@ -97,7 +99,7 @@ Rules:
 - Repos may add extra subsections inside the block; **preserve any subsections you don't recognize** when migrating or validating — never drop repo-added content.
 - A repo may have no typecheck (e.g. plain JS) — drop the line, don't invent a command.
 - Fused toolchains (Ruff, Biome/Ultracite) may not split format from lint: prefer a merged line when one command owns both, e.g. a single `Format + Lint:` entry pointing at `bun run fix`; keep them split when CI runs them as separate steps. Required Check commands are expected to auto-fix/mutate the working tree where the tool supports it — record the mutating form even when CI runs check-mode (`ruff format`, not `ruff format --check`).
-- Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI **and** applies regardless of which files changed (e.g. a `Security:` line for a SAST scan) — path-conditional gates stay Situational. Record the exact command form CI fails on, not a variant.
+- Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI **and** can fail regardless of which files changed (e.g. a `Security:` line for a SAST scan). Checks that run on every PR but only fail on specific changes (lockfile validation) stay Situational. Record the exact command form CI fails on, not a variant.
 - For **Test**, prefer the suite that gates every PR in CI. If a meaningfully different locally-runnable subset exists (e.g. a marker/filter), ask the user which to record; if the command is textually identical but environment-dependent (tests expect a local database), record it as-is and note the requirement. Slow or environment-dependent extra suites (E2E against ephemeral infra) go under Situational Checks.
 - A Situational Check's action need not be a shell command: "watch the `<name>` CI check on the PR" (for CI-only checks) or "run the `<name>` skill/agent" (for available validation tooling) are both valid.
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
