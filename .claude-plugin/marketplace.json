@@ -14,6 +14,13 @@
       "description": "OpenAI Codex MCP integration for external AI agent collaboration. Enables brainstorming, plan validation, and code review.",
       "version": "3.2.6",
       "keywords": ["codex", "mcp", "collaboration", "review", "external-agent"]
+    },
+    {
+      "name": "dev-workflow",
+      "source": "./plugins/dev-workflow",
+      "description": "Language-agnostic dev workflow: setup consultant, pre-commit checks, multi-perspective code review, and documentation sync. Repos parameterize it via a Dev Workflow Contract in CLAUDE.md.",
+      "version": "0.1.0",
+      "keywords": ["workflow", "review", "checks", "quality", "process"]
     }
   ]
 }
