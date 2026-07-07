@@ -58,11 +58,15 @@ If a contract block already exists:
 
 ## Contract Schema (v1)
 
-The contract lives in the repo's CLAUDE.md inside bounded markers. Everything between the markers is owned by this skill; everything outside is owned by the repo.
+The contract lives in the repo's CLAUDE.md inside bounded markers. The **markers are authoritative**, not the heading: the visible heading should stay neutral and generally useful (`## Commands & Checks` by default, or an existing heading like `## Common Commands`) — these facts serve every session, not just workflow runs. Everything between the markers is owned by this skill; everything outside is owned by the repo.
 
 ```markdown
 <!-- dev-workflow-contract:v1:start -->
-## Dev Workflow Contract
+## Commands & Checks
+
+### Run
+
+- `<command>` - <what it starts/does, e.g. run the app locally>
 
 ### Required Checks
 
@@ -89,7 +93,8 @@ The contract lives in the repo's CLAUDE.md inside bounded markers. Everything be
 
 Rules:
 
-- Omit sections that don't apply (e.g. no Additional Reviewers) rather than leaving placeholders.
+- Omit sections that don't apply (e.g. no Additional Reviewers) rather than leaving placeholders. `Run` is optional convenience content — everyday commands (start the app, install deps) that belong with the check commands.
+- Repos may add extra subsections inside the block; **preserve any subsections you don't recognize** when migrating or validating — never drop repo-added content.
 - A repo may have no typecheck (e.g. plain JS) — drop the line, don't invent a command.
 - Fused toolchains (Ruff, Biome/Ultracite) may not split format from lint: prefer a merged line when one command owns both, e.g. a single `Format + Lint:` entry pointing at `bun run fix`; keep them split when CI runs them as separate steps. Required Check commands are expected to auto-fix/mutate the working tree where the tool supports it — record the mutating form even when CI runs check-mode (`ruff format`, not `ruff format --check`).
 - Required Checks may carry extra labeled lines beyond the four standard ones when a check gates every PR in CI **and** applies regardless of which files changed (e.g. a `Security:` line for a SAST scan) — path-conditional gates stay Situational. Record the exact command form CI fails on, not a variant.

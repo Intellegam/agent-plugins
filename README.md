@@ -23,6 +23,7 @@ Language-agnostic org dev workflow: a setup consultant plus a contract-driven va
 
 **Includes:**
 
+- `agent-behavior` skill + SessionStart hook — always-on behavioral guidelines (think-before-coding, simplicity-first, surgical changes, goal-driven), injected condensed at session start
 - `setup` skill — inspects a repo, recommends checks/reviewers with evidence, and installs the **Dev Workflow Contract** (a versioned marker block in CLAUDE.md) that parameterizes the other skills
 - `dev-check`, `dev-review`, `dev-sync` skills — risk-tiered validation chain with bounded review passes and root-cause reflection
 - `dev-coder` implementation agent + quality/test/correctness/sync reviewer agents

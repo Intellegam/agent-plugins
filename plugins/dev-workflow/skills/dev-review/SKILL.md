@@ -21,7 +21,7 @@ Skills can be chained in a single prompt or invoked sequentially via the Skill t
 
 Run comprehensive code review, **fix obvious issues directly**, only ask for non-obvious trade-offs.
 
-Read the **Dev Workflow Contract** in the repo's CLAUDE.md first — it declares Review Inputs (standards docs to give reviewers) and Additional Reviewers (repo-specific reviewer agents to spawn).
+Read the **Dev Workflow Contract** — the `dev-workflow-contract` marker block in the repo's CLAUDE.md — first: it declares Review Inputs (standards docs to give reviewers) and Additional Reviewers (repo-specific reviewer agents to spawn).
 
 ## Why This Review Matters
 
