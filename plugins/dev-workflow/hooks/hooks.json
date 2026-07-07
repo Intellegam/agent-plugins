@@ -12,7 +12,7 @@
     ],
     "SubagentStart": [
       {
-        "matcher": "general-purpose|claude|dev-coder|dev-workflow:dev-coder",
+        "matcher": "^(general-purpose|claude)$",
         "hooks": [
           {
             "type": "command",
