@@ -19,7 +19,7 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Language-agnostic dev workflow: setup consultant, pre-commit checks, multi-perspective code review, and documentation sync. Repos parameterize it via a Dev Workflow Contract in CLAUDE.md.",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "keywords": ["workflow", "review", "checks", "quality", "process"]
     }
   ]

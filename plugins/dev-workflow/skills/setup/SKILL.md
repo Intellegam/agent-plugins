@@ -49,7 +49,8 @@ Use AskUserQuestion to let the user accept/reject per group (or item for content
 1. Write or update the contract block in CLAUDE.md (see schema below). Beyond the markers, touch only what the user explicitly accepted (de-duplication edits, settings entries) — never restructure or reformat anything else.
 2. Create accepted reviewer agents in `.claude/agents/` (keep them focused: one concern per reviewer, with a description saying when dev-review should spawn it).
 3. Apply accepted settings edits (`enabledPlugins` / `extraKnownMarketplaces`) in `.claude/settings.json`.
-4. Report what was applied and what was skipped.
+4. **No-loss audit**: diff everything you removed or replaced (sections, commands, prose — including accepted de-dup edits) and map each line to its new home (contract line, plugin skill/hook, repo doc). Anything unmapped gets restored before you finish. Removal is only ever justified by an existing replacement, never by tidiness.
+5. Report what was applied, what was skipped, and the removal→home mapping.
 
 ## Re-runs: validate & migrate
 
