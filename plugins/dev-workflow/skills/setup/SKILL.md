@@ -89,10 +89,10 @@ Two ordinary CLAUDE.md sections, located by meaning, not markup:
 - Testing standards: `<path>`
 ```
 
-**2. A `## Dev Workflow` section** — plugin-specific configuration and repo refinements of the injected workflow:
+**2. A `## Dev Workflow Plugin` section** — plugin-specific configuration and repo refinements of the injected workflow:
 
 ```markdown
-## Dev Workflow
+## Dev Workflow Plugin
 
 <optional repo-specific refinements of the shared workflow>
 

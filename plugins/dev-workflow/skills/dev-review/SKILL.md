@@ -21,7 +21,7 @@ Skills can be chained in a single prompt or invoked sequentially via the Skill t
 
 Run comprehensive code review, **fix obvious issues directly**, only ask for non-obvious trade-offs.
 
-Read the repo's CLAUDE.md first: the commands & checks section declares Review Inputs (standards docs to give reviewers), and the Dev Workflow section may declare custom dev-workflow reviewers (repo-specific reviewer agents to spawn).
+Read the repo's CLAUDE.md first: the commands & checks section declares Review Inputs (standards docs to give reviewers), and the Dev Workflow Plugin section may declare custom dev-workflow reviewers (repo-specific reviewer agents to spawn).
 
 ## Why This Review Matters
 
@@ -58,7 +58,7 @@ First, spawn sub-agents in parallel:
 
 1. `dev-workflow:dev-quality-reviewer` - code quality, simplicity, maintainability
 2. `dev-workflow:dev-test-reviewer` - test coverage and quality
-3. Any **custom dev-workflow reviewers** declared in CLAUDE.md's Dev Workflow section (repo-local agents, e.g. a fork-maintenance or framework-conventions reviewer)
+3. Any **custom dev-workflow reviewers** declared in CLAUDE.md's Dev Workflow Plugin section (repo-local agents, e.g. a fork-maintenance or framework-conventions reviewer)
 4. `Explore` agent if available (otherwise search directly) - find existing utils, patterns, types that new code might duplicate
 5. Situational, for unfamiliar external APIs: a web-research agent if available, otherwise check the docs yourself via WebFetch/WebSearch
 

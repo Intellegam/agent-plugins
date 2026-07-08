@@ -7,7 +7,7 @@
 cat > /dev/null  # drain stdin
 cat <<'EOF'
 <dev-workflow>
-The dev-workflow plugin is active. For coding tasks, follow this workflow. Repo-specific commands and policy come from CLAUDE.md (commands & checks, Dev Workflow sections) — where those are concrete, they win.
+The dev-workflow plugin is active. For coding tasks, follow this workflow. Repo-specific commands and policy come from CLAUDE.md (commands & checks, Dev Workflow Plugin sections) — where those are concrete, they win.
 
 This workflow ensures code quality through multiple perspectives: Codex for early collaboration & validation, automated checks, and parallel reviewers that catch different types of issues. Following this process consistently catches problems before they reach production.
 
