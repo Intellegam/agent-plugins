@@ -97,6 +97,7 @@ The contract lives in the repo's CLAUDE.md inside bounded markers. The **markers
 Rules:
 
 - Omit sections that don't apply (e.g. no Additional Reviewers) rather than leaving placeholders. `Run` is optional convenience content — everyday commands (start the app, install deps) that belong with the check commands.
+- **When the block replaces an existing commands section, carry over ALL of its entries verbatim** (into `Run` or the matching check line) — never drop a documented command. The contract adds structure on top of existing content; it doesn't shrink it.
 - Repos may add extra subsections inside the block; **preserve any subsections you don't recognize** when migrating or validating — never drop repo-added content.
 - A repo may have no typecheck (e.g. plain JS) — drop the line, don't invent a command.
 - Fused toolchains (Ruff, Biome/Ultracite) may not split format from lint: prefer a merged line when one command owns both, e.g. a single `Format + Lint:` entry pointing at `bun run fix`; keep them split when CI runs them as separate steps. Required Check commands are expected to auto-fix/mutate the working tree where the tool supports it — record the mutating form even when CI runs check-mode (`ruff format`, not `ruff format --check`).
