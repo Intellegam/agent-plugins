@@ -2,7 +2,7 @@
 name: dev-quality-reviewer
 description: Reviews implementation code AND tests for quality, maintainability, and coverage - one reviewer for both sides, because testability is a design concern. Provide minimal context (goal, constraints, scope) but NOT reasoning or justifications - the reviewer should form an independent opinion. Invoked by the dev-workflow:dev-review skill.
 tools: ["Read", "Grep", "Glob", "LSP", "Skill"]
-model: inherit
+model: opus
 color: cyan
 ---
 
