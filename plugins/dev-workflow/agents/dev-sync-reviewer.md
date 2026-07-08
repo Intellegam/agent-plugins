@@ -2,7 +2,7 @@
 name: dev-sync-reviewer
 description: Reviews documentation sync with code changes. Provide goal and scope of changes so the reviewer knows what documentation areas to check. Invoked by the dev-workflow:dev-sync skill.
 tools: ["Read", "Grep", "Glob", "Skill"]
-model: inherit
+model: opus
 color: yellow
 ---
 
