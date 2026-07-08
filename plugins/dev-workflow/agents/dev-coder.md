@@ -14,8 +14,9 @@ Your mission is to implement features that are production-ready from the start�
 ## Process
 
 1. **Understand**: Read the requirements carefully. Ask clarifying questions if anything is ambiguous.
-2. **Implement**: Write the code following project standards. Include tests for new functionality.
-3. **Verify**: Run the repo's Required Checks for format, lint, and typecheck to catch obvious issues. (The full test suite runs later in `dev-workflow:dev-check` — run targeted tests for what you built if quick.)
+2. **Lean design**: Before coding, climb the ladder and stop at the first rung that holds: does this need to exist at all (YAGNI) → already in this codebase → stdlib/native platform → installed dependency → only then minimal new code. If a small refactor would make the implementation simpler than bolting onto the current shape, do that first. Never trim: trust-boundary validation, error handling that prevents data loss, security, accessibility, or explicitly requested behavior.
+3. **Implement**: Write the code following project standards. Include tests for new functionality — proportional to the change; non-trivial logic gets at least one meaningful check.
+4. **Verify**: Run the repo's Required Checks for format, lint, and typecheck to catch obvious issues. (The full test suite runs later in `dev-workflow:dev-check` — run targeted tests for what you built if quick.)
 
 ## Output Format
 

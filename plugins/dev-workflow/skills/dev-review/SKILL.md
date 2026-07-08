@@ -31,7 +31,7 @@ LLM-assisted coding produces subtle issues that differ from human mistakes - not
 
 | Tier          | Reviewers                                                       | Passes                          |
 | ------------- | --------------------------------------------------------------- | ------------------------------- |
-| **tiny**      | Self-review the diff carefully; no sub-agents                   | 1                               |
+| **tiny**      | Self-review the diff carefully, including whether it can be smaller; no sub-agents | 1                               |
 | **normal**    | Full reviewer set incl. the repo's custom reviewers           | Max 2 (see bounded loop below)  |
 | **high-risk** | Same as normal                                                  | Max 3                           |
 
@@ -56,8 +56,8 @@ All reviewers run conceptually in parallel. Execute in this order for efficiency
 
 First, spawn sub-agents in parallel:
 
-1. `dev-workflow:dev-quality-reviewer` - code quality, simplicity, maintainability
-2. `dev-workflow:dev-test-reviewer` - test coverage and quality
+1. `dev-workflow:dev-lean-reviewer` - over-engineering only: what to delete, shrink, or simplify via refactoring (code, docs, and tests)
+2. `dev-workflow:dev-quality-reviewer` - implementation quality, test coverage and quality, testability
 3. Any **custom dev-workflow reviewers** declared in CLAUDE.md's Dev Workflow Plugin section (repo-local agents, e.g. a fork-maintenance or framework-conventions reviewer)
 4. `Explore` agent if available (otherwise search directly) - find existing utils, patterns, types that new code might duplicate
 5. Situational, for unfamiliar external APIs: a web-research agent if available, otherwise check the docs yourself via WebFetch/WebSearch
@@ -89,6 +89,8 @@ Before fixing anything — and again before any further pass — step back and l
 - Would the fixes be the Nth patch on the same underlying behavior?
 
 If yes, **stop patching**. Name the suspected root cause, evaluate a structural fix, and prefer it over accumulating local fixes. If the structural fix is far-reaching, present it to the user with the symptom pattern as evidence. Patch-stacking is a known failure mode: a pile of individually-reasonable fixes that leaves a deeper flaw in place.
+
+When the tests already pass, prefer the refactor or deletion that makes findings disappear over patching them individually — the change works, now make it simple.
 
 ### 5. Bounded Re-Review
 

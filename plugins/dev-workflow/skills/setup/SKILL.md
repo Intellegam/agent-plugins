@@ -42,7 +42,7 @@ If the repo already encodes checks elsewhere (a local `dev-check`-style skill, d
 
 If the plugin itself isn't enabled in the repo's `.claude/settings.json` yet, recommend the `enabledPlugins` entry — together with the `extraKnownMarketplaces` entry if the marketplace is missing too (an enabled plugin from an unknown marketplace won't load on a fresh checkout). Apply only with explicit user acceptance (it's a settings edit).
 
-Do **not** recommend reviewers or checks the plugin already provides: the workflow ships quality, test, and correctness reviewers (spawned by `dev-workflow:dev-review`) and a doc-drift reviewer (`dev-workflow:dev-sync-reviewer`, spawned by `dev-workflow:dev-sync`). Custom reviewers are for concerns beyond these — e.g. fork maintenance, framework conventions, domain-specific rules.
+Do **not** recommend reviewers or checks the plugin already provides: the workflow ships lean (over-engineering), quality (implementation + tests), and correctness reviewers (spawned by `dev-workflow:dev-review`) and a doc-drift reviewer (`dev-workflow:dev-sync-reviewer`, spawned by `dev-workflow:dev-sync`). Custom reviewers are for concerns beyond these — e.g. fork maintenance, framework conventions, domain-specific rules.
 
 ## Phase 3: Apply
 
@@ -113,6 +113,6 @@ Rules:
 - A Situational Check's action need not be a shell command: "watch the `<name>` CI check on the PR" (for CI-only checks) or "run the `<name>` skill/agent" (for available validation tooling) are both valid.
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
 - **Review Inputs** takes arbitrary labeled entries — register any doc reviewers should read (documentation guidelines, architecture, fork-maintenance rules, ...), not just code/testing standards.
-- **Custom dev-workflow reviewers** means beyond the plugin's built-in set (quality, test, and correctness reviewers spawned by dev-review; doc-drift reviewer spawned by dev-sync). Only list repo-specific ones; omit the subsection if there are none.
+- **Custom dev-workflow reviewers** means beyond the plugin's built-in set (lean, quality, and correctness reviewers spawned by dev-review; doc-drift reviewer spawned by dev-sync). Only list repo-specific ones; omit the subsection if there are none.
 - Place new sections after the repo's overview sections (or at the end of CLAUDE.md if unsure) — never before `@import` lines at the top, and never inside another tool's managed region (vendored standards sections, other tools' marker blocks).
 - Keep these sections compact: they are always-on context for every session in the repo.
