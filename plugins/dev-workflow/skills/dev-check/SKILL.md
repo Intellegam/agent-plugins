@@ -25,7 +25,7 @@ Run checks, **auto-fix what you can**, only ask when genuinely unsure.
 
 ## The Contract
 
-The repo declares its commands in the **Dev Workflow Contract** — the block between `dev-workflow-contract` markers in CLAUDE.md. Read it first; this skill uses its Required Checks and Situational Checks sections. If the contract is missing, run `dev-workflow:setup` (or ask the user) before proceeding — don't guess commands.
+The repo declares its commands in CLAUDE.md's commands & checks section (Required Checks / Situational Checks). Read it first. If those sections are missing, run `dev-workflow:setup` (or ask the user) before proceeding — don't guess commands.
 
 ## Scale to the Change
 
@@ -41,11 +41,11 @@ When in doubt, go one tier up.
 
 ## Required Checks
 
-Run the commands under the contract's **Required Checks**, fix failures automatically (report what a tool couldn't auto-fix). For normal and high-risk tiers, check the entire repository — avoid targeting only specific files or directories.
+Run the commands under **Required Checks**, fix failures automatically (report what a tool couldn't auto-fix). For normal and high-risk tiers, check the entire repository — avoid targeting only specific files or directories.
 
 ## Situational Checks
 
-Run the contract's **Situational Checks** whose conditions match the change (at high-risk, run them when in doubt; at tiny, skip). Beyond the contract, think about what additional validation makes sense for what changed — e.g. exercising a changed CLI command, hitting a changed endpoint, or running a relevant validation skill.
+Run the **Situational Checks** whose conditions match the change (at high-risk, run them when in doubt; at tiny, skip). Beyond the declared checks, think about what additional validation makes sense for what changed — e.g. exercising a changed CLI command, hitting a changed endpoint, or running a relevant validation skill.
 
 **Tip**: Check available skills — some are useful for testing and validation.
 
@@ -53,16 +53,16 @@ Use judgment. Skip if tests already cover it, add others if the situation calls 
 
 ## Drift Guard
 
-The contract is the baseline, not a cage. Each run, glance at the repo's CI surfaces (CI workflow files, manifest scripts/tasks) — a cheap heuristic scan, not a CI interpreter. If CI gates a check the contract doesn't list:
+The declared checks are the baseline, not a cage. Each run, glance at the repo's CI surfaces (CI workflow files, manifest scripts/tasks) — a cheap heuristic scan, not a CI interpreter. If CI gates a check CLAUDE.md doesn't list:
 
 - **Run it** when it's clearly a safe local command (a lint/typecheck/test-style script)
 - **Flag it** when it's ambiguous, secrets-dependent, or CI-only
 
-Either way, report the contract as **stale** — visibly, before any commit/PR — and recommend updating the block (via `dev-workflow:dev-sync` or `dev-workflow:setup`). This is also open-ended in the other direction: think about what validation the change itself calls for, listed or not.
+Either way, report the declared checks as **stale** — visibly, before any commit/PR — and recommend updating the section (via `dev-workflow:dev-sync` or `dev-workflow:setup`). This is also open-ended in the other direction: think about what validation the change itself calls for, listed or not.
 
 ## Output
 
-Summarize results, report what was fixed, confirm all checks pass. Include any contract-drift findings.
+Summarize results, report what was fixed, confirm all checks pass. Include any drift findings.
 
 ## Next Step
 

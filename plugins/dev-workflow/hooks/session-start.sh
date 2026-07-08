@@ -7,7 +7,7 @@
 cat > /dev/null  # drain stdin
 cat <<'EOF'
 <dev-workflow>
-The dev-workflow plugin is active. For coding tasks, follow this workflow. Repo-specific commands and policy come from CLAUDE.md and its contract block (`dev-workflow-contract` markers) — where those are concrete, they win.
+The dev-workflow plugin is active. For coding tasks, follow this workflow. Repo-specific commands and policy come from CLAUDE.md (commands & checks, Dev Workflow sections) — where those are concrete, they win.
 
 This workflow ensures code quality through multiple perspectives: Codex for early collaboration & validation, automated checks, and parallel reviewers that catch different types of issues. Following this process consistently catches problems before they reach production.
 
@@ -27,7 +27,7 @@ Read the `collaborating-with-codex` skill for Codex guidelines.
 
 ### 2. Implement
 
-Write code following the repo's code standards and testing guidelines (declared under Review Inputs in the contract).
+Write code following the repo's code standards and testing guidelines (declared under Review Inputs in CLAUDE.md).
 
 **Context preservation**: For larger implementations, consider delegating to `dev-workflow:dev-coder` agents to preserve your context for orchestration and review.
 

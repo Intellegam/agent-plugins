@@ -21,7 +21,7 @@ Skills can be chained in a single prompt or invoked sequentially via the Skill t
 
 Run comprehensive code review, **fix obvious issues directly**, only ask for non-obvious trade-offs.
 
-Read the **Dev Workflow Contract** — the `dev-workflow-contract` marker block in the repo's CLAUDE.md — first: it declares Review Inputs (standards docs to give reviewers) and Additional Reviewers (repo-specific reviewer agents to spawn).
+Read the repo's CLAUDE.md first: the commands & checks section declares Review Inputs (standards docs to give reviewers), and the Dev Workflow section may declare custom dev-workflow reviewers (repo-specific reviewer agents to spawn).
 
 ## Why This Review Matters
 
@@ -32,7 +32,7 @@ LLM-assisted coding produces subtle issues that differ from human mistakes - not
 | Tier          | Reviewers                                                       | Passes                          |
 | ------------- | --------------------------------------------------------------- | ------------------------------- |
 | **tiny**      | Self-review the diff carefully; no sub-agents                   | 1                               |
-| **normal**    | Full reviewer set incl. contract Additional Reviewers           | Max 2 (see bounded loop below)  |
+| **normal**    | Full reviewer set incl. the repo's custom reviewers           | Max 2 (see bounded loop below)  |
 | **high-risk** | Same as normal                                                  | Max 3                           |
 
 If `dev-check` already picked a tier, reuse it.
@@ -46,7 +46,7 @@ Before spawning reviewers, prepare minimal context. Include:
 - **Goal**: One sentence - what problem is being solved
 - **Constraints**: Hard requirements (if any)
 - **Scope**: Files changed, **including the actual diff** — reviewers run with fresh context and no Bash, so paste the `git diff` output into their prompt; for very large diffs, include the per-file stat plus the hunks for the riskiest files and name the rest for reading
-- **Review Inputs**: the standards docs declared in the contract
+- **Review Inputs**: the standards docs declared in CLAUDE.md
 
 **Do NOT include**: Why specific solutions were chosen, alternatives considered, or reasoning. Reviewers should form independent opinions, not validate decisions.
 
@@ -58,7 +58,7 @@ First, spawn sub-agents in parallel:
 
 1. `dev-workflow:dev-quality-reviewer` - code quality, simplicity, maintainability
 2. `dev-workflow:dev-test-reviewer` - test coverage and quality
-3. Any **Additional Reviewers** declared in the contract (repo-local agents, e.g. a fork-maintenance or framework-conventions reviewer)
+3. Any **custom dev-workflow reviewers** declared in CLAUDE.md's Dev Workflow section (repo-local agents, e.g. a fork-maintenance or framework-conventions reviewer)
 4. `Explore` agent if available (otherwise search directly) - find existing utils, patterns, types that new code might duplicate
 5. Situational, for unfamiliar external APIs: a web-research agent if available, otherwise check the docs yourself via WebFetch/WebSearch
 
@@ -113,10 +113,10 @@ Continue to `dev-workflow:dev-sync` (the recommended next step) unless the user 
 
 ## Continuous Learning
 
-If the user provides feedback about issues the review missed, offer to add them to the repo's code standards doc (the one declared under Review Inputs in the contract). This improves both future reviews and code generation.
+If the user provides feedback about issues the review missed, offer to add them to the repo's code standards doc (the one declared under Review Inputs in CLAUDE.md). This improves both future reviews and code generation.
 
 ## Notes
 
 - Codex review is valuable - always try it first
-- Sub-agents consult the contract's Review Inputs and `CLAUDE.md`
+- Sub-agents consult the Review Inputs declared in `CLAUDE.md`
 - Focus on current changes, but read context as needed

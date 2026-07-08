@@ -37,10 +37,10 @@ Based on what changed, check if related documentation needs updates:
 | Public APIs          | Are docstrings/API docs present and accurate?                                        |
 | Component behavior   | Does the repo's documentation reflect current code?                                  |
 | Claude skills/agents | Do `.claude/skills/` and `.claude/agents/` still accurately describe behavior?       |
-| Contract             | Do the Dev Workflow Contract's commands, docs paths, and reviewers still exist? Does CI gate checks the contract doesn't list (or did `dev-check` flag drift)? Update the block accordingly — dev-sync owns contract repair |
+| Commands & checks    | Do the declared commands, docs paths, and reviewers still exist? Does CI gate checks CLAUDE.md doesn't list (or did `dev-check` flag drift)? Update the sections accordingly — dev-sync owns their repair |
 | Placement            | Does each added paragraph serve THIS doc's target reader and the task this doc owns? |
 
-**Guidelines**: Apply the repo's documentation standards if declared under Review Inputs in the Dev Workflow Contract.
+**Guidelines**: Apply the repo's documentation standards if declared under Review Inputs in CLAUDE.md.
 
 **When making updates**: Integrate new content into existing structure—don't bolt it on. Add to existing lists, match the surrounding style, avoid "**Important**:" patch markers. Updates should feel like they've always been there.
 
@@ -55,7 +55,7 @@ Use judgment. Not every code change needs doc updates. Focus on:
 
 ## Next Step
 
-**Before offering to commit**: if review or sync edited any files since the last `dev-check` pass, re-run the contract's Required Checks — plus any Situational Checks whose conditions the new edits match — before continuing. Post-check edits must not reach a commit unchecked.
+**Before offering to commit**: if review or sync edited any files since the last `dev-check` pass, re-run the Required Checks — plus any Situational Checks whose conditions the new edits match — before continuing. Post-check edits must not reach a commit unchecked.
 
 Committing, pushing, or opening a PR is a genuine decision — when everything is in sync, use AskUserQuestion:
 

@@ -5,6 +5,6 @@
 cat > /dev/null  # drain stdin
 cat <<'EOF'
 <dev-workflow-subagent>
-The dev workflow is active. If your delegated task includes code changes, read the repo's CLAUDE.md and its contract block (`dev-workflow-contract` markers). Before returning, run or report the contract's relevant Required Checks, and mention any skipped validation with reasons. Read-only review or exploration tasks should not modify files or run broad checks unless asked.
+The dev workflow is active. If your delegated task includes code changes, read the repo's CLAUDE.md, especially its commands & checks section. Before returning, run or report the relevant Required Checks, and mention any skipped validation with reasons. Read-only review or exploration tasks should not modify files or run broad checks unless asked.
 </dev-workflow-subagent>
 EOF
