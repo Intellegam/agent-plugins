@@ -1,10 +1,9 @@
 #!/bin/bash
-# SubagentStart pointer for implementation-capable agents (matched by type
-# in hooks.json). Deliberately a pointer, not a second workflow spec — the
-# full workflow is injected into the main session by session-start.sh.
+# SubagentStart context injection for implementation-capable sub-agents
+# (general-purpose/claude, matched by type in hooks.json). Injects the same
+# workflow as session-start.sh (single source: dev-workflow.md) — the text
+# tells sub-agents to apply the phases that fit their delegated scope.
+# Special agents (dev-coder, reviewers, Explore) are excluded by the matcher
+# and keep their own focused prompts.
 cat > /dev/null  # drain stdin
-cat <<'EOF'
-<dev-workflow-subagent>
-The dev workflow is active. If your delegated task includes code changes, read the repo's CLAUDE.md, especially its commands & checks section. Before returning, run or report the relevant Required Checks, and mention any skipped validation with reasons. Read-only review or exploration tasks should not modify files or run broad checks unless asked.
-</dev-workflow-subagent>
-EOF
+cat "$(dirname "$0")/dev-workflow.md"

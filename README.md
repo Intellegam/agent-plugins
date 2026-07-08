@@ -24,10 +24,10 @@ Language-agnostic org dev workflow: a setup consultant plus a contract-driven va
 **Includes:**
 
 - SessionStart hook — injects the five-phase workflow (explore & plan, implement, validate, commit, triage) into every session; re-fires after compaction
-- SubagentStart hook — short validate-before-returning pointer for implementation-capable sub-agents (general-purpose/claude); read-only agents unaffected
+- SubagentStart hook — injects the same workflow into implementation-capable sub-agents (general-purpose/claude), which apply the phases that fit their delegated scope; special agents (reviewers, dev-coder, Explore) unaffected
 - `setup` skill — inspects a repo, recommends checks/reviewers with evidence, and installs the commands & checks sections in CLAUDE.md that parameterize the other skills
 - `dev-check`, `dev-review`, `dev-sync` skills — risk-tiered validation chain with bounded review passes and root-cause reflection
-- `dev-coder` implementation agent + quality/test/correctness/sync reviewer agents
+- `dev-coder` implementation agent + lean (over-engineering), quality (implementation + tests), correctness, and sync reviewer agents
 
 Repos declare their commands, situational checks, standards docs, and repo-specific reviewers in the contract; run `/dev-workflow:setup` to onboard a repo.
 
