@@ -21,6 +21,13 @@
       "description": "Language-agnostic dev workflow: setup consultant, pre-commit checks, multi-perspective code review, and documentation sync. Repos parameterize it via commands & checks sections in CLAUDE.md.",
       "version": "0.4.1",
       "keywords": ["workflow", "review", "checks", "quality", "process"]
+    },
+    {
+      "name": "code-tour",
+      "source": "./plugins/code-tour",
+      "description": "Agent-generated visual PR walkthroughs: an authored narrative whose every code snippet is a grounded reference into the real diff, built into a single offline tour.html with a line-level review surface.",
+      "version": "0.1.0",
+      "keywords": ["code-tour", "pr", "walkthrough", "review", "diff"]
     }
   ]
 }

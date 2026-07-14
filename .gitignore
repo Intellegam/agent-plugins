@@ -1,1 +1,10 @@
 .DS_Store
+node_modules/
+__pycache__/
+.pytest_cache/
+
+# dev-harness lockfile — the shipped runtime deps are installed fresh per tour workspace
+bun.lock
+
+# local tour preview output (generated while iterating on a tour)
+.preview-*

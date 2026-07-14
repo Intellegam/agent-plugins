@@ -1,0 +1,724 @@
+/* code-tour page styles — page chrome plus the React content inserted into Pierre slots. */
+
+:root {
+  --tour-fg: #1f2328;
+  --tour-muted: #656d76;
+  --tour-bg: #ffffff;
+  --tour-border: #d0d7de;
+  --tour-accent: #0969da;
+  --tour-accent-soft: #eef6ff;
+  --tour-green: #1a7f37;
+  --tour-shadow: 0 1px 2px rgba(31, 35, 40, 0.04), 0 8px 28px rgba(31, 35, 40, 0.06);
+  --tour-code-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+body {
+  margin: 0;
+  color: var(--tour-fg);
+  background: var(--tour-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+}
+
+.tour {
+  position: relative;
+  /* 80% of the viewport by default, but never squeeze small windows below 640px of usable width */
+  max-width: var(--tour-width, max(80vw, 640px));
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* Drag either edge to widen the content column symmetrically about the centre. The strip is
+   invisible until hovered or dragging, then a thin accent bar hints the grabbable edge. */
+.tour-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  cursor: ew-resize;
+  touch-action: none;
+  z-index: 5;
+}
+
+.tour-resize-handle.is-left {
+  left: -6px;
+}
+
+.tour-resize-handle.is-right {
+  right: -6px;
+}
+
+.tour-resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  background: var(--tour-accent);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.tour-resize-handle:hover::after,
+body.tour-resizing .tour-resize-handle::after {
+  opacity: 0.5;
+}
+
+body.tour-resizing {
+  cursor: ew-resize;
+  user-select: none;
+}
+
+.tour-header {
+  border-bottom: 1px solid var(--tour-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tour-title {
+  font-size: 1.9rem;
+  margin: 0 0 0.25rem;
+}
+
+.tour-meta {
+  margin: 0;
+  color: var(--tour-muted);
+  font-size: 0.95rem;
+}
+
+.tour-body {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.tour-nav {
+  position: sticky;
+  top: 1rem;
+  font-size: 0.9rem;
+}
+
+.tour-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid var(--tour-border);
+}
+
+.tour-nav li {
+  margin: 0;
+}
+
+.tour-nav a {
+  display: block;
+  padding: 0.2rem 0.75rem;
+  color: var(--tour-muted);
+  text-decoration: none;
+  /* Long path headings are a single unbreakable token; wrap them inside the column instead
+     of letting them overflow into the content. */
+  overflow-wrap: anywhere;
+}
+
+.tour-nav a:hover {
+  color: var(--tour-accent);
+}
+
+/* Scrollspy: the section (and its current sub-heading) in view. Colour + a left accent bar
+   only — no font-weight change, so a wrapped nav label never reflows as the reader scrolls. */
+.tour-nav a.is-active {
+  color: var(--tour-accent);
+  box-shadow: inset 2px 0 0 var(--tour-accent);
+}
+
+.tour-nav .tour-nav-sub a.is-active {
+  box-shadow: none;
+  opacity: 1;
+}
+
+/* Second level: plain <h3>s inside a section, indented and quieter than their section.
+   Selectors outweigh `.tour-nav ul` / `.tour-nav a` so the nested list drops the guide bar. */
+.tour-nav .tour-nav-sub {
+  border-left: none;
+}
+
+.tour-nav .tour-nav-sub a {
+  padding: 0.1rem 0.75rem 0.1rem 1.4rem;
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+/* The nav's bottom block (review-export link, viewed counter), set off by one thin rule. */
+.tour-nav-export {
+  margin-top: 0.75rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--tour-border);
+}
+
+.tour-nav-export + .tour-nav-export {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* The minimal viewed counter: plain muted text, aligned with the nav links. */
+.tour-nav-viewed {
+  padding: 0.2rem 0.75rem;
+  color: var(--tour-muted);
+  font-size: 0.75rem;
+}
+
+/* "Collapse/expand all diffs": a quiet text button grouped with the viewed counter, styled
+   like the nav links (borderless, muted, accent on hover) so it doesn't clash with them. */
+.tour-nav-toggle-all {
+  display: block;
+  width: 100%;
+  padding: 0.2rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--tour-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tour-nav-toggle-all:hover {
+  color: var(--tour-accent);
+}
+
+.tour-main {
+  min-width: 0;
+}
+
+.tour-section {
+  margin-bottom: 2.5rem;
+  scroll-margin-top: 1rem;
+}
+
+.tour-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.35rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--tour-border);
+}
+
+/* The shared section/diff collapse toggle: chevron points down open, right closed. */
+.tour-chevron {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  color: var(--tour-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.tour-chevron:hover {
+  color: var(--tour-fg);
+  background: #e9edf2;
+}
+
+.tour-chevron svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.12s ease;
+}
+
+.tour-chevron[aria-expanded="false"] svg {
+  transform: rotate(-90deg);
+}
+
+/* Author <h3>s double as second-level nav targets; keep them clear of the viewport top. */
+.tour-section h3 {
+  scroll-margin-top: 1rem;
+}
+
+.tour-main p {
+  font-size: 1rem;
+}
+
+/* Markdown-style inline code for prose, headings, the page title, and annotations. Scoped to
+   light-DOM tour content: Pierre's diff source lines are `<code>` too but live in a shadow root
+   (adoptedStyleSheets), so this never reaches them. `em` sizing scales the chip inside headings. */
+.tour-main code,
+.tour-header code {
+  font-family: var(--tour-code-font);
+  font-size: 0.9em;
+  background: #eff1f3;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+/* Markdown-codeblock chrome for multiline non-diff snippets in prose. Scoped to `.tour-section`
+   so the review-export's own <pre> stays untouched; Pierre's diff internals are shadow DOM and
+   unreachable anyway. `.tour-filetree` shares the chrome but renders rows as divs. */
+.tour-section pre,
+.tour-filetree {
+  font-family: var(--tour-code-font);
+  font-size: 0.82rem;
+  background: #f6f8fa;
+  border: 1px solid var(--tour-border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  overflow-x: auto;
+  margin: 1rem 0 1.5rem;
+}
+
+.tour-filetree {
+  line-height: 1.55;
+}
+
+.tour-filetree-group + .tour-filetree-group {
+  margin-top: 0.8em;
+}
+
+/* `pre` whitespace keeps the connector glyphs aligned and stops rows from wrapping. */
+.tour-filetree-row {
+  white-space: pre;
+}
+
+.tour-filetree-prefix {
+  color: #afb8c1;
+}
+
+.tour-filetree-dir {
+  font-weight: 600;
+}
+
+.tour-filetree-desc {
+  color: var(--tour-muted);
+}
+
+/* diff blocks */
+.tour-diff {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin: 1rem 0 1.5rem;
+}
+
+.tour-diff-code {
+  min-width: 0;
+  border: 1px solid var(--tour-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--tour-shadow);
+}
+
+.tour-diff-file {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-family: var(--tour-code-font);
+  min-height: 42px;
+  font-size: 0.78rem;
+  color: var(--tour-fg);
+  background: #f8fafc;
+  padding: 0.35rem 0.5rem 0.35rem 0.85rem;
+  border-bottom: 1px solid var(--tour-border);
+}
+
+.tour-diff-path {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.tour-diff-viewed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: none;
+  color: var(--tour-muted);
+  font: 600 0.7rem/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tour-diff-viewed:hover {
+  color: var(--tour-fg);
+}
+
+.tour-diff-viewed input {
+  margin: 0;
+  accent-color: var(--tour-accent);
+  cursor: pointer;
+}
+
+.tour-diff-controls {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--tour-border);
+  border-radius: 7px;
+  background: #fff;
+}
+
+.tour-diff-controls button {
+  appearance: none;
+  border: 0;
+  border-radius: 4px;
+  padding: 0.28rem 0.55rem;
+  color: var(--tour-muted);
+  background: transparent;
+  font: 600 0.7rem/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+
+.tour-diff-controls button:hover:not(:disabled) {
+  color: var(--tour-fg);
+  background: #f3f4f6;
+}
+
+.tour-diff-controls button.is-active {
+  color: var(--tour-fg);
+  background: #e9edf2;
+  box-shadow: 0 1px 2px rgba(31, 35, 40, 0.08);
+}
+
+.tour-diff-controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tour-diff-code > diffs-container {
+  display: block;
+  font-size: 12px;
+}
+
+.tour-comment-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  color: #59636e;
+  background: #fff;
+  border: 1px solid #afb8c1;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(31, 35, 40, 0.12);
+  cursor: pointer;
+}
+
+.tour-comment-trigger:hover {
+  color: #0969da;
+  border-color: #0969da;
+  background: #f6f8fa;
+}
+
+.tour-comment-trigger svg {
+  width: 14px;
+  height: 14px;
+  overflow: visible;
+  fill: #fff;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.2;
+}
+
+.tour-diff-broken {
+  display: block;
+  padding: 0.75rem;
+  border: 1px solid #cf222e;
+  border-radius: 8px;
+  border-color: #cf222e;
+  background: #ffebe9;
+}
+
+.tour-diff-broken-msg {
+  margin: 0;
+  color: #cf222e;
+}
+
+/* Pierre annotation slots: AI notes, human review threads, and the composer. */
+.tour-comment,
+.tour-comment-composer {
+  box-sizing: border-box;
+  margin: 6px 10px 8px 42px;
+  overflow: hidden;
+  color: var(--tour-fg);
+  background: #fff;
+  border: 1px solid #c9d1d9;
+  border-radius: 6px;
+  font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  box-shadow: none;
+}
+
+.tour-comment:hover,
+.tour-comment-composer:focus-within {
+  border-color: #8c959f;
+}
+
+.tour-comment-composer:focus-within {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.tour-comment-ai {
+  border-color: #a8c7fa;
+  background: linear-gradient(180deg, #f8fbff, #fff 70%);
+}
+
+.tour-comment-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 0 10px;
+  color: var(--tour-muted);
+  border-bottom: 1px solid #e7ebef;
+}
+
+.tour-comment-head strong {
+  color: var(--tour-fg);
+  font-size: 12px;
+}
+
+.tour-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: #fff;
+  background: #24292f;
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.tour-avatar svg {
+  width: 11px;
+  height: 11px;
+  fill: currentColor;
+}
+
+.tour-avatar-ai {
+  color: #174ea6;
+  background: #dbeafe;
+}
+
+.tour-comment-body {
+  padding: 10px 12px;
+  white-space: normal;
+}
+
+.tour-comment-body > :first-child { margin-top: 0; }
+.tour-comment-body > :last-child { margin-bottom: 0; }
+
+.tour-comment-actions,
+.tour-composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 7px 10px;
+  border-top: 1px solid #e7ebef;
+}
+
+.tour-comment-actions button,
+.tour-composer-actions button,
+.tour-review-output-title button {
+  appearance: none;
+  padding: 0.32rem 0.65rem;
+  color: #fff;
+  background: #24292f;
+  border: 1px solid #24292f;
+  border-radius: 6px;
+  font: 600 11px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+
+.tour-comment-actions button {
+  color: var(--tour-muted);
+  background: #fff;
+  border-color: var(--tour-border);
+}
+
+/* Hovers: primary buttons lift slightly; Delete warns in red. */
+.tour-composer-actions button:hover:not(:disabled):not(.secondary),
+.tour-review-output-title button:hover {
+  background: #32383f;
+  border-color: #32383f;
+}
+
+.tour-composer-actions button.secondary:hover {
+  color: var(--tour-fg);
+  background: #f6f8fa;
+  border-color: #8c959f;
+}
+
+.tour-comment-actions button:hover {
+  color: #cf222e;
+  background: #ffebe9;
+  border-color: #cf222e;
+}
+
+.tour-comment-composer textarea {
+  box-sizing: border-box;
+  display: block;
+  min-height: 58px;
+  margin: 8px;
+  width: calc(100% - 16px);
+  resize: none;
+  padding: 9px 10px;
+  color: var(--tour-fg);
+  background: #fff;
+  border: 1px solid #8c959f;
+  border-radius: 6px;
+  outline: none;
+  font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.tour-comment-composer textarea:focus {
+  border-color: var(--tour-accent);
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+}
+
+.tour-composer-actions span {
+  margin-right: auto;
+  color: var(--tour-muted);
+  font-size: 11px;
+}
+
+.tour-composer-actions button.secondary {
+  color: var(--tour-fg);
+  background: #fff;
+  border-color: var(--tour-border);
+}
+
+.tour-composer-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Review hand-off. */
+.tour-review-export {
+  margin-top: 3rem;
+  padding: 1.25rem;
+  border: 1px solid var(--tour-border);
+  border-radius: 12px;
+  background: #f8fafc;
+  scroll-margin-top: 1rem;
+}
+
+.tour-review-export-heading,
+.tour-review-output-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tour-review-export-heading h2 {
+  margin: 0.1rem 0 0;
+  font-size: 1.25rem;
+}
+
+.tour-eyebrow {
+  color: var(--tour-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tour-review-count {
+  padding: 0.22rem 0.55rem;
+  color: var(--tour-green);
+  background: #dafbe1;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.tour-review-output {
+  margin-top: 1rem;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--tour-border);
+  border-radius: 8px;
+}
+
+.tour-review-output-title {
+  min-height: 38px;
+  padding: 0 0.65rem 0 0.8rem;
+  border-bottom: 1px solid #e7ebef;
+  font-size: 0.78rem;
+}
+
+.tour-review-output pre {
+  max-height: 300px;
+  margin: 0;
+  overflow: auto;
+  padding: 0.8rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font: 11px/1.55 var(--tour-code-font);
+}
+
+/* graphs */
+.tour-graph {
+  margin: 1rem 0 1.5rem;
+  text-align: center;
+}
+
+/* Scale rendered mermaid SVGs to the text column. mermaid sets an inline
+   `max-width: <natural>px` on the svg, so `width: 100%` here resolves to
+   min(column, natural size): wide diagrams shrink to fit, narrow ones never upscale. */
+.tour-graph svg {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.tour-graph-source {
+  text-align: left;
+  font-family: var(--tour-code-font);
+  font-size: 0.82rem;
+  background: #f6f8fa;
+  border: 1px solid var(--tour-border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+
+@media (max-width: 720px) {
+  .tour-body {
+    grid-template-columns: 1fr;
+  }
+  .tour-nav {
+    position: static;
+  }
+  .tour-resize-handle {
+    display: none;
+  }
+  .tour-comment,
+  .tour-comment-composer {
+    margin-left: 12px;
+  }
+}

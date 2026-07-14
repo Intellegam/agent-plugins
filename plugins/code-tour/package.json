@@ -1,0 +1,30 @@
+{
+  "name": "code-tour-dev",
+  "private": true,
+  "type": "module",
+  "description": "Dev harness for the code-tour plugin: hoists tour-viewer's deps so the tests and fixtures resolve. Not shipped.",
+  "workspaces": ["tools/tour-viewer"],
+  "scripts": {
+    "test": "bun test tools/tour-viewer/tests",
+    "build": "bun run tools/tour-viewer/scripts/build.ts",
+    "map": "bun run tools/tour-viewer/scripts/map.ts",
+    "setup": "bun run tools/tour-viewer/scripts/setup.ts"
+  },
+  "dependencies": {
+    "@pierre/diffs": "1.2.12",
+    "mermaid": "^11.4.1",
+    "react": "^18.3.1",
+    "react-diff-view": "^3.3.3",
+    "react-dom": "^18.3.1",
+    "tour-viewer": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vite-plugin-singlefile": "^2.1.0"
+  }
+}
