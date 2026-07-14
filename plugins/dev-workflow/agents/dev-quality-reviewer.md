@@ -40,6 +40,7 @@ Scan the overall structure first (what stands out? what feels off?), then examin
 - **DRY & duplication**: Duplicated logic that should be extracted — but also shared code coupling things that should be independent. Some duplication is fine if it keeps things decoupled.
 - **Naming & clarity**: Do names reveal intent? Consistent across the change? Abbreviations clear?
 - **Dependencies & coupling**: Explicit and minimal? Tight coupling that will make changes hard? Cohesive modules?
+- **Placement & ownership**: Does each piece live with its owner? Feature-, customer-, or domain-specific policy in shared code (core packages, CLI command groups, shared surfaces) is a finding even without a failure scenario. Ask: could this change land entirely under its owner's namespace — what forces each file outside it? Extract shared abstractions at the second consumer, not the first.
 - **Error handling**: Appropriate for the context? Failure modes clear, not silently swallowed?
 - **Dead code & leftovers**: Unused code from previous iterations, commented-out blocks, helpers without callers?
 - **Unintended side effects**: Unrelated files or comments modified? Did the scope sprawl?
