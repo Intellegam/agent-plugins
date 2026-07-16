@@ -21,6 +21,35 @@ export function parse(diffText: string): FileData[] {
   return parseDiff(diffText);
 }
 
+export interface ChangeCount {
+  added: number;
+  removed: number;
+}
+
+/** Changed lines in one hunk: added + removed rows (context/`normal` rows don't count). */
+export function countHunk(hunk: HunkData): ChangeCount {
+  let added = 0;
+  let removed = 0;
+  for (const change of hunk.changes) {
+    if (change.type === "insert") added += 1;
+    else if (change.type === "delete") removed += 1;
+  }
+  return { added, removed };
+}
+
+/** Changed lines across every hunk of every file in the parsed diff — the whole PR's churn. */
+export function countFiles(files: FileData[]): ChangeCount {
+  const total: ChangeCount = { added: 0, removed: 0 };
+  for (const file of files) {
+    for (const hunk of file.hunks) {
+      const count = countHunk(hunk);
+      total.added += count.added;
+      total.removed += count.removed;
+    }
+  }
+  return total;
+}
+
 /** The path as it appears in pr.diff: the new path, or the old path for deleted files. */
 export function pathOf(file: FileData): string {
   return file.type === "delete" ? file.oldPath : file.newPath;

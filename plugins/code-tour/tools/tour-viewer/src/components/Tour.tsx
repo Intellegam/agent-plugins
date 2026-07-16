@@ -20,14 +20,15 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
-import { parse } from "../diff.ts";
+import { parse, countFiles, type ChangeCount } from "../diff.ts";
 import {
   claudeReviewPrompt,
   githubReviewCommand,
   type GitHubReviewTarget,
   type ReviewComment,
 } from "../review.ts";
-import { withFilenameCode } from "./Section.tsx";
+import { withFilenameCode, sumDiffCounts } from "./Section.tsx";
+import { ChangeBadge } from "./Stats.tsx";
 import { VictoryOverlay, victorySound } from "./Victory.tsx";
 import {
   DiffContext,
@@ -158,6 +159,12 @@ export interface TourProps {
 
 export function Tour({ title, meta, repo, pr, headSha, children }: TourProps) {
   const { width, handleProps } = useTourWidth();
+  // Whole-PR churn, straight from the parsed pr.diff (available during SSR too, so it renders
+  // into the offline HTML). Section totals need not add up to this — the tour shows a curated,
+  // sometimes overlapping subset of the diff.
+  const files = useContext(DiffContext);
+  const total = files ? countFiles(files) : { added: 0, removed: 0 };
+  const fileCount = files?.length ?? 0;
   return (
     <div
       className="tour"
@@ -168,6 +175,12 @@ export function Tour({ title, meta, repo, pr, headSha, children }: TourProps) {
       <header className="tour-header">
         <h1 className="tour-title">{withFilenameCode(title)}</h1>
         {meta ? <p className="tour-meta">{meta}</p> : null}
+        {fileCount > 0 ? (
+          <p className="tour-header-stats">
+            <span>{fileCount} {fileCount === 1 ? "file" : "files"} changed</span>
+            <ChangeBadge added={total.added} removed={total.removed} />
+          </p>
+        ) : null}
       </header>
       <div className="tour-body">
         <TourNav />
@@ -391,12 +404,32 @@ function hash(value: string): string {
 interface NavSubItem {
   id: string;
   title: string;
+  changes: ChangeCount;
 }
 
 interface NavItem {
   id: string;
   title: string;
   subItems: NavSubItem[];
+  changes: ChangeCount;
+}
+
+/**
+ * Sum the changed lines of the diffs that belong to one `<h3>` subsection: those in document
+ * order after `start` and before `next` (or the section's end when `next` is null).
+ */
+function sumDiffsUnderHeading(section: Element, start: Element, next: Element | null): ChangeCount {
+  const total: ChangeCount = { added: 0, removed: 0 };
+  section.querySelectorAll<HTMLElement>("[data-tour-diff]").forEach((el) => {
+    const afterStart = (start.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+    const beforeNext =
+      next === null || (next.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_PRECEDING) !== 0;
+    if (afterStart && beforeNext) {
+      total.added += Number(el.dataset.tourAdded) || 0;
+      total.removed += Number(el.dataset.tourRemoved) || 0;
+    }
+  });
+  return total;
 }
 
 /** A markdown-TOC-style slug: lowercase, non-alphanumerics collapsed to single dashes. */
@@ -430,16 +463,26 @@ function TourNav() {
     );
     setItems(
       sections.map((s) => {
-        const subItems = Array.from(s.querySelectorAll<HTMLHeadingElement>("h3")).map((h) => {
+        const headings = Array.from(s.querySelectorAll<HTMLHeadingElement>("h3"));
+        const subItems = headings.map((h, index) => {
           const title = (h.textContent ?? "").trim();
           const base = `${s.id}--${slugify(title)}`;
           let id = base;
           for (let n = 2; usedIds.has(id); n += 1) id = `${base}-${n}`;
           usedIds.add(id);
           h.id = id;
-          return { id, title: title || id };
+          return {
+            id,
+            title: title || id,
+            changes: sumDiffsUnderHeading(s, h, headings[index + 1] ?? null),
+          };
         });
-        return { id: s.id, title: s.dataset.tourTitle ?? s.id, subItems };
+        return {
+          id: s.id,
+          title: s.dataset.tourTitle ?? s.id,
+          subItems,
+          changes: sumDiffCounts(s),
+        };
       }),
     );
     setDiffRefs(
@@ -508,9 +551,12 @@ function TourNav() {
     navigateTo(id);
   };
 
-  const navLink = (id: string, label: string, active: boolean) => (
+  const navLink = (id: string, label: string, active: boolean, changes?: ChangeCount) => (
     <a href={`#${id}`} className={active ? "is-active" : undefined} onClick={go(id)}>
-      {label}
+      <span className="tour-nav-label">{label}</span>
+      {changes ? (
+        <ChangeBadge added={changes.added} removed={changes.removed} className="tour-nav-changes" />
+      ) : null}
     </a>
   );
 
@@ -526,11 +572,11 @@ function TourNav() {
       <ul>
         {items.map((item) => (
           <li key={item.id}>
-            {navLink(item.id, item.title, sectionActive(item))}
+            {navLink(item.id, item.title, sectionActive(item), item.changes)}
             {item.subItems.length > 0 ? (
               <ul className="tour-nav-sub">
                 {item.subItems.map((sub) => (
-                  <li key={sub.id}>{navLink(sub.id, sub.title, activeId === sub.id)}</li>
+                  <li key={sub.id}>{navLink(sub.id, sub.title, activeId === sub.id, sub.changes)}</li>
                 ))}
               </ul>
             ) : null}

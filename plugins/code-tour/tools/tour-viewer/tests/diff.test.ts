@@ -1,7 +1,7 @@
 /** Slice helper + reference resolution — the rendering semantics the tour depends on. */
 
 import { describe, expect, test } from "bun:test";
-import { parse, resolveRef } from "../src/diff.ts";
+import { countFiles, countHunk, parse, resolveRef } from "../src/diff.ts";
 
 // app.py hunk 1: [normal, del old2, add new2, normal] — a delete interleaved with the new-side
 // rows. hunk 2: [del old10, add new10, del old11] — an insert between two deletes.
@@ -54,5 +54,18 @@ describe("resolveRef / sliceHunk", () => {
     expect(!badHunk.ok && badHunk.error).toContain("file has 2 hunks");
     const crossHunk = resolveRef(files, "app.py", { lines: { side: "new", start: 2, end: 10 } });
     expect(!crossHunk.ok && crossHunk.error).toContain("not within a single hunk");
+  });
+});
+
+describe("countHunk / countFiles", () => {
+  test("a hunk counts its added and removed rows, not context", () => {
+    // hunk 1: [normal, delete, insert, normal] → 1 added, 1 removed.
+    expect(countHunk(files[0].hunks[0])).toEqual({ added: 1, removed: 1 });
+    // hunk 2: [delete, insert, delete] → 1 added, 2 removed.
+    expect(countHunk(files[0].hunks[1])).toEqual({ added: 1, removed: 2 });
+  });
+
+  test("the whole diff sums every hunk of every file", () => {
+    expect(countFiles(files)).toEqual({ added: 2, removed: 3 });
   });
 });

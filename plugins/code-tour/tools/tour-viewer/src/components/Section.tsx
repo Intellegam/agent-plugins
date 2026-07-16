@@ -4,11 +4,23 @@
  */
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ChangeCount } from "../diff.ts";
+import { ChangeBadge } from "./Stats.tsx";
 
 export interface SectionProps {
   id: string;
   title: string;
   children?: ReactNode;
+}
+
+/** Sum the `data-tour-added/removed` of every `<Diff>` rendered inside `root`. */
+export function sumDiffCounts(root: ParentNode): ChangeCount {
+  const total: ChangeCount = { added: 0, removed: 0 };
+  root.querySelectorAll<HTMLElement>("[data-tour-diff]").forEach((el) => {
+    total.added += Number(el.dataset.tourAdded) || 0;
+    total.removed += Number(el.dataset.tourRemoved) || 0;
+  });
+  return total;
 }
 
 /** The shared collapse toggle: a chevron that points down when expanded, right when collapsed. */
@@ -39,7 +51,14 @@ export function Chevron({
 
 export function Section({ id, title, children }: SectionProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [changes, setChanges] = useState<ChangeCount | null>(null);
   const ref = useRef<HTMLElement>(null);
+
+  // Accumulate the section's own changed lines from the diffs it contains, after they mount.
+  // Stays null through SSR/first render (so hydration matches), then fills in the browser.
+  useEffect(() => {
+    if (ref.current) setChanges(sumDiffCounts(ref.current));
+  }, []);
 
   // Navigation (nav links, progress links, manual hash edits) must reach anchors inside a
   // collapsed section, so expand whenever a `tour-navigate` event or the hash targets this
@@ -77,7 +96,10 @@ export function Section({ id, title, children }: SectionProps) {
           label={collapsed ? "Expand section" : "Collapse section"}
           onClick={() => setCollapsed((current) => !current)}
         />
-        <span>{withFilenameCode(title)}</span>
+        <span className="tour-section-title-text">{withFilenameCode(title)}</span>
+        {changes ? (
+          <ChangeBadge added={changes.added} removed={changes.removed} className="tour-section-changes" />
+        ) : null}
       </h2>
       <div hidden={collapsed}>{children}</div>
     </section>

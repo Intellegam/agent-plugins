@@ -20,11 +20,12 @@ import {
   type SelectedLineRange,
 } from "@pierre/diffs/react";
 
-import { changeAt, patchFor, resolveRef, type LineRange, type Side } from "../diff.ts";
+import { changeAt, countHunk, patchFor, resolveRef, type LineRange, type Side } from "../diff.ts";
 import type { ReviewComment } from "../review.ts";
 import { recordFailure } from "../failures.ts";
 import { Annotation, type AnnotationProps } from "./Annotation.tsx";
 import { Chevron } from "./Section.tsx";
+import { ChangeBadge } from "./Stats.tsx";
 import { DiffContext, DiffViewContext, ReviewContext, ViewedContext } from "./context.ts";
 
 export interface DiffProps {
@@ -171,6 +172,9 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
   const narrow = containerWidth > 0 && containerWidth < 680;
   const viewType = narrow ? "unified" : viewPref?.view ?? "split";
   const patch = patchFor(resolved.file, resolved.hunk);
+  // Changed lines in the shown slice — surfaced as a header badge and as data attributes the
+  // nav/section aggregators sum up (they can't re-derive this from the DOM Pierre renders).
+  const counts = countHunk(resolved.hunk);
   const authored = annotationsFrom(children);
   // Build guarantee (parity with broken <Diff> refs): an <Annotation> whose line is not a shown
   // line of this hunk renders nothing — catch it at build time instead of letting it vanish.
@@ -284,7 +288,14 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
   };
 
   return (
-    <div className="tour-diff" id={domId} data-tour-diff={refId} ref={containerRef}>
+    <div
+      className="tour-diff"
+      id={domId}
+      data-tour-diff={refId}
+      data-tour-added={counts.added}
+      data-tour-removed={counts.removed}
+      ref={containerRef}
+    >
       <div className="tour-diff-code">
         <div className="tour-diff-file">
           <Chevron
@@ -293,6 +304,7 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
             onClick={() => setCollapsed((current) => !current)}
           />
           <span className="tour-diff-path">{file}</span>
+          <ChangeBadge added={counts.added} removed={counts.removed} className="tour-diff-changes" />
           <label className="tour-diff-viewed">
             <input type="checkbox" checked={viewed} onChange={() => viewedCtx?.toggle(refId)} />
             Viewed

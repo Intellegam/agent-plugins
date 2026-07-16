@@ -114,10 +114,17 @@ body.tour-resizing {
 }
 
 .tour-nav a {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
   padding: 0.2rem 0.75rem;
   color: var(--tour-muted);
   text-decoration: none;
+}
+
+.tour-nav-label {
+  min-width: 0;
   /* Long path headings are a single unbreakable token; wrap them inside the column instead
      of letting them overflow into the content. */
   overflow-wrap: anywhere;
@@ -721,6 +728,57 @@ body.tour-resizing {
   .tour-comment-composer {
     margin-left: 12px;
   }
+}
+
+/* Changed-line counters (GitHub-style: +adds green, -deletes red). Shared by the whole-PR
+   header total, each diff header, section headings, and the nav entries. */
+.tour-changes {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex: none;
+  font: 600 0.72rem/1.2 var(--tour-code-font);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tour-changes-add {
+  color: var(--tour-green);
+}
+
+.tour-changes-del {
+  color: #cf222e;
+}
+
+/* Whole-PR total, under the page title. */
+.tour-header-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0.55rem 0 0;
+  color: var(--tour-muted);
+  font-size: 0.85rem;
+}
+
+/* Per-diff badge, just after the file path and before the Viewed toggle. */
+.tour-diff-changes {
+  font-size: 0.72rem;
+}
+
+/* Section heading total, pushed to the right edge of the underline rule. */
+.tour-section-title .tour-section-changes {
+  margin-left: auto;
+  font-size: 0.8rem;
+}
+
+/* Nav counters: quiet, right-aligned, never crowding the label. */
+.tour-nav-changes {
+  font-size: 0.68rem;
+  opacity: 0.9;
+}
+
+.tour-nav-sub .tour-nav-changes {
+  font-size: 0.64rem;
 }
 
 /* Victory easter egg — summoned when a review export is copied. Fills the whole viewport (no
