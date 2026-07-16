@@ -28,6 +28,7 @@ import {
   type ReviewComment,
 } from "../review.ts";
 import { withFilenameCode } from "./Section.tsx";
+import { VictoryOverlay, victorySound } from "./Victory.tsx";
 import {
   DiffContext,
   DiffViewContext,
@@ -267,6 +268,8 @@ function useTourWidth() {
 function ReviewExport({ repo, pr, headSha }: { repo?: string; pr?: string; headSha?: string }) {
   const review = useContext(ReviewContext);
   const [copied, setCopied] = useState<"claude" | "github" | null>(null);
+  const [victory, setVictory] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   if (!review || review.comments.length === 0) return null;
 
   // The target is fixed from the tour's own props (the author sets repo/pr/headSha); the
@@ -288,6 +291,30 @@ function ReviewExport({ repo, pr, headSha }: { repo?: string; pr?: string; headS
     await copyText(value);
     setCopied(kind);
     window.setTimeout(() => setCopied(null), 1200);
+    celebrate();
+  };
+
+  // Handing off the review is the finish line — summon the victory screen and fanfare. The
+  // sound is started here, inside the copy click, so the browser's autoplay policy allows it
+  // (a click grants transient activation that outlives the awaited clipboard write).
+  const celebrate = () => {
+    try {
+      if (!audioRef.current) audioRef.current = new Audio(victorySound);
+      audioRef.current.currentTime = 0;
+      void audioRef.current.play().catch(() => {});
+    } catch {
+      // No Audio constructor or playback blocked — the victory image still shows.
+    }
+    setVictory(true);
+  };
+
+  const dismissVictory = () => {
+    setVictory(false);
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
   };
 
   return (
@@ -321,6 +348,8 @@ function ReviewExport({ repo, pr, headSha }: { repo?: string; pr?: string; headS
           <pre>{command}</pre>
         </div>
       ) : null}
+
+      <VictoryOverlay open={victory} onClose={dismissVictory} />
     </section>
   );
 }

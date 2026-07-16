@@ -722,3 +722,51 @@ body.tour-resizing {
     margin-left: 12px;
   }
 }
+
+/* Victory easter egg — summoned when a review export is copied. Fills the whole viewport (no
+   transformed ancestor), above everything, dismissed by a click anywhere. */
+.tour-victory {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  cursor: pointer;
+  animation: tour-victory-fade 0.3s ease-out;
+}
+
+.tour-victory-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  animation: tour-victory-pop 0.6s cubic-bezier(0.2, 0.85, 0.3, 1);
+}
+
+@keyframes tour-victory-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* A slight zoom-out to settle (never below 1×, so no letterbox edges flash during the intro). */
+@keyframes tour-victory-pop {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-victory,
+  .tour-victory-image {
+    animation: none;
+  }
+}

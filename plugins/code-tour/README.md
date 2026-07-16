@@ -59,8 +59,11 @@ the product layer around it:
 - AI explanations authored through `<Annotation>`,
 - user comments created by clicking or dragging line numbers,
 - compact inline comment threads directly beneath their anchored source line,
-- local persistence keyed by the exact `pr.diff`, and
-- a final Claude prompt plus one `gh api` command that creates a bundled GitHub review.
+- local persistence keyed by the exact `pr.diff`,
+- a final Claude prompt plus one `gh api` command that creates a bundled GitHub review, and
+- a victory easter egg: copying either export fills the screen with a FromSoftware "VICTORY"
+  screen and plays the fanfare until you click to dismiss (assets in
+  `src/components/assets/`, inlined into `tour.html` like everything else).
 
 User comments store GitHub's current anchor shape (`path`, old/new side, end line, optional
 start line/side). Resolved comments remain visible but are omitted from both exports. The raw

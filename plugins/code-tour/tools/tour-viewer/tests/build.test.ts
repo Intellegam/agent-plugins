@@ -74,6 +74,10 @@ describe("build", () => {
     // The Claude-Artifact deploy rejects any literal U+FFFD; the build re-escapes it, so none
     // must survive into the published HTML (bundled highlighter grammars contain it as a range).
     expect(html).not.toContain("�");
+    // The victory easter egg's image + sound must be inlined as data: URIs, not emitted as
+    // separate files — otherwise the "single offline file" guarantee silently breaks.
+    expect(html).toContain("data:image/jpeg;base64");
+    expect(html).toContain("data:audio/mpeg;base64");
     // Deliberately no assertions on the fixture's CONTENT (section ids, diff/heading counts):
     // the fixture is a living reference example and content assertions only produce churn.
   }, 120_000);
