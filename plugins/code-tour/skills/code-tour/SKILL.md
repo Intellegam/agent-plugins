@@ -57,6 +57,8 @@ Only a few things are non-negotiable — treat everything after this as a *tip t
 
 **Find the one story.** A tour reads best as a single red thread: one thesis, and a handful of chapters that each advance it — ideally titled by the reader's question ("What do you invoke?", "How does grounding prevent hallucination?") rather than by filename, since files and hunks tend to work better as evidence *inside* chapters than as the chapter structure itself (a file-by-file walk is a fine fallback when the change genuinely is file-shaped). A solid default arc: orient a newcomer first — what it is and where it lives, how it's invoked, what they get and look at, one mental-model diagram — before the motivating problem; then a file-structure overview (`<FileTree>`); then the chapters, ordering the pieces inside each by execution flow rather than source order.
 
+**Link out to the context.** When the PR has related material a reader would want — the Linear/Jira issue, a Notion or design doc, the tracking project, sibling PRs, the spec or agent transcript behind it — surface it in the orienting section: a plain link is enough, a nicer rendering welcome. Draw these only from what you can verify (the PR description, the branch, commit trailers, or what the user hands you); never invent a URL — an unverified link is worse than none, so skip it when there's nothing real to point at.
+
 **Explain, then show.** Prose and visuals carry the point; the `<Diff>` beneath is the evidence that backs it. Aim for a tour a reader could follow having skipped every code block — which is what keeps the explanation above the diff rather than inside it. Fewer, larger contiguous slices (~10–40 lines) with the narrative right there usually beat scattered 3-line fragments.
 
 **Give the heart the most depth.** Spend your explanation where the feature's value actually lives — even when that's a prompt, a schema, or a doc rather than the plumbing. Boring remainders (docs mirroring behaviour, one-line wiring) can share one short explanation, and low-signal hunks ship `collapsed` (tests, snapshots, generated code, lockfiles, mechanical renames). Judge by signal, not filetype: a test that *is* the story gets depth, a Markdown file can be the heart of the change.
@@ -117,6 +119,13 @@ Then run the editorial check the build can't: **skim only the headings, prose, a
 ## 5. Publish
 
 Publish the built `tour.html` as a Claude Artifact with the **Artifact** tool: `file_path` = the built `tour.html`, `description` = one sentence on which PR the tour walks through, and a stable `favicon` (keep it identical across rebuilds so the reader's tab keeps its icon; the page title is derived from the `<Tour title>`). The page is pre-designed by `tour-viewer` — you're publishing a built artifact, not authoring a page, so the `artifact-design` skill does not apply here; publish `tour.html` as-is. Return the artifact link to the user. Also mention they can open it locally — `open <workDir>/tour.html` — since it works offline by double-click.
+
+**Offer to post the tour link on the PR.** The tour is most useful linked from the PR itself — but confirm first rather than doing it automatically: a published artifact stays private until the user shares it (an unshared link is dead for anyone else), and posting to a PR is outward-facing. On their go-ahead, post or update a single PR comment:
+
+```bash
+gh pr comment <N> --repo owner/name --edit-last --create-if-none \
+  --body "📖 **[Code tour](<artifact-url>)** — visual walkthrough of this PR."
+```
 
 Then tell the user what the page does beyond reading — it is a review surface:
 

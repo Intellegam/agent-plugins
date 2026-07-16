@@ -86,7 +86,8 @@ export default function TourPage() {
         <p>
           Summarize the change in a sentence or two. Use free JSX — paragraphs, lists,
           <code>inline code</code>, and diagrams — to tell the story. Note in prose anything
-          you deliberately don't walk through.
+          you deliberately don't walk through. When the PR has related context — a Linear issue,
+          a doc, the tracking project — link those here (verified URLs only).
         </p>
 
         <Graph source="flowchart TD; A[Request] --> B[Handler] --> C[Store]" />

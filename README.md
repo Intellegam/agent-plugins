@@ -37,7 +37,7 @@ Agent-generated visual PR walkthroughs. An agent authors a `tour.tsx` — free J
 
 **Includes:**
 
-- `code-tour` skill — drives the flow: export the diff, scaffold a workspace, author `tour.tsx`, build, and publish the tour as a Claude Artifact
+- `code-tour` skill — drives the flow: export the diff, scaffold a workspace, author `tour.tsx`, build, publish the tour as a Claude Artifact, and (on request) post the link back to the PR
 - `tour-viewer` — the reference components (`Tour`, `Section`, `Diff`, `Annotation`, `Graph`), diff parsing/slicing, the `@pierre/diffs` render + review layer (line/range comments, local persistence, Claude-prompt and `gh api` review export), and the single-file build pipeline
 
 Ask Claude to "create a code tour for PR N", or invoke the `code-tour` skill directly.

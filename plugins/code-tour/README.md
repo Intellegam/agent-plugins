@@ -8,8 +8,8 @@ bundles everything into a single self-contained `tour.html` that works offline b
 ## Authoring a tour
 
 The [`code-tour` skill](skills/code-tour/SKILL.md) is the front door: it drives the whole flow —
-export the PR diff, scaffold a workspace, author `tour.tsx`, build, and publish the result as a
-Claude Artifact. Invoke it via the Skill tool (`code-tour`), or ask Claude to "create a code tour
+export the PR diff, scaffold a workspace, author `tour.tsx`, build, publish the result as a
+Claude Artifact, and (on request) post the link back to the PR. Invoke it via the Skill tool (`code-tour`), or ask Claude to "create a code tour
 for PR N". The `setup.sh` → edit `tour.tsx` → `bun run build` commands below are that same flow run
 by hand.
 
