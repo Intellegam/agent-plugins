@@ -1,7 +1,7 @@
 ---
 name: dev-coder
 description: Implementation agent for writing code. Use for multi-file implementations or significant features to preserve main agent context. Provide clear requirements and review the output.
-model: inherit
+model: opus
 color: green
 ---
 
