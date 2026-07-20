@@ -1,0 +1,52 @@
+diff --git a/notifier/send.py b/notifier/send.py
+index 1a2b3c4..5d6e7f8 100644
+--- a/notifier/send.py
++++ b/notifier/send.py
+@@ -1,4 +1,6 @@
+ import logging
++import time
+ from .client import Client
++from .config import MAX_RETRIES, BACKOFF
+ 
+ logger = logging.getLogger(__name__)
+@@ -10,4 +12,11 @@ logger = logging.getLogger(__name__)
+ def send(message):
+     client = Client()
+-    client.deliver(message)
+-    return True
++    for attempt in range(MAX_RETRIES):
++        try:
++            client.deliver(message)
++            return True
++        except TransientError:
++            logger.warning("attempt %d failed", attempt)
++            time.sleep(BACKOFF * attempt)
++    logger.error("giving up after %d attempts", MAX_RETRIES)
++    return False
+diff --git a/notifier/config.py b/notifier/config.py
+new file mode 100644
+index 0000000..9abcdef
+--- /dev/null
++++ b/notifier/config.py
+@@ -0,0 +1,5 @@
++"""Retry tuning knobs for the notification sender."""
++
++MAX_RETRIES = 5
++BACKOFF = 0.5  # seconds, multiplied by the attempt number
++TIMEOUT = 30
+diff --git a/tests/test_send.py b/tests/test_send.py
+index aaaaaaa..bbbbbbb 100644
+--- a/tests/test_send.py
++++ b/tests/test_send.py
+@@ -1,4 +1,11 @@
+ from notifier.send import send
++from notifier.errors import TransientError
+ 
+ 
++def test_retries_then_succeeds(fake_client):
++    fake_client.fail_times(2)
++    assert send("hi", fake_client) is True
++    assert fake_client.calls == 3
++
++
+ def test_delivers_once(fake_client):

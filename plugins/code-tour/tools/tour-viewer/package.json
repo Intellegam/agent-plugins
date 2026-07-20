@@ -1,0 +1,29 @@
+{
+  "name": "tour-viewer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/components/index.ts",
+    "./styles.css": "./src/components/styles.css"
+  },
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "setup": "bun run scripts/setup.ts"
+  },
+  "dependencies": {
+    "@pierre/diffs": "1.2.12",
+    "mermaid": "^11.4.1",
+    "react": "^18.3.1",
+    "react-diff-view": "^3.3.3",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vite-plugin-singlefile": "^2.1.0"
+  }
+}
