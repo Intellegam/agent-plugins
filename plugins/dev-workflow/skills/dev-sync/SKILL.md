@@ -66,10 +66,10 @@ Committing, pushing, or opening a PR is a genuine decision — when everything i
 | **Commit + PR**   | Commit changes, create pull request                                           |
 | **Stop**          | Stop without committing                                                       |
 
-For PR creation, draft the title and description, then ask user to confirm or adjust. If the repo has a PR-triage workflow (e.g. a `pr-triage` skill watching CI and review comments), chain into it after creating the PR.
+For PR creation, draft the title and description, then ask user to confirm or adjust. After creating the PR, chain into `/dev-workflow:babysit-pr` to watch CI and review comments until the PR is clean.
 
 Follow the repo's branching and commit conventions (Conventional Commits unless the repo says otherwise). If you're on the repo's production branch, confirm intention with the user before committing.
 
 ---
 
-**Workflow complete.** Full flow: `dev-check` → `dev-review` → `dev-sync` → commit/push/PR.
+**Workflow complete.** Full flow: `dev-check` → `dev-review` → `dev-sync` → commit/push/PR → `babysit-pr`.

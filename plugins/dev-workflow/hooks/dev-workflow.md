@@ -54,9 +54,9 @@ Run these skills in order:
 
 Follow Conventional Commits. Offer push/PR options.
 
-### 5. Triage (after PR is opened)
+### 5. Babysit (after PR is opened)
 
-Run the repo's PR-triage workflow (e.g. `/pr-triage`) to triage review comments and CI failures until the PR is clean.
+Run `/dev-workflow:babysit-pr` to triage review comments and CI failures — event-driven, loops until the PR is clean or waiting on user decision.
 
 If the repo has no commands & checks section in CLAUDE.md, offer `/dev-workflow:setup`.
 </dev-workflow>
