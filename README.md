@@ -23,10 +23,11 @@ Language-agnostic org dev workflow: a setup consultant plus a contract-driven va
 
 **Includes:**
 
-- SessionStart hook — injects the five-phase workflow (explore & plan, implement, validate, commit, triage) into every session; re-fires after compaction
+- SessionStart hook — injects the five-phase workflow (explore & plan, implement, validate, commit, babysit) into every session; re-fires after compaction
 - SubagentStart hook — injects the same workflow into implementation-capable sub-agents (general-purpose/claude), which apply the phases that fit their delegated scope; special agents (reviewers, dev-coder, Explore) unaffected
 - `setup` skill — inspects a repo, recommends checks/reviewers with evidence, and installs the commands & checks sections in CLAUDE.md that parameterize the other skills
 - `dev-check`, `dev-review`, `dev-sync` skills — risk-tiered validation chain with bounded review passes and root-cause reflection
+- `babysit-pr` skill — event-driven post-PR loop: a one-shot waiter wakes the agent on new reviews, Codex's 👍 all-clear reaction, pushes, or CI changes; findings get verified, fixed or refuted, replied, and resolved until the PR is clean
 - `dev-coder` implementation agent + lean (over-engineering), quality (implementation + tests), correctness, and sync reviewer agents
 
 Repos declare their commands, situational checks, standards docs, and repo-specific reviewers in the contract; run `/dev-workflow:setup` to onboard a repo.
