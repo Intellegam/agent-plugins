@@ -34,10 +34,12 @@ Before acting on any finding:
 ```text
 # tool call (not a shell command) — one-shot: exits when the next event fires
 Monitor(
-  command="python3 <skill-base>/scripts/await_pr_event.py $pr",
+  command="cd <repo-root> && python3 <skill-base>/scripts/await_pr_event.py $pr",
   description="next event on PR #$pr",
 )
 ```
+
+The `cd <repo-root>` prefix is required: `gh` resolves the repo from the working directory, and the monitor inherits whatever cwd the shell last had — which may have drifted elsewhere. Watch for the waiter *failing* (its task ends with a non-zero exit): that means it could not see the PR at all — re-arm it; never assume a dead waiter means a quiet PR.
 
 Then fetch the current state:
 
