@@ -56,9 +56,10 @@ The waiter exits printing one line when something changes:
 - `new-head` — a commit was pushed; CI and reviewers restart
 - `ci-failure` — a check entered a failing state (includes cancelled/timed-out)
 - `ci-concluded` — no checks pending anymore (green or red)
+- `pr-closed` — the PR was merged or closed
 - `quiet` — nothing happened for 30 min (`--quiet-after` to change) — the PR looks settled, assess for merge
 
-Treat `review-activity`, `new-head`, `ci-failure`, and `ci-concluded` as "re-enter step 1" (re-arm, re-fetch, re-triage). Treat `reaction` and `quiet` as cues to assess the step-5 stop conditions and, if clean, report ready-to-merge.
+Treat `review-activity`, `new-head`, `ci-failure`, and `ci-concluded` as "re-enter step 1" (re-arm, re-fetch, re-triage). Treat `reaction` and `quiet` as cues to assess the step-5 stop conditions and, if clean, report ready-to-merge. On `pr-closed`, stop babysitting — don't re-arm; report final state.
 
 ### 2. Classify each finding
 

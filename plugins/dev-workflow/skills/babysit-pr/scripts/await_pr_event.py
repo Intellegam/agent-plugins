@@ -19,6 +19,7 @@ Exits 0 printing exactly one line:
 - ``new-head`` — a commit was pushed; CI and reviewers restart
 - ``ci-failure`` — a check entered a failing bucket (fail or cancel)
 - ``ci-concluded`` — no checks pending anymore (green or red); assess
+- ``pr-closed`` — the PR was merged or closed; stop babysitting
 - ``quiet`` — nothing happened for --quiet-after seconds (default 1800);
   the PR looks settled, assess for merge
 
@@ -60,12 +61,13 @@ def _gh_json(args: list[str]) -> object | None:
 def _snapshot(pr: str) -> dict | None:
     """Return the comparable state of the PR, or None on transient failure."""
     view = _gh_json(
-        ["pr", "view", pr, "--json", "reviews,reactionGroups,headRefOid"]
+        ["pr", "view", pr, "--json", "reviews,reactionGroups,headRefOid,state"]
     )
     checks = _gh_json(["pr", "checks", pr, "--json", "name,state,bucket"])
     if not isinstance(view, dict) or not isinstance(checks, list):
         return None
     return {
+        "state": view.get("state"),
         # Full array, canonicalized — catches dismissed/replaced reviews
         # that a plain count comparison would miss.
         "reviews": json.dumps(view.get("reviews", []), sort_keys=True),
@@ -79,6 +81,8 @@ def _snapshot(pr: str) -> dict | None:
 
 
 def _event(base: dict, now: dict) -> str | None:
+    if now["state"] != "OPEN":
+        return "pr-closed"
     if now["head"] != base["head"]:
         return "new-head"
     if now["reviews"] != base["reviews"]:
