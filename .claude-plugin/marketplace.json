@@ -1,11 +1,11 @@
 {
-  "name": "intellegam-claude-plugins",
+  "name": "intellegam-agent-plugins",
   "owner": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com"
   },
   "metadata": {
-    "description": "Intellegam internal Claude Code plugins"
+    "description": "Intellegam internal agent plugins"
   },
   "plugins": [
     {

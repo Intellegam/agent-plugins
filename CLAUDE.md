@@ -1,6 +1,7 @@
-# Claude Plugins
+# Agent Plugins
 
-Internal Claude Code plugins for the Intellegam workspace.
+Internal agent plugins for Claude Code and OpenAI Codex in the Intellegam
+workspace.
 
 You MUST read the following file for more information:
 
@@ -9,7 +10,7 @@ You MUST read the following file for more information:
 ## Structure
 
 ```
-claude-plugins/
+agent-plugins/
 ├── .claude-plugin/
 │   └── marketplace.json    # Marketplace definition with plugin versions
 ├── plugins/

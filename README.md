@@ -1,10 +1,11 @@
-# Intellegam Claude Plugins
+# Intellegam Agent Plugins
 
-Internal Claude Code plugins for the Intellegam workspace.
+Internal agent plugins for the Intellegam workspace, shared across Claude Code
+and OpenAI Codex where their extension surfaces overlap.
 
 ## Marketplace
 
-**Name:** `intellegam-claude-plugins`
+**Name:** `intellegam-agent-plugins`
 
 ## Available Plugins
 
@@ -43,24 +44,24 @@ Agent-generated visual PR walkthroughs. An agent authors a `tour.tsx` — free J
 
 Ask Claude to "create a code tour for PR N", or invoke the `code-tour` skill directly.
 
-## Installation
+## Claude Code installation
 
 Add the marketplace to your project's `.claude/settings.json`:
 
 ```json
 {
   "extraKnownMarketplaces": {
-    "intellegam-claude-plugins": {
+    "intellegam-agent-plugins": {
       "source": {
         "source": "github",
-        "repo": "intellegam/claude-plugins"
+        "repo": "intellegam/agent-plugins"
       }
     }
   },
   "enabledPlugins": {
-    "codex@intellegam-claude-plugins": true,
-    "dev-workflow@intellegam-claude-plugins": true,
-    "code-tour@intellegam-claude-plugins": true
+    "codex@intellegam-agent-plugins": true,
+    "dev-workflow@intellegam-agent-plugins": true,
+    "code-tour@intellegam-agent-plugins": true
   }
 }
 ```
