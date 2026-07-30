@@ -1,0 +1,20 @@
+{
+  "name": "intellegam-agent-plugins",
+  "interface": {
+    "displayName": "Intellegam Agent Plugins"
+  },
+  "plugins": [
+    {
+      "name": "claude-code",
+      "source": {
+        "source": "local",
+        "path": "./plugins/claude-code"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_FIRST_USE"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

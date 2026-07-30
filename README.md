@@ -18,6 +18,15 @@ OpenAI Codex collaboration MCP server for brainstorming, plan validation, and co
 - MCP server configuration (references `github:Intellegam/codex-mcp`)
 - `collaborating-with-codex` skill with collaboration guidelines
 
+### claude-code
+
+The reverse direction: lets OpenAI Codex consult Claude Code as a second-opinion agent for brainstorming, plan validation, and code review. This is a **Codex plugin** (`.codex-plugin/`), not a Claude Code plugin — install it via the Codex marketplace below.
+
+**Includes:**
+
+- MCP server configuration (references `github:Intellegam/claude-code-mcp`, tag-pinned)
+- `collaborating-with-claude` skill with collaboration guidelines for the Codex side
+
 ### dev-workflow
 
 Language-agnostic org dev workflow: a setup consultant plus a contract-driven validation chain (checks → review → docs sync).
@@ -66,14 +75,26 @@ Add the marketplace to your project's `.claude/settings.json`:
 }
 ```
 
+## Codex installation
+
+The repo doubles as a Codex plugin marketplace (`.agents/plugins/marketplace.json`). Add it once:
+
+```bash
+codex plugin marketplace add Intellegam/agent-plugins
+```
+
+Then install the `claude-code` plugin from the `/plugins` browser in the Codex CLI. The bundled skill is invoked as `$claude-code:collaborating-with-claude`.
+
+Manual fallback without the plugin system: add the MCP server directly to `~/.codex/config.toml` — snippet in the [claude-code-mcp README](https://github.com/Intellegam/claude-code-mcp#installation).
+
 ## Versioning
 
 When updating a plugin, bump the version in both places and keep them in sync:
 
-1. `plugins/<name>/.claude-plugin/plugin.json` - source of truth
-2. `.claude-plugin/marketplace.json` - for discovery/updates
+1. `plugins/<name>/.claude-plugin/plugin.json` (or `.codex-plugin/plugin.json` for Codex plugins) - source of truth
+2. `.claude-plugin/marketplace.json` or `.agents/plugins/marketplace.json` - for discovery/updates
 
-Use semantic versioning (MAJOR.MINOR.PATCH).
+Use semantic versioning (MAJOR.MINOR.PATCH). Plugin versions are their own release stream — a skill or config change still requires a plugin version bump, independent of the referenced MCP server's version.
 
 ## Documentation
 
