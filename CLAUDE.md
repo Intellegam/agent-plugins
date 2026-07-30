@@ -37,6 +37,6 @@ add <path>` install (OpenAI's bundled plugins under
 
 ## Development
 
-- Plugin versions must be updated in both `plugin.json` and the matching marketplace file (Codex marketplace entries carry no version — only `plugin.json` there)
+- Claude Code plugins: versions must be updated in both `plugin.json` and `.claude-plugin/marketplace.json`. Codex plugins: only `.codex-plugin/plugin.json` is versioned
 - MCP servers are separate repos (e.g., `codex-mcp`, `claude-code-mcp`) referenced via GitHub
 - The codex and claude-code plugins' `.mcp.json` pin their server to a git tag (`#v{version}`). When releasing a new server version, update the tag pin in `.mcp.json` and bump the plugin version to force a cache refresh

@@ -89,10 +89,12 @@ Manual fallback without the plugin system: add the MCP server directly to `~/.co
 
 ## Versioning
 
-When updating a plugin, bump the version in both places and keep them in sync:
+**Claude Code plugins** — bump the version in both places and keep them in sync:
 
-1. `plugins/<name>/.claude-plugin/plugin.json` (or `.codex-plugin/plugin.json` for Codex plugins) - source of truth
-2. `.claude-plugin/marketplace.json` or `.agents/plugins/marketplace.json` - for discovery/updates
+1. `plugins/<name>/.claude-plugin/plugin.json` - source of truth
+2. `.claude-plugin/marketplace.json` - for discovery/updates
+
+**Codex plugins** — only `plugins/<name>/.codex-plugin/plugin.json` carries a version; `.agents/plugins/marketplace.json` entries are unversioned.
 
 Use semantic versioning (MAJOR.MINOR.PATCH). Plugin versions are their own release stream — a skill or config change still requires a plugin version bump, independent of the referenced MCP server's version.
 
