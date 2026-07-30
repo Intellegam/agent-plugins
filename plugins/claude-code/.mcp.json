@@ -1,5 +1,5 @@
 {
-  "mcp_servers": {
+  "mcpServers": {
     "claude-agent": {
       "command": "npx",
       "args": ["-y", "github:Intellegam/claude-code-mcp#v0.1.0"]

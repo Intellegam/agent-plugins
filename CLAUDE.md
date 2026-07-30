@@ -29,9 +29,11 @@ agent-plugins/
 ```
 
 A plugin targets one host: `codex`, `dev-workflow`, and `code-tour` are Claude
-Code plugins; `claude-code` is a Codex plugin. Note the `.mcp.json` formats
-differ — Claude Code uses an `mcpServers` map, Codex uses `mcp_servers` (or a
-direct server map).
+Code plugins; `claude-code` is a Codex plugin. Both hosts use an `mcpServers`
+map in `.mcp.json`. Trust the installed `codex` CLI over the online plugin
+docs when they disagree — validate against a local `codex plugin marketplace
+add <path>` install (OpenAI's bundled plugins under
+`~/.codex/.tmp/bundled-marketplaces/` are ground-truth examples).
 
 ## Development
 
