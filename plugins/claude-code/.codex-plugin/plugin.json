@@ -1,0 +1,25 @@
+{
+  "name": "claude-code",
+  "version": "0.1.0",
+  "description": "Claude Code MCP integration for external AI agent collaboration. Enables brainstorming, plan validation, and code review with Claude as a second-opinion agent.",
+  "author": {
+    "name": "Intellegam",
+    "email": "burrichter@intellegam.com"
+  },
+  "license": "MIT",
+  "keywords": ["claude", "claude-code", "mcp", "collaboration", "review", "external-agent"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Claude Code",
+    "shortDescription": "Consult Claude Code as a second-opinion agent",
+    "longDescription": "Lets Codex consult Claude Code for brainstorming, plan validation, and code review. Claude runs as the operator's own Claude Code (their configuration, plugins, and MCP servers) in read-only mode by default, with an opt-in writable mode. Includes the collaborating-with-claude skill with collaboration guidelines.",
+    "developerName": "Intellegam",
+    "category": "Engineering",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "Ask Claude Code for a second opinion on this plan",
+      "Have Claude Code review my uncommitted changes"
+    ]
+  }
+}
