@@ -3,7 +3,7 @@
     "codex-agent": {
       "type": "stdio",
       "command": "bunx",
-      "args": ["github:Intellegam/codex-mcp#v3.2.7"],
+      "args": ["github:Intellegam/codex-mcp#v3.2.8"],
       "env": {},
       "alwaysLoad": true
     }
