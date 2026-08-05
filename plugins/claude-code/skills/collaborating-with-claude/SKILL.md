@@ -1,6 +1,6 @@
 ---
 name: collaborating-with-claude
-description: How to consult Claude Code as a second-opinion agent via the claude-agent MCP tools (claude, claude-reply, claude-result, claude-cancel). Use before brainstorming with Claude, validating a plan, requesting an external code review, or any claude-agent tool call.
+description: How to consult Claude Code as a second-opinion agent via the claude-agent MCP tools (claude, claude-reply, claude-result, claude-cancel). Use before brainstorming with Claude (aliases @claude, @claude-code), validating a plan, requesting an external code review, or any claude-agent tool call. Form your own analysis first and treat disagreement as signal. Consultations are read-only by default and run as the operator's own Claude Code; always pass cwd (repo root).
 ---
 
 # Claude Code Collaboration Guidelines
