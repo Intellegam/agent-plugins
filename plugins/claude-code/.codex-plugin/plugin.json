@@ -1,6 +1,6 @@
 {
   "name": "claude-code",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Claude Code MCP integration for external AI agent collaboration. Enables brainstorming, plan validation, and code review with Claude as a second-opinion agent.",
   "author": {
     "name": "Intellegam",
