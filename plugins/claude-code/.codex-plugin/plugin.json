@@ -1,7 +1,7 @@
 {
   "name": "claude-code",
   "version": "0.1.3",
-  "description": "Consult Claude Code as a second-opinion agent for brainstorming, plan validation, and code review.\n\nAliases: @claude, @claude-code.\n\nUse when the user explicitly asks to consult Claude, or when an independent external perspective would materially improve a non-trivial plan, architecture decision, or code review. Form your own analysis first, let Claude challenge it, and treat disagreement as signal, not noise — then critically evaluate and synthesize.\n\nConsultations are read-only by default and run as the operator's own Claude Code (their configuration and MCP servers). Always pass cwd (repo root) so Claude loads the right project. Use writable: true only for a clearly requested, tightly scoped task. For async mode and session mechanics, read the collaborating-with-claude skill.\n\nDo not invoke for routine implementation or simple questions.",
+  "description": "Consult Claude Code as a second-opinion agent for brainstorming, plan validation, and code review.\n\nAliases: @claude, @claude-code.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com",
