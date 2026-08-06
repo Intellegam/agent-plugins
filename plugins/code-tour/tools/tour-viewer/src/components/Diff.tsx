@@ -83,23 +83,24 @@ function PersonAvatar() {
 
 /** The write surface shared by the new-comment composer and the edit form of a saved comment. */
 function CommentEditor({
-  title,
+  mode,
   value,
-  saveLabel,
   onChange,
   onSave,
   onCancel,
 }: {
-  title: string;
+  mode: "add" | "edit";
   value: string;
-  saveLabel: string;
   onChange(next: string): void;
   onSave(): void;
   onCancel(): void;
 }) {
   return (
     <div className="tour-comment-composer">
-      <div className="tour-comment-head"><PersonAvatar /><strong>{title}</strong></div>
+      <div className="tour-comment-head">
+        <PersonAvatar />
+        <strong>{mode === "edit" ? "Edit review comment" : "Add review comment"}</strong>
+      </div>
       <textarea
         autoFocus
         value={value}
@@ -112,7 +113,9 @@ function CommentEditor({
       <div className="tour-composer-actions">
         <span>⌘ Enter to save</span>
         <button type="button" className="secondary" onClick={onCancel}>Cancel</button>
-        <button type="button" disabled={!value.trim()} onClick={onSave}>{saveLabel}</button>
+        <button type="button" disabled={!value.trim()} onClick={onSave}>
+          {mode === "edit" ? "Save" : "Add comment"}
+        </button>
       </div>
     </div>
   );
@@ -294,8 +297,9 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
   };
 
   const saveEdit = () => {
-    const body = editing?.draft.trim();
-    if (!body || !editing || !review) return;
+    if (!editing || !review) return;
+    const body = editing.draft.trim();
+    if (!body) return;
     review.updateComment(editing.id, body);
     setEditing(null);
   };
@@ -314,9 +318,8 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
       if (editing?.id === comment.id) {
         return (
           <CommentEditor
-            title="Edit review comment"
+            mode="edit"
             value={editing.draft}
-            saveLabel="Save"
             onChange={(next) => setEditing({ id: comment.id, draft: next })}
             onSave={saveEdit}
             onCancel={() => setEditing(null)}
@@ -336,9 +339,8 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
     }
     return (
       <CommentEditor
-        title="Add review comment"
+        mode="add"
         value={draft}
-        saveLabel="Add comment"
         onChange={setDraft}
         onSave={addComment}
         onCancel={() => { setDraft(""); setSelection(null); }}
