@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
-  "version": "0.6.0",
-  "description": "Language-agnostic dev workflow: setup consultant, pre-commit checks, multi-perspective code review, and documentation sync. Repos parameterize it via commands & checks sections in CLAUDE.md.",
+  "version": "0.7.0",
+  "description": "Cross-host development workflow: setup, checks, multi-perspective review, documentation sync, and PR follow-through for Claude Code and Codex.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com"

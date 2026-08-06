@@ -29,18 +29,18 @@ The reverse direction: lets OpenAI Codex consult Claude Code as a second-opinion
 
 ### dev-workflow
 
-Language-agnostic org dev workflow: a setup consultant plus a contract-driven validation chain (checks → review → docs sync).
+Cross-host org development workflow for Claude Code and Codex: a setup consultant plus a contract-driven validation chain (checks → review → docs sync → PR follow-through).
 
 **Includes:**
 
-- SessionStart hook — injects the five-phase workflow (explore & plan, implement, validate, commit, babysit) into every session; re-fires after compaction
-- SubagentStart hook — injects the same workflow into implementation-capable sub-agents (general-purpose/claude), which apply the phases that fit their delegated scope; special agents (reviewers, dev-coder, Explore) unaffected
-- `setup` skill — inspects a repo, recommends checks/reviewers with evidence, and installs the commands & checks sections in CLAUDE.md that parameterize the other skills
-- `dev-check`, `dev-review`, `dev-sync` skills — risk-tiered validation chain with bounded review passes and root-cause reflection
-- `babysit-pr` skill — event-driven post-PR loop: a one-shot waiter wakes the agent on new reviews, Codex's 👍 all-clear reaction, pushes, or CI changes; findings get verified, fixed or refuted, replied, and resolved until the PR is clean
-- `dev-coder` implementation agent + lean (over-engineering), quality (implementation + tests), correctness, and sync reviewer agents
+- SessionStart hook — injects the five-phase workflow in Claude Code and Codex and re-fires after compaction
+- Claude-only SubagentStart matcher — injects the workflow into implementation-capable `general-purpose`/`claude` agents without affecting reviewers; generic Codex sub-agents are intentionally excluded
+- `setup` skill — inspects a repo, recommends checks/reviewers with evidence, configures applicable `AGENTS.md`/`CLAUDE.md`, and generates thin Claude/Codex wrappers for accepted repo-specific reviewers
+- `dev-check`, `dev-review`, `dev-sync` skills — cross-host, risk-tiered validation with 1/2–3/5 independent reviews, targeted re-review, and up to two fresh broad final-gate cycles
+- `babysit-pr` skill — one shared event-driven PR policy plus non-invokable Claude Code/Codex host adapters; it verifies and automatically replies to clear feedback, watches reviews, comments, mergeability, pushes, and CI, and continues until the PR closes or needs a user decision
+- One canonical internal reference per lean, quality, correctness-fallback, and sync reviewer; Claude agents are thin wrappers and Codex sub-agents load the same references
 
-Repos declare their commands, situational checks, standards docs, and repo-specific reviewers in the contract; run `/dev-workflow:setup` to onboard a repo.
+Repos declare commands, situational checks, standards docs, and repo-specific reviewers in applicable `AGENTS.md`/`CLAUDE.md`; run `/dev-workflow:setup` in Claude Code or `$dev-workflow:setup` in Codex to onboard a repo.
 
 ### code-tour
 
@@ -83,7 +83,7 @@ The repo doubles as a Codex plugin marketplace (`.agents/plugins/marketplace.jso
 codex plugin marketplace add Intellegam/agent-plugins
 ```
 
-Then install the `claude-code` plugin from the `/plugins` browser in the Codex CLI. The bundled skill is invoked as `$claude-code:collaborating-with-claude`.
+Then install `claude-code` and `dev-workflow` from the `/plugins` browser in the Codex CLI. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, and `$dev-workflow:babysit-pr`.
 
 Manual fallback without the plugin system: add the MCP server directly to `~/.codex/config.toml` — snippet in the [claude-code-mcp README](https://github.com/Intellegam/claude-code-mcp#installation).
 
@@ -95,6 +95,8 @@ Manual fallback without the plugin system: add the MCP server directly to `~/.co
 2. `.claude-plugin/marketplace.json` - for discovery/updates
 
 **Codex plugins** — only `plugins/<name>/.codex-plugin/plugin.json` carries a version; `.agents/plugins/marketplace.json` entries are unversioned.
+
+**Dual-host plugins** — keep `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, and the Claude marketplace entry on the same release version.
 
 Use semantic versioning (MAJOR.MINOR.PATCH). Plugin versions are their own release stream — a skill or config change still requires a plugin version bump, independent of the referenced MCP server's version.
 
