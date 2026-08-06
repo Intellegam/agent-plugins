@@ -325,12 +325,21 @@ body.tour-resizing {
   min-width: 0;
   border: 1px solid var(--tour-border);
   border-radius: 10px;
+  /* `clip` (not `hidden`) keeps the rounded-corner clipping without creating a scroll
+     container — a hidden-overflow ancestor would silently disable the sticky file header. */
   overflow: hidden;
+  overflow: clip;
   background: #fff;
   box-shadow: var(--tour-shadow);
 }
 
 .tour-diff-file {
+  /* GitHub-style: the header of the diff you're reading pins to the viewport top and rides
+     along until its diff scrolls past. Sticky never escapes .tour-diff-code, so it releases
+     naturally at the end of each file. */
+  position: sticky;
+  top: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
