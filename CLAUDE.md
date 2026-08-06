@@ -18,9 +18,9 @@ agent-plugins/
 │       └── marketplace.json # Codex marketplace (plugins with .codex-plugin/)
 ├── plugins/
 │   └── <plugin-name>/
-│       ├── .claude-plugin/  # Claude Code plugin manifest, OR
+│       ├── .claude-plugin/  # Claude Code plugin manifest (optional)
 │       │   └── plugin.json #   plugin metadata (version source of truth)
-│       ├── .codex-plugin/   # Codex plugin manifest (same role)
+│       ├── .codex-plugin/   # Codex plugin manifest (optional; may coexist)
 │       │   └── plugin.json
 │       ├── .mcp.json       # MCP server configuration (optional)
 │       ├── skills/         # Agent skills (optional)
@@ -28,15 +28,14 @@ agent-plugins/
 └── README.md
 ```
 
-A plugin targets one host: `codex`, `dev-workflow`, and `code-tour` are Claude
-Code plugins; `claude-code` is a Codex plugin. Both hosts use an `mcpServers`
-map in `.mcp.json`. Trust the installed `codex` CLI over the online plugin
-docs when they disagree — validate against a local `codex plugin marketplace
-add <path>` install (OpenAI's bundled plugins under
-`~/.codex/.tmp/bundled-marketplaces/` are ground-truth examples).
+`dev-workflow` targets both hosts from one plugin root and carries both
+manifests. `codex` and `code-tour` target Claude Code; `claude-code` targets
+Codex. Both hosts use an `mcpServers` map in `.mcp.json`. Trust the installed
+Codex CLI over online plugin docs when they disagree and validate structural
+changes with a local marketplace install.
 
 ## Development
 
-- Claude Code plugins: versions must be updated in both `plugin.json` and `.claude-plugin/marketplace.json`. Codex plugins: only `.codex-plugin/plugin.json` is versioned
+- Claude Code plugins: update the manifest and `.claude-plugin/marketplace.json`. Codex plugins: update `.codex-plugin/plugin.json`; Codex marketplace entries are unversioned. Dual-host plugins coordinate both manifests to the same release version.
 - MCP servers are separate repos (e.g., `codex-mcp`, `claude-code-mcp`) referenced via GitHub
 - The codex and claude-code plugins' `.mcp.json` pin their server to a git tag (`#v{version}`). When releasing a new server version, update the tag pin in `.mcp.json` and bump the plugin version to force a cache refresh

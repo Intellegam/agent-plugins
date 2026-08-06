@@ -1,10 +1,6 @@
-#!/bin/bash
-# Injects the dev workflow (dev-workflow.md) into context. Referenced by BOTH
-# hook events in hooks.json:
-# - SessionStart (no matcher → fires on startup, resume, clear, AND compact,
-#   so the workflow re-injects after compaction)
-# - SubagentStart (matcher: general-purpose/claude → implementation-capable
-#   sub-agents get the same workflow and apply the phases that fit their
-#   delegated scope; special agents like reviewers/dev-coder are excluded)
+#!/usr/bin/env bash
+# Inject the shared workflow on session start in Claude Code and Codex. Both
+# hosts fire SessionStart after compaction. The Claude-specific SubagentStart
+# matcher intentionally excludes generic Codex sub-agents.
 cat > /dev/null  # drain stdin
 cat "$(dirname "$0")/dev-workflow.md"

@@ -1,17 +1,17 @@
 ---
 name: setup
-description: Set up or validate a repository's dev-workflow configuration in CLAUDE.md. Use when onboarding a repo to the org dev workflow, when the commands/checks sections in CLAUDE.md are missing or outdated for the installed plugin version, or when the user asks to "set up the dev workflow", "onboard this repo", "check the workflow config", or wants recommendations for workflow improvements (reviewers, checks, skills).
+description: Set up or validate a repository's cross-host dev-workflow configuration in AGENTS.md and/or CLAUDE.md. Use when onboarding a repo, when commands/checks or reviewer configuration is missing or stale, or when the user asks to set up the dev workflow, check workflow config, or recommend checks and custom reviewers.
 ---
 
 # Dev Workflow Setup
 
-Act as a workflow consultant for this repository: inspect it, recommend how it should plug into the org dev workflow, and apply only what the user accepts.
+Act as a workflow consultant: inspect the repository, recommend how it should plug into the org workflow in Claude Code and Codex, and apply only what the user accepts.
 
-The workflow skills read their repo-specific configuration from ordinary CLAUDE.md sections (see **Conventions** below) — no special markup, just well-structured documentation that serves humans and agents alike.
+Workflow skills read ordinary sections from applicable `AGENTS.md` and `CLAUDE.md` files (see **Conventions**). Keep one canonical copy of each repository contract and make both hosts follow it.
 
 Three phases, always in order: **Inspect → Recommend → Apply**.
 
-**Dry run**: if the user asked for recommendations only, stop after Recommend and present anything that would have been an AskUserQuestion as an open question with your recommended default.
+**Dry run**: if the user asked for recommendations only, stop after Recommend and present every unresolved choice as an open question with a recommended default.
 
 ## Phase 1: Inspect
 
@@ -19,14 +19,14 @@ Gather evidence before recommending anything. Look at:
 
 - **Stack & tooling**: manifest files (`pyproject.toml`, `package.json`, `pom.xml`, `build.gradle`, `Cargo.toml`, ...), lockfiles, and the scripts/tasks they define (format, lint, typecheck, test)
 - **CI config** (`.github/workflows/`, etc.): which checks actually gate merges — these are the ground truth for required checks
-- **Existing Claude assets**: `CLAUDE.md` (do the conventions sections exist and match reality?), `.claude/skills/`, `.claude/agents/`, `.claude/settings.json` hooks
+- **Existing agent assets**: `AGENTS.md`, `CLAUDE.md`, `.agents/skills/`, `.agents/reviewers/`, `.codex/agents/`, `.claude/skills/`, `.claude/agents/`, and host settings/hooks
 - **Docs**: code standards, testing guidelines, architecture docs — candidates for Review Inputs
 - **Repo shape signals**: upstream remotes or fork markers, `custom/` directories, monorepo/workspace layout, generated code, infra-as-code — anything that suggests repo-specific reviewers or situational checks
-- **Git history**: recently deleted or moved workflow assets (`git status`, `git log` on `.claude/`, CLAUDE.md) — repos migrating from a local workflow to this plugin often carry the strongest evidence in just-removed files
+- **Git history**: recently deleted or moved workflow assets under `.agents/`, `.codex/`, `.claude/`, `AGENTS.md`, or `CLAUDE.md`
 
-Use Explore agents for broad scans if available (otherwise search directly); read key files directly. Every later recommendation must cite evidence found here (a file path or observed pattern). If you can't cite evidence, don't recommend it.
+Use the host's exploration agent for broad scans when available; otherwise search directly. Every recommendation must cite a file path or observed pattern.
 
-Also check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md` (e.g. `CLAUDE.md → AGENTS.md`, or `AGENTS.md → CLAUDE.md`): edits land in the physical target and fan out to every consumer of the linked file (e.g. Codex reads AGENTS.md). Always write the physical file — never retarget — and name the fan-out in your report (interactive runs: before applying).
+Check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md`. Always write the physical target, never retarget a link, and name the fan-out before applying. When both are independent files, identify which already owns the workflow contract. Recommend one canonical owner plus a short explicit read/follow pointer from the other rather than duplicating the contract; ask before introducing that relationship.
 
 ## Phase 2: Recommend
 
@@ -34,33 +34,35 @@ Present findings in three groups:
 
 - **Required** — the repo can't run the workflow without these: the commands/checks sections themselves, and any check command that couldn't be detected. Phrase undetectable commands as explicit questions with your recommended default (in a dry run, list them as open questions in the report)
 - **Recommended** — clear evidence supports these: e.g. "upstream remote + `custom/` dir → add a fork-maintenance reviewer agent", "CI runs an e2e suite → add it as a situational check", "docs/guides/code-standards.md exists → register as review input"
-- **Optional** — useful but judgment-call: extra skills, hook cleanups, CLAUDE.md improvements
+- **Optional** — useful but judgment-call: extra skills, hook cleanups, or guidance-file improvements
 
 For each item: what, why (with evidence citation), and what applying it would change. Propose — never adopt silently. Anything touching branch/release policy, security, or hooks is always proposed, never auto-applied.
 
-If the repo already encodes checks elsewhere (a local `dev-check`-style skill, duplicated prose in CLAUDE.md), the conventions sections become the single source of truth: recommend updating those assets to point there or removing the duplication. The same applies to CLAUDE.md content duplicating a skill this plugin actually ships (check the plugin's skill list) — never recommend removing content whose only copy lives in the repo.
+If the repo already encodes checks elsewhere, make the accepted conventions section the single source of truth: recommend pointers or removal of real duplication. Never remove content whose only copy lives in the repository.
 
-If the plugin itself isn't enabled in the repo's `.claude/settings.json` yet, recommend the `enabledPlugins` entry — together with the `extraKnownMarketplaces` entry if the marketplace is missing too (an enabled plugin from an unknown marketplace won't load on a fresh checkout). Apply only with explicit user acceptance (it's a settings edit).
+For Claude Code, if the plugin is not enabled in `.claude/settings.json`, recommend the `enabledPlugins` entry plus its marketplace when missing. For Codex, report whether the plugin is unavailable from the configured marketplace; do not modify user-level Codex installation state as part of repository setup. Apply project settings only with explicit acceptance.
 
-Do **not** recommend reviewers or checks the plugin already provides: the workflow ships lean (over-engineering), quality (implementation + tests), and correctness reviewers (spawned by `dev-workflow:dev-review`) and a doc-drift reviewer (`dev-workflow:dev-sync-reviewer`, spawned by `dev-workflow:dev-sync`). Custom reviewers are for concerns beyond these — e.g. fork maintenance, framework conventions, domain-specific rules.
+Do **not** recommend reviewers or checks the plugin already provides: lean, quality, correctness, and documentation-sync contracts are built into the workflow. Custom reviewers are only for additional concerns such as fork maintenance, framework conventions, or domain rules.
 
 ## Phase 3: Apply
 
-Use AskUserQuestion to let the user accept/reject per group (or item for contentious ones). Then:
+Use the host's structured user-input mechanism when available, otherwise ask directly, and let the user accept/reject each group or contentious item. Then:
 
-1. Write or update the conventions sections in CLAUDE.md (see below). Beyond those sections, touch only what the user explicitly accepted (de-duplication edits, settings entries) — never restructure or reformat anything else.
-2. Create accepted reviewer agents in `.claude/agents/` (keep them focused: one concern per reviewer, with a description saying when dev-review should spawn it).
-3. Apply accepted settings edits (`enabledPlugins` / `extraKnownMarketplaces`) in `.claude/settings.json`.
-4. **No-loss audit**: diff everything you removed or replaced (sections, commands, prose — including accepted de-dup edits) and map each line to its new home (a conventions line, plugin skill/hook, repo doc). Anything unmapped gets restored before you finish. Removal is only ever justified by an existing replacement, never by tidiness.
-5. Report what was applied, what was skipped, and the removal→home mapping.
+1. Write or update the conventions section in the accepted canonical `AGENTS.md` or `CLAUDE.md`. If both independent files must serve as entry points, add only the accepted explicit pointer in the non-canonical file. Beyond accepted changes, do not restructure or reformat either file.
+2. For every accepted custom reviewer, write the full contract once to `.agents/reviewers/<name>.md`.
+3. Generate two thin wrappers that load that canonical contract and fail closed:
+   - `.claude/agents/<name>.md` with Claude frontmatter (description, tools/model as accepted) and a body that reads `${CLAUDE_PROJECT_DIR}/.agents/reviewers/<name>.md`
+   - `.codex/agents/<name>.toml` with `name`, `description`, `sandbox_mode = "read-only"`, and `developer_instructions` that reads `.agents/reviewers/<name>.md` from the project root
+4. Apply accepted project settings edits. Do not duplicate reviewer bodies in either wrapper.
+5. **No-loss audit**: map every removed/replaced line to its canonical new home. Restore anything unmapped, then report applied/skipped items and the mapping.
 
 ## Re-runs: validate
 
-If the conventions sections already exist, validate them: do the commands still exist in the manifests? Does CI gate checks that aren't recorded? Do referenced docs/agents still exist? Report drift, then offer to fix it via the normal Apply flow (in a dry run, report only). After plugin updates that change these conventions, do the same — semantically diff what's there against what's expected and propose the delta.
+If conventions already exist, validate commands against manifests/CI and confirm Review Inputs, canonical reviewer contracts, and both host wrappers exist. Report drift and offer to fix it through the normal Apply flow.
 
 ## Conventions
 
-Two ordinary CLAUDE.md sections, located by meaning, not markup:
+Two ordinary sections in the chosen canonical `AGENTS.md` or `CLAUDE.md`, located by meaning rather than markup:
 
 **1. A commands & checks section** — universal repo facts, useful in every session. Keep whatever heading the repo already uses (`## Commands & Checks`, `## Common Commands`, ...); create `## Commands & Checks` if none exists.
 
@@ -113,6 +115,6 @@ Rules:
 - A Situational Check's action need not be a shell command: "watch the `<name>` CI check on the PR" (for CI-only checks) or "run the `<name>` skill/agent" (for available validation tooling) are both valid.
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
 - **Review Inputs** takes arbitrary labeled entries — register any doc reviewers should read (documentation guidelines, architecture, fork-maintenance rules, ...), not just code/testing standards.
-- **Custom dev-workflow reviewers** means beyond the plugin's built-in set (lean, quality, and correctness reviewers spawned by dev-review; doc-drift reviewer spawned by dev-sync). Only list repo-specific ones; omit the subsection if there are none.
-- Place new sections after the repo's overview sections (or at the end of CLAUDE.md if unsure) — never before `@import` lines at the top, and never inside another tool's managed region (vendored standards sections, other tools' marker blocks).
+- **Custom dev-workflow reviewers** means beyond the built-in lean, quality, correctness, and sync contracts. Only list repository-specific reviewers and omit the subsection when none exist.
+- Place new sections after repository overview sections (or at the end if unsure), never before Claude `@import` lines and never inside another tool's managed region.
 - Keep these sections compact: they are always-on context for every session in the repo.

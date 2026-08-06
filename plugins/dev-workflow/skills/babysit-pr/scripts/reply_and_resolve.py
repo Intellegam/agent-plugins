@@ -12,10 +12,7 @@ Usage:
 The reply body is the raw markdown string — shell-quote it as usual,
 or pipe via ``"$(cat <<'EOF' ... EOF)"`` when embedded in a heredoc.
 
-``--no-resolve`` posts the reply without resolving the thread. Use this
-for human-authored threads that should stay open until the maintainer
-confirms the exchange, or for ``real-fix-nonobvious`` / ``judgment-call``
-threads that need to remain visible until the user decides.
+``--no-resolve`` posts the reply without resolving the thread.
 """
 
 from __future__ import annotations
@@ -48,7 +45,7 @@ def _run_mutation(query: str, **vars: str) -> tuple[int, str]:
     response body. ``gh api graphql`` returns exit 0 when GitHub responds
     HTTP 200 even if the payload carries GraphQL-level errors (stale thread
     id, missing permission, bad input) — treating that as success would
-    make ``/pr-triage`` report "resolved" on threads still open.
+    make ``babysit-pr`` report "resolved" on threads still open.
     """
     args = ["gh", "api", "graphql", "-f", f"query={query}"]
     for k, v in vars.items():

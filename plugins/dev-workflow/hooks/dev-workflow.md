@@ -1,62 +1,58 @@
 <dev-workflow>
-The dev-workflow plugin is active. For coding tasks, follow this workflow — whether you are the main agent or a sub-agent delegated a coding task. Apply the phases that fit your task's scope (e.g. skip commit/PR phases when your spawning agent owns them). Repo-specific commands and policy come from CLAUDE.md (commands & checks, Dev Workflow Plugin sections) — where those are concrete, they win.
+The dev-workflow plugin is active. Apply the phases that fit the coding task's scope, whether acting as the main agent or an implementation owner. Skip commit/PR phases when a parent agent owns them.
 
-This workflow ensures code quality through multiple perspectives: Codex for early collaboration & validation, automated checks, and parallel reviewers that catch different types of issues. Following this process consistently catches problems before they reach production.
+Read every applicable `AGENTS.md` and `CLAUDE.md` by directory scope. Repository-specific commands, checks, Review Inputs, and Dev Workflow Plugin sections win over generic workflow defaults. If both guidance variants exist, follow both; let the nearer-scoped file win on conflicts.
 
-### 1. Explore & Plan
+### 1. Explore and Plan
 
-For non-trivial tasks, enter plan mode. Then:
+For non-trivial tasks:
 
-- **Explore**: Use `Explore` agents to find things like
-  - Relevant code and patterns
-  - Existing utils/functionality to reuse (avoid duplication)
-  - Related documentation and tests
-- **Web-Research**: Use web-research agents (e.g. `web-explore`) to find external documentation, best practices, or unfamiliar APIs
-- **Refactor first**: Ask whether a small refactor would make the change much simpler than bolting it onto the current shape — "make the change easy, then make the easy change". If yes, the plan leads with the refactor.
-- **Lean plan**: Plan the leanest version that solves the problem. Challenge whether each part needs to exist and whether the diff could be smaller.
-- **Brainstorm**: Use `codex` MCP to get an independent perspective on the problem, then iterate via `codex-reply` until you converge on a common strategy
-- **Plan review**: Before presenting a plan (to the user, or to your spawning agent), validate the approach with `codex` — including the refactor-first and lean-plan questions above. Never present a plan without Codex validation — the recipient should receive a plan that has been stress-tested by a second perspective.
-
-Read the `collaborating-with-codex` skill for Codex guidelines.
+- Use the host's exploration sub-agent when useful; otherwise search directly for relevant code, existing utilities, tests, and documentation.
+- Use official documentation or a focused research agent for unfamiliar external APIs.
+- Ask whether a small refactor makes the change simpler before adding new behavior.
+- Plan the smallest complete solution and challenge every new abstraction or file.
+- Get an independent perspective from the other coding agent:
+  - In Claude Code, read `collaborating-with-codex` and use the Codex MCP tools.
+  - In Codex, read `collaborating-with-claude` and use the Claude-agent MCP tools.
+  - If the opposite-host tools are unavailable, state the fallback and use a fresh independent read-only reviewer rather than implying the external agent participated.
+- Stress-test non-trivial plans with that independent perspective before presenting them.
 
 ### 2. Implement
 
-Write code following the repo's code standards and testing guidelines (declared under Review Inputs in CLAUDE.md).
+Follow repository standards and Review Inputs.
 
-**Minimality**: before writing new code, climb this ladder and stop at the first rung that holds:
+Before adding code, climb this ladder and stop at the first rung that holds:
 
-1. Does this need to exist at all? (YAGNI) — speculative need means skip it and say so
-2. Already in this codebase? Reuse it — look before you write
-3. Stdlib or a native platform feature covers it? Use that
-4. An already-installed dependency covers it? Use it — never add a new one for what a few lines can do
-5. Only then: the minimum code that works — no speculative abstractions, no scaffolding "for later"
+1. Does this need to exist at all?
+2. Does the codebase already provide it?
+3. Does the standard library or native platform cover it?
+4. Does an installed dependency cover it?
+5. Only then add the minimum new implementation.
 
-Never trim: validation at trust boundaries, error handling that prevents data loss, security, accessibility, or explicitly requested behavior. And never be lazy about understanding the problem — the ladder shortens the solution, not the reading.
+Never trim trust-boundary validation, data-loss-preventing error handling, security, accessibility, tests for non-trivial behavior, or explicitly requested behavior.
 
-**Context preservation**: For larger implementations, consider delegating to `dev-workflow:dev-coder` agents to preserve your context for orchestration and review.
+For larger implementations, consider delegation to preserve orchestration context:
 
-| Scope                          | Consider                                               |
-| ------------------------------ | ------------------------------------------------------ |
-| Small (few lines, single file) | Implement directly                                     |
-| Medium/Large (multi-file)      | Consider delegating to `dev-workflow:dev-coder` agents |
+- Claude Code: use `dev-workflow:dev-coder`.
+- Codex: use an implementation-focused worker sub-agent with explicit file ownership and validation requirements.
 
-When delegating: provide clear requirements, review the output, iterate if needed.
+Review delegated output before accepting it.
 
 ### 3. Validate
 
-Run these skills in order:
+Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex:
 
-1. `/dev-workflow:dev-check` - Format, lint, types, tests
-2. `/dev-workflow:dev-review` - Over-engineering, code quality, test coverage, correctness
-3. `/dev-workflow:dev-sync` - Documentation alignment
+1. `dev-check` — formatting, lint, types, and tests
+2. `dev-review` — risk-scaled independent review
+3. `dev-sync` — documentation and agent-surface alignment
 
-### 4. Commit & Push
+### 4. Commit and Push
 
-Follow Conventional Commits. Offer push/PR options.
+Follow repository commit conventions. Committing, pushing, and opening a PR require the user's explicit choice; merging or landing requires a separate explicit approval.
 
-### 5. Babysit (after PR is opened)
+### 5. Babysit
 
-Run `/dev-workflow:babysit-pr` to triage review comments and CI failures — event-driven, loops until the PR is clean or waiting on user decision.
+After opening a PR, run `/dev-workflow:babysit-pr` in Claude Code or `$dev-workflow:babysit-pr` in Codex to triage feedback and CI until the PR closes or needs a user decision.
 
-If the repo has no commands & checks section in CLAUDE.md, offer `/dev-workflow:setup`.
+If repository guidance has no commands/checks contract, offer `dev-workflow:setup`.
 </dev-workflow>

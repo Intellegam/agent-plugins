@@ -7,7 +7,7 @@ description: This skill MUST be used before committing changes and after complet
 
 ## Dev Workflow
 
-This skill is part of the dev workflow: `dev-check` → `dev-review` → `dev-sync` (invoke via the Skill tool as `dev-workflow:dev-check`, `dev-workflow:dev-review`, `dev-workflow:dev-sync`).
+This skill is part of `dev-check` → `dev-review` → `dev-sync`. Invoke workflow skills through `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
 | Phase     | Purpose                          |
 | --------- | -------------------------------- |
@@ -15,7 +15,7 @@ This skill is part of the dev workflow: `dev-check` → `dev-review` → `dev-sy
 | review    | Code quality, tests, correctness |
 | sync      | Documentation alignment          |
 
-Skills can be chained in a single prompt or invoked sequentially via the Skill tool.
+Skills can be chained in one prompt or invoked sequentially through the host's skill selector.
 
 ---
 
@@ -25,7 +25,7 @@ Run checks, **auto-fix what you can**, only ask when genuinely unsure.
 
 ## The Contract
 
-The repo declares its commands in CLAUDE.md's commands & checks section (Required Checks / Situational Checks). Read it first. If those sections are missing, run `dev-workflow:setup` (or ask the user) before proceeding — don't guess commands.
+Read every applicable `AGENTS.md` and `CLAUDE.md` by directory scope. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, invoke `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
 
 ## Scale to the Change
 
@@ -53,7 +53,7 @@ Use judgment. Skip if tests already cover it, add others if the situation calls 
 
 ## Drift Guard
 
-The declared checks are the baseline, not a cage. Each run, glance at the repo's CI surfaces (CI workflow files, manifest scripts/tasks) — a cheap heuristic scan, not a CI interpreter. If CI gates a check CLAUDE.md doesn't list:
+The declared checks are the baseline, not a cage. Each run, glance at the repository's CI surfaces (workflow files and manifest tasks). If CI gates a check that repository guidance does not list:
 
 - **Run it** when it's clearly a safe local command (a lint/typecheck/test-style script)
 - **Flag it** when it's ambiguous, secrets-dependent, or CI-only
@@ -66,4 +66,4 @@ Summarize results, report what was fixed, confirm all checks pass. Include any d
 
 ## Next Step
 
-When all checks pass, continue to `dev-workflow:dev-review` (the recommended next step) unless the user asked for checks only. Don't stop to ask — state what you're doing and proceed. Only ask when there is a genuine decision to make (e.g. an unfixable failure with multiple reasonable resolutions).
+When all checks pass, continue to `dev-review` unless the user asked for checks only. State the transition and proceed. Ask only when an unfixable failure has multiple reasonable resolutions.

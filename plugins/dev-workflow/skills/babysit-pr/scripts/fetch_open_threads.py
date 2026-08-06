@@ -22,11 +22,15 @@ and tend to cause re-processing of already-handled findings.
 Thread pagination is complete (loops on ``hasNextPage``). Comments per
 thread are fetched in a single page of 100 — more than enough for any
 realistic review exchange; if a thread overflows, we warn to stderr so a
-silent truncation can't let step 5 of ``/pr-triage`` falsely declare "all
+silent truncation can't let step 5 of ``babysit-pr`` falsely declare "all
 clear".
 
 Usage:
-    fetch_open_threads.py <pr-number>
+    fetch_open_threads.py [--all] <pr-number>
+
+``--all`` retains resolved threads and adds ``is_resolved`` to every item. It
+is intended for the event waiter's fingerprint; normal triage remains
+unresolved-only.
 """
 
 from __future__ import annotations
@@ -88,10 +92,14 @@ def _fetch_page(owner: str, repo: str, pr: int, after: str | None) -> dict:
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("usage: fetch_open_threads.py <pr-number>", file=sys.stderr)
+    argv = sys.argv[1:]
+    include_resolved = bool(argv and argv[0] == "--all")
+    if include_resolved:
+        argv = argv[1:]
+    if len(argv) != 1:
+        print("usage: fetch_open_threads.py [--all] <pr-number>", file=sys.stderr)
         return 2
-    pr = int(sys.argv[1])
+    pr = int(argv[0])
     owner, repo = _repo_slug()
 
     all_nodes: list[dict] = []
@@ -105,30 +113,31 @@ def main() -> int:
 
     open_threads = []
     for t in all_nodes:
-        if t["isResolved"]:
+        if t["isResolved"] and not include_resolved:
             continue
         if t["comments"]["pageInfo"]["hasNextPage"]:
-            # Silent truncation here would let /pr-triage falsely declare the
+            # Silent truncation here would let babysit-pr falsely declare the
             # PR clean. Surface loudly so the human/agent notices.
             print(
                 f"warning: thread {t['id']} has >100 comments; only first page fetched",
                 file=sys.stderr,
             )
-        open_threads.append(
-            {
-                "thread_id": t["id"],
-                "path": t["path"],
-                "line": t["line"],
-                "comments": [
-                    {
-                        "author": c["author"]["login"] if c["author"] else None,
-                        "body": c["body"],
-                        "created_at": c["createdAt"],
-                    }
-                    for c in t["comments"]["nodes"]
-                ],
-            }
-        )
+        item = {
+            "thread_id": t["id"],
+            "path": t["path"],
+            "line": t["line"],
+            "comments": [
+                {
+                    "author": c["author"]["login"] if c["author"] else None,
+                    "body": c["body"],
+                    "created_at": c["createdAt"],
+                }
+                for c in t["comments"]["nodes"]
+            ],
+        }
+        if include_resolved:
+            item["is_resolved"] = t["isResolved"]
+        open_threads.append(item)
     print(json.dumps(open_threads, indent=2))
     return 0
 

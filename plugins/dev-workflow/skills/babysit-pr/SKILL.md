@@ -1,187 +1,239 @@
 ---
 name: babysit-pr
-description: This skill MUST be used after creating or updating a PR on the current branch to babysit it - triage review comments (Codex or human) and CI failures until the PR is clean. Proactively run after `/dev-workflow:dev-sync` pushes a PR. Also use when the user says "babysit the PR", "babysit my PR", "triage PR", "handle PR comments", "address review", "respond to Codex", "resolve review threads", "fix CI on my PR", "my PR checks are red", or "what did Codex say".
+description: This skill MUST be used after creating or updating a PR on the current branch. Triage review comments and CI failures until the PR is merged, closed, or needs a user decision. Proactively run after dev-sync creates or updates a PR. Also use when the user asks to babysit or triage a PR, handle review comments, resolve threads, fix CI, or report what a reviewer said.
 ---
 
 # Babysit PR
 
 ## Dev Workflow
 
-This skill is the post-PR step:
+This is the post-PR step:
 
-`/dev-workflow:dev-check` → `/dev-workflow:dev-review` → `/dev-workflow:dev-sync` → PR created → **`/dev-workflow:babysit-pr`** (loops until clean)
+`dev-check` → `dev-review` → `dev-sync` → PR created → **`babysit-pr`**.
 
-Requires `gh` (authenticated) and `python3`. Scripts live in this skill's `scripts/` directory — invoke them with `python3 "<skill-base>/scripts/<name>.py"` using the base directory announced when this skill loads. Check CLAUDE.md's **Dev Workflow Plugin** section for repo-specific triage notes (known flaky checks, sibling deployments that fail independently of the PR, a custom review bot to watch).
+Invoke `/dev-workflow:babysit-pr` in Claude Code or
+`$dev-workflow:babysit-pr` in Codex. Requires authenticated `gh` and Python 3.
 
----
+## Load the host adapter
 
-## The rule: Verify Before Fixing
+Resolve this skill's announced base directory, then read exactly one adapter
+completely before acting:
 
-Reviewer findings (automated or human) are **hypotheses**, not facts. Every reviewer pass introduces noise; acting on unverified claims creates worse code.
+- Claude Code: `references/claude-code.md`
+- OpenAI Codex: `references/codex.md`
 
-Before acting on any finding:
+The adapter defines only how this host owns the waiter and attributes replies.
+This file is the sole source of behavioral policy. If the host cannot be
+identified or the adapter cannot be read, stop and report the problem; do not
+guess or silently fall back.
 
-1. **Read** the claim + cited code. Understand the proposed failure mode.
-2. **Prove or disprove empirically**: write a reproducing snippet, grep the codebase, run a targeted test, or exhibit a counter-example. If you cannot produce evidence, escalate to the user — do not fix on suspicion.
-3. **Only then classify and act.**
+Read every applicable `AGENTS.md` and `CLAUDE.md`. Use triage notes from
+whichever guidance file defines the **Dev Workflow Plugin** section.
+
+## Rule: verify before fixing
+
+Reviewer findings, whether automated or human, are hypotheses. Before acting:
+
+1. Read the claim and cited code.
+2. Prove or disprove it with a targeted test, reproducer, code trace, or
+   counterexample. If evidence is unavailable, ask the user instead of fixing
+   on suspicion.
+3. Classify it and take only the corresponding action below.
 
 ## Process
 
-### 1. Arm the waiter, then fetch PR state
+### 1. Establish scope, arm, then fetch
 
-**Arm first, fetch second** — the waiter baselines at startup, so anything that happens after arming (including during your triage pass) fires on this or the next arm. Fetching first would let an event land unseen between fetch and arm.
-
-```text
-# tool call (not a shell command) — one-shot: exits when the next event fires
-Monitor(
-  command="cd <repo-root> && python3 <skill-base>/scripts/await_pr_event.py $pr",
-  description="next event on PR #$pr",
-)
-```
-
-The `cd <repo-root>` prefix is required: `gh` resolves the repo from the working directory, and the monitor inherits whatever cwd the shell last had — which may have drifted elsewhere. Watch for the waiter *failing* (its task ends with a non-zero exit): that means it could not see the PR at all — re-arm it; never assume a dead waiter means a quiet PR.
-
-Then fetch the current state:
+Resolve the current PR and verify all of these before mutating anything:
 
 ```bash
 pr=$(gh pr view --json number -q .number)
+gh pr view "$pr" --json author,isCrossRepository,isDraft,headRefName,baseRefName
+gh api user --jq .login
+```
+
+- Stop on an author mismatch unless the user explicitly authorized this PR.
+- Cross-repository PRs are unsupported because the scripts resolve the current
+  repository. Stop if `isCrossRepository` is true.
+- Skip draft PRs; review bots generally do not review them.
+- Never push to the base branch. Fixes go only to the PR head branch.
+
+**Arm first, fetch second.** Start the retained one-shot waiter exactly as the
+host adapter specifies:
+
+```bash
+cd <repo-root> && python3 "<skill-base>/scripts/await_pr_event.py" "$pr"
+```
+
+Retain its task/process handle. An untracked background process is not a
+waiter. A non-zero exit means monitoring failed, never that the PR is quiet.
+Wait until the process emits `armed` before fetching PR state; this confirms
+its baseline exists and closes the launch-versus-fetch race.
+Keep exactly one waiter. Before replacing an armed waiter—for example directly
+after a push—terminate it through the host adapter unless its event has already
+been consumed, then arm the replacement before fetching again.
+If the waiter cannot be armed or its handle retained, stop and report that
+event-driven monitoring is unavailable; do not substitute in-turn polling.
+
+After arming, fetch all current state:
+
+```bash
 python3 "<skill-base>/scripts/fetch_open_threads.py" "$pr"
 gh pr checks "$pr"
+gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestReviews,comments,reactionGroups,headRefOid
 ```
 
-`fetch_open_threads.py` returns JSON: only unresolved threads, each with `thread_id`, `path`, `line`, and the full comment chain. Resolved threads are filtered out so we don't re-triage.
+The waiter first emits `armed`, then emits one terminal event and exits:
 
-The waiter exits printing one line when something changes:
+- `review-activity` — reviews changed
+- `review-thread-activity` — inline review-thread replies or resolution changed
+- `conversation-activity` — top-level PR comments changed
+- `reaction` — PR reactions changed; Codex may use 👍 as an all-clear
+- `new-head` — a commit was pushed
+- `ci-failure` — a check entered a failing bucket
+- `ci-concluded` — all checks concluded
+- `merge-state` — mergeability or review-decision state changed
+- `pr-closed` — merged or closed
+- `quiet` — no event for 30 minutes; reassess, but do not treat silence as approval
 
-- `review-activity` — the review set changed (new, dismissed, or replaced review, any author)
-- `reaction` — the PR's reactions changed (Codex reacts 👍 on the PR instead of posting a review when it finds nothing — this is its all-clear; anyone can react though, so verify the reactor in step 5 before treating it as one)
-- `new-head` — a commit was pushed; CI and reviewers restart
-- `ci-failure` — a check entered a failing state (includes cancelled/timed-out)
-- `ci-concluded` — no checks pending anymore (green or red)
-- `pr-closed` — the PR was merged or closed
-- `quiet` — nothing happened for 30 min (`--quiet-after` to change) — the PR looks settled, assess for merge
+Every event except `pr-closed` re-enters this step: re-arm first, then fetch and
+triage. On `pr-closed`, stop the waiter and report the final state.
 
-Treat `review-activity`, `new-head`, `ci-failure`, and `ci-concluded` as "re-enter step 1" (re-arm, re-fetch, re-triage). Treat `reaction` and `quiet` as cues to assess the step-5 stop conditions and, if clean, report ready-to-merge. On `pr-closed`, stop babysitting — don't re-arm; report final state.
+### 2. Verify and classify findings
 
-### 2. Classify each finding
+| Class | Meaning | Action |
+| --- | --- | --- |
+| `already-addressed` | A prior commit fixed a stale claim | Reply with commit/test evidence; resolve bot threads only |
+| `false-alarm` | The claim does not match reality | Reply with empirical disproof; resolve bot threads only |
+| `real-fix-obvious` | Clear, small, self-contained bug | Fix and test; batch with other obvious fixes; push once; reply with evidence |
+| `real-fix-nonobvious` | Real issue with ambiguous or broad fix | Ask the user; keep thread open; stop until decided |
+| `judgment-call` | Subjective product or style tradeoff | Ask the user; keep thread open; stop until decided |
 
-Iterate the threads from step 1. For each one, apply **Verify Before Fixing**, pick a class, and act:
+Batch obvious fixes into one commit and one push per pass so reviewers rerun
+once against the combined change. Immediately replace the waiter after pushing
+and before fetching the new head's state.
 
-- verify the claim empirically (grep, reproducing snippet, targeted test)
-- classify the finding (table below)
-- `already-addressed` / `false-alarm` → reply + resolve (step 4)
-- `real-fix-obvious` → queue the fix (commit all obvious fixes in a single batch)
-- `real-fix-nonobvious` / `judgment-call` → present to user, leave the thread open
+Immediately before every commit and push, refetch the PR head/base names and
+verify that local `HEAD` is attached to the PR head branch, is not the base
+branch, and still tracks a remote for this repository. Stop on any mismatch.
+Push explicitly to the verified remote and ref, for example
+`git push "$remote" "HEAD:refs/heads/$head"`; never rely on an implicit push
+destination during a long-lived task.
 
-| Class                   | Meaning                                                   | Action                                                                      |
-| ----------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------- |
-| **already-addressed**   | Fixed by a prior commit; reviewer re-raised a stale claim | Reply citing commit + test; resolve (bot threads only — see step 4)         |
-| **false-alarm**         | Claim doesn't match reality                               | Reply with empirical disproof (commit/test/counter-example); resolve (bot threads only) |
-| **real-fix-obvious**    | Clear bug, small self-contained fix                       | Fix + test; batch commit + push once per pass; reply citing commit, resolve |
-| **real-fix-nonobvious** | Real issue, fix is ambiguous or far-reaching              | Present options to user, don't auto-act                                     |
-| **judgment-call**       | Stylistic or subjective trade-off                         | Present tradeoffs to user                                                   |
+### 3. Diagnose CI before retrying
 
-**Batch obvious fixes into a single commit** before moving on, so the review bot re-reviews once against the combined change instead of firing on each individual push.
+Review feedback first. If a fix commit is needed, push it instead of wasting a
+rerun on the old SHA.
 
-If `/dev-workflow:dev-review` added a regression test for a claim that turned out to be a false alarm, cite _that test name_ in the `false-alarm` reply — the pre-push evidence is the cleanest artifact to link.
-
-### 3. CI failures
-
-For each failing check (GitHub Actions — for other providers, follow the check's details URL):
+For each failing GitHub Actions job, inspect job-level logs even while sibling
+jobs still run:
 
 ```bash
-gh run view <run-id> --log-failed
+gh run view <run-id> --json jobs,status,conclusion,url
+gh api repos/{owner}/{repo}/actions/runs/<run-id>/jobs --paginate
+gh api repos/{owner}/{repo}/actions/jobs/<job-id>/logs > /tmp/babysit-pr-<job-id>.log
 ```
 
-Classify:
+If direct job logs are unavailable, use `gh run view <run-id> --log-failed`
+after the run concludes. For non-GitHub providers, inspect the check's details
+URL and report what is observable.
 
-- **our-bug** — our change caused it → fix
-- **flaky** — intermittent test, unrelated infrastructure → retry once via `gh run rerun`; if it still fails, treat as our-bug
-- **external-dep** — a transient outside the PR's control (package registry/CDN blip, a sibling deployment that fails independently of this change — check CLAUDE.md's triage notes for known ones) → note and move on; don't block on it
-- **infra** — CI config / secrets / runner problem → report to user
+Classify each failure:
 
-Report root cause before acting on non-trivial ones.
+- `our-bug` — caused by this change: apply the same obvious versus non-obvious
+  boundary as review findings; fix/test only an obvious issue and ask the user
+  before an architectural, migration, or product decision.
+- `flaky` — intermittent test or unrelated transient infrastructure: rerun.
+- `external-dep` — transient dependency outside the PR: report and monitor.
+- `infra` — credentials, configuration, or runner problem: report to the user.
 
-### 4. Reply + resolve
+Retry likely flaky failures at most three times per head SHA. Reset the budget
+only when the head SHA changes. Preserve the count in task context and, after a
+handoff or uncertain continuity, inspect workflow attempts before rerunning so
+the budget cannot silently reset.
 
-**Reply to every triaged finding.** The reply IS the context: it feeds the next review pass (so the bot doesn't re-raise the same false alarm) and is the durable record for future readers.
+Before rerunning, inspect the workflow and dependent jobs. Automatically rerun
+only side-effect-free checks. A job or dependency that deploys, publishes, or
+otherwise mutates an external system requires user approval. If the third retry
+still fails, stop as a user-help-required blocker and report all attempts and
+evidence; do not re-arm into an endless quiet loop.
+
+### 4. Reply automatically; resolve deliberately
+
+For every finding with a verified, clear disposition, reply automatically. Do
+not ask for separate approval merely because the author is human. Prefix the
+reply exactly as required by the host adapter and cite a commit SHA, test name,
+reproducer, or counterexample.
 
 ```bash
-python3 "<skill-base>/scripts/reply_and_resolve.py" "$THREAD_ID" "$(cat <<'EOF'
-reply body here — cite commit hash, test name, or empirical proof
-EOF
-)"
+python3 "<skill-base>/scripts/reply_and_resolve.py" "$THREAD_ID" "<attributed evidence-backed reply>"
 ```
 
-Reply content checklist:
+For a top-level conversation comment or a review summary with no thread, post
+the attributed disposition on the PR instead:
 
-- Cite evidence: commit SHA, test name, or a reproducing snippet
-- Terse but complete — enough that the reviewer won't re-raise next pass
-- On `false-alarm`: state what you verified and how (not just "not an issue")
+```bash
+gh pr comment "$pr" --body "<attributed evidence-backed reply>"
+```
 
-**Only resolve when the finding has a clear disposition.** `real-fix-nonobvious` and `judgment-call` stay open until the user decides. **Human-authored threads always get `--no-resolve`** — reply, but leave resolution to the maintainer; human comments are conversation, not just findings.
+- Bot-authored thread with clear disposition: reply and resolve.
+- Human-authored thread with clear disposition: reply automatically using
+  `--no-resolve`; leave resolution to the maintainer.
+- `real-fix-nonobvious` or `judgment-call`: do not post a substantive answer
+  before the user decides. After the decision, reply automatically with the
+  resulting disposition; keep a human thread unresolved.
 
-### 5. Loop (event-driven)
+Before posting, check the existing thread or conversation so a resumed task
+does not duplicate a reply that already landed.
 
-After the first triage pass, **do not block**. The waiter armed in step 1 is one-shot: when its notification lands, re-enter step 1 (arm a fresh waiter, fetch threads + checks, triage). Between events you are free to return to the user, work on other tasks, or wait idly.
+If the same finding reappears after a reply, escalate to the user rather than
+repeating the same response.
 
-Stop when all three are clear:
+### 5. Assess all feedback and readiness
 
-1. **No skill-actionable review threads remain.** `fetch_open_threads.py` returns every unresolved thread — subtract the ones classified as `real-fix-nonobvious` / `judgment-call` (and human threads awaiting the maintainer's reply) during this session. Those are expected to stay open pending user decision and **must not block the stop condition** — report them at step 6 when stopping. Stop when the remaining threads (`already-addressed` / `false-alarm` / `real-fix-obvious`) have all been replied + resolved.
-2. **CI checks are SUCCESS** (or the user has accepted non-blocking failures). Check: `gh pr checks "$pr"`.
-3. **No actionable written feedback** on the PR outside inline threads. GitHub has three surfaces beyond inline threads, and the waiter only fingerprints reviews/reactions/checks — check the others manually:
-   - **Latest review body** (`COMMENT` / `REQUEST_CHANGES` with a summary but no inline comments — typical human pattern):
+Inline review threads are only one feedback surface. On every pass inspect:
 
-     ```bash
-     gh pr view "$pr" --json latestReviews --jq \
-       '.latestReviews[] | {author: .author.login, state, body: (.body[0:400])}'
-     ```
+1. Open review threads from `fetch_open_threads.py`.
+2. Latest review bodies, including `COMMENT` and `REQUEST_CHANGES` summaries.
+3. Top-level conversation comments. Read all on the first pass; on later passes
+   still ensure no older actionable comment was missed.
+4. Reactions. Before treating 👍 as Codex's all-clear, query reaction authors
+   and confirm the review bot reacted after the latest push:
 
-   - **Top-level PR conversation comments** (the "Conversation" tab — neither a review nor an inline thread). On your **first** pass over a PR, read all of them — an older comment may still be unaddressed. On later passes, filter to those after your last fix commit. This is also where review bots post out-of-band notices — e.g. Codex posting "usage limits reached" means the PR was never reviewed and quiet is NOT all-clear:
+   ```bash
+   gh api graphql -f query='query($owner:String!,$repo:String!,$pr:Int!){repository(owner:$owner,name:$repo){pullRequest(number:$pr){reactions(first:20){nodes{content createdAt user{login}}}}}}' -F owner='{owner}' -F repo='{repo}' -F pr="$pr" --jq '.data.repository.pullRequest.reactions.nodes'
+   ```
 
-     ```bash
-     last_fix=$(git log -1 --format=%cI HEAD)
-     gh pr view "$pr" --json comments | jq --arg since "$last_fix" \
-       '.comments[] | select(.createdAt > $since) | {author: .author.login, body: (.body[0:400])}'
-     ```
+For the current head, report reviewer state as `reviewed-clean`, `reacted 👍`,
+or `not observed`. Silence and `quiet` are not approval.
 
-   - **Open review threads** — already covered by (1).
+A PR is a clean milestone only when:
 
-   For **Codex specifically**: when it has no findings it **reacts with 👍 on the PR instead of posting a review** — the waiter surfaces this as a `reaction` event. Reactions carry no author in `gh pr view`, so before treating one as the all-clear, confirm who reacted:
+- no actionable feedback remains and no user decision is pending;
+- CI is successful, or the user explicitly accepted a non-blocking failure;
+- `mergeable` is positively `MERGEABLE`, `mergeStateStatus` has no blocking
+  state, and `reviewDecision` has no blocking review. `UNKNOWN` is not clean.
 
-     ```bash
-     gh api graphql -f query='query($owner:String!,$repo:String!,$pr:Int!){repository(owner:$owner,name:$repo){pullRequest(number:$pr){reactions(first:20){nodes{content createdAt user{login}}}}}}' \
-       -F owner='{owner}' -F repo='{repo}' -F pr="$pr" --jq '.data.repository.pullRequest.reactions.nodes'
-     ```
+Being clean and mergeable is progress, not permission to merge and not a stop
+condition while the PR remains open. Report the milestone and re-arm.
 
-     The 👍 must be from the review bot and its `createdAt` must postdate your last push. A Codex review whose body is only the standard "Here are some automated review suggestions" boilerplate + the `Reviewed commit: ...` line, with zero inline threads, is also all-clear. For any other author, assume a body-only review or conversation comment is blocking unless you read it and confirm otherwise.
+If the repository has no CI checks, the empty check set satisfies the CI gate,
+but report `no checks configured` rather than claiming a successful check run.
 
-Stopping on `quiet` with green CI is legitimate even when the review bot never appeared (it may be rate-limited or down) — but the report must then say so explicitly. State the reviewer's status for the **current head**: reviewed-clean, reacted 👍, or **not observed** — never let silence read as approval.
+### 6. Continue until terminal
 
-Then stop the still-armed waiter with `TaskStop` (its task id is in the most recent Monitor response) and report.
+Keep the skill active using the host adapter. Stop only when:
 
-`real-fix-nonobvious` and `judgment-call` threads stay open by design — they block only on user decision, not on the skill looping. Report them and stop the waiter.
+- the PR is merged or closed;
+- a non-obvious fix, judgment call, infrastructure problem, merge conflict, or
+  other blocker requires user help;
+- the user explicitly asks to stop.
 
-If the same finding reappears after a reply, escalate — either the reply didn't land as useful context, or the finding deserves a real fix after all.
-
-### 6. Report
-
-Summarize to the user:
-
-- Findings triaged (counts by class)
-- Commits pushed
-- Threads still open (with reason — waiting on user decision)
-- CI status
-
-## Scope & safety
-
-- **Don't reply on someone else's PR** without authorization. Compare `gh pr view --json author --jq .author.login` with `gh api user --jq .login` — only proceed when they match.
-- **PRs must target this checkout's repo.** Before the first triage pass, check `gh pr view "$pr" --json isCrossRepository --jq .isCrossRepository` — if `true`, stop and tell the user: the scripts resolve the current repo and would query the wrong one.
-- **Draft PRs**: review bots don't review; skip.
-- **Never push to the PR's base branch.** Feature-branch PRs only — all fixes go to the PR's head branch.
-- **Custom review bots**: the waiter fires on review activity from any author. If the repo declares a custom bot in CLAUDE.md's triage notes, apply the same clean-signal reasoning to it as to Codex.
+When stopping, terminate the retained waiter as specified by the host adapter.
+Report findings by class, commits pushed, replies made, unresolved threads and
+why, CI, mergeability/review decision, and reviewer status for the current SHA.
 
 ## Related skills
 
-- `/dev-workflow:dev-review` — local review loop before pushing; shares the **Verify Before Fixing** discipline.
-- `/dev-workflow:dev-sync` — documentation alignment; the step that typically precedes creating a PR.
+- `dev-review` — local review before pushing; shares verify-before-fixing.
+- `dev-sync` — documentation alignment before creating or updating a PR.
