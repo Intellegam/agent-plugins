@@ -1,11 +1,14 @@
 {
   "name": "dev-workflow",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Language-agnostic development workflow with repository checks, multi-perspective review, documentation sync, and PR follow-through.",
   "author": {
     "name": "Intellegam",
-    "email": "burrichter@intellegam.com"
+    "email": "burrichter@intellegam.com",
+    "url": "https://intellegam.com"
   },
+  "homepage": "https://github.com/Intellegam/agent-plugins/tree/main/plugins/dev-workflow",
+  "repository": "https://github.com/Intellegam/agent-plugins",
   "license": "MIT",
   "keywords": ["workflow", "review", "checks", "quality", "process"],
   "skills": "./skills/",
@@ -16,6 +19,10 @@
     "developerName": "Intellegam",
     "category": "Engineering",
     "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/Intellegam/agent-plugins/tree/main/plugins/dev-workflow",
+    "brandColor": "#00CFE8",
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png",
     "defaultPrompt": [
       "Set up this repository for the dev workflow",
       "Run the complete dev workflow for my changes"
