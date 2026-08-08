@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import {
-  claudeReviewPrompt,
+  agentReviewPrompt,
   githubReviewPayload,
   type ReviewComment,
 } from "../src/review.ts";
@@ -30,18 +30,18 @@ const comments: ReviewComment[] = [
 ];
 
 describe("review exports", () => {
-  test("Claude prompt lists every comment with its source range", () => {
-    const prompt = claudeReviewPrompt(comments);
+  test("agent prompt lists every comment with its source range", () => {
+    const prompt = agentReviewPrompt(comments);
     expect(prompt).toContain("`src/auth.ts`, lines 42-47 (new)");
     expect(prompt).toContain("Validate the role");
     expect(prompt).toContain("`src/legacy.ts`, line 8 (old)");
     expect(prompt).toContain("Tighten this guard");
   });
 
-  test("Claude prompt names the concrete PR when a target is given, else falls back", () => {
+  test("agent prompt names the concrete PR when a target is given, else falls back", () => {
     const target = { owner: "acme", repo: "app", pullNumber: "12", commitId: "abc1234" };
-    expect(claudeReviewPrompt(comments, target)).toContain("comments on `acme/app#12`:");
-    expect(claudeReviewPrompt(comments)).toContain("comments on this pull request:");
+    expect(agentReviewPrompt(comments, target)).toContain("comments on `acme/app#12`:");
+    expect(agentReviewPrompt(comments)).toContain("comments on this pull request:");
   });
 
   test("GitHub payload uses current line/side fields for a multi-line review", () => {

@@ -144,8 +144,8 @@ async function bundle(tourPath: string, diffPath: string, prerendered: string, o
     const built = join(distDir, "index.html");
     if (!existsSync(built)) throw new Error("vite build did not produce dist/index.html");
     // Bundled highlighter grammars contain literal U+FFFD as a Unicode range endpoint
-    // (XML NameChar ends at �); the Claude-Artifact deploy rejects any literal
-    // U+FFFD. Re-escaping is semantically identical inside JS string/regex literals.
+    // (XML NameChar ends at �). Some static hosts reject the literal character; re-escaping
+    // is semantically identical inside JS string/regex literals.
     const html = readFileSync(built, "utf8").replaceAll("�", "\\uFFFD");
     writeFileSync(outPath, html);
   } finally {

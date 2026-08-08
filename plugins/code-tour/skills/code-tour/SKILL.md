@@ -7,9 +7,18 @@ description: Create a visual PR walkthrough — a "code tour". Use when the user
 
 Author a `tour.tsx` — a narrated, illustrated walkthrough of a pull request — where **you never write code**: every snippet is a reference into a raw `pr.diff`, resolved at build time. `bun run build` bundles it into one offline `tour.html`. The tour explains the PR to a reader with zero prior knowledge and doubles as a line-level review surface.
 
-**Prerequisites:** `bun` ≥ 1.x installed. Everything runs offline after the initial install.
+**Prerequisites:** `bun` ≥ 1.x, a writable workspace, and dependency access for the initial install. Everything runs offline after that install.
 
-Five steps: **export the diff → scaffold → author `tour.tsx` → build & fix → publish.**
+Five steps: **export the diff → scaffold → author `tour.tsx` → build & fix → deliver.**
+
+## Load the host adapter
+
+Resolve this skill's announced base directory, then read exactly one adapter completely before acting:
+
+- Claude Code: `references/claude-code.md`
+- OpenAI Codex or ChatGPT Work: `references/openai.md`
+
+The adapter defines how to locate the setup script and deliver or optionally publish the built tour. If the host cannot be identified or the adapter cannot be read, stop and report the problem rather than guessing.
 
 ## 1. Export the diff
 
@@ -26,7 +35,7 @@ Not inside the target repo, or the PR number is ambiguous (two repos can each ha
 Run the plugin's setup script. It copies the template, wires the build, and installs deps:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/skills/code-tour/scripts/setup.sh" <workDir> --diff pr.diff
+"<skill-base>/scripts/setup.sh" <workDir> --diff pr.diff
 #   or let it run git for you:   … <workDir> --base <ref> --head <ref>
 ```
 
@@ -46,7 +55,7 @@ Only a few things are non-negotiable — treat everything after this as a *tip t
 
 - **Code from the PR appears only through `<Diff>` references into `pr.diff`.** A reference that doesn't resolve fails the build, so hallucinated code is structurally impossible. Authoring the tour's *own* presentation — JSX, SVG, CSS, small components — is expected and encouraged; that isn't "writing the PR's code".
 - **Every changed line ends up shown somewhere.** The tour is also a review surface, so nothing silently vanishes — but *how much depth* each line gets is entirely yours to allocate.
-- **For a real PR, set `pr`, `repo` ("owner/name") and `headSha` on `<Tour>`.** That's what lets the reader post their review to GitHub (the GitHub-export block shows only when all three are set; the Claude-prompt export always shows).
+- **For a real PR, set `pr`, `repo` ("owner/name") and `headSha` on `<Tour>`.** That's what lets the reader post their review to GitHub (the GitHub-export block shows only when all three are set; the agent-prompt export always shows).
 - Two authoring gotchas the build can't catch — JSX escaping and Mermaid label quoting — are in *Components* below; they just break the render.
 
 ### Tips to reach the goal
@@ -116,19 +125,19 @@ Once it exits 0, **open the built file and look at it before publishing** — `o
 
 Then run the editorial check the build can't: **skim only the headings, prose, and diagrams — without opening a single code block — and confirm the whole PR is understandable that way, and that every section advances the one thesis.** If a section only makes sense once you read its diff, the explanation above it is missing.
 
-## 5. Publish
+## 5. Deliver
 
-Publish the built `tour.html` as a Claude Artifact with the **Artifact** tool: `file_path` = the built `tour.html`, `description` = one sentence on which PR the tour walks through, and a stable `favicon` (keep it identical across rebuilds so the reader's tab keeps its icon; the page title is derived from the `<Tour title>`). The page is pre-designed by `tour-viewer` — you're publishing a built artifact, not authoring a page, so the `artifact-design` skill does not apply here; publish `tour.html` as-is. Return the artifact link to the user. Also mention they can open it locally — `open <workDir>/tour.html` — since it works offline by double-click.
+Follow the loaded host adapter. Building `tour.html` completes a request to create a code tour; publishing, hosting, or posting it externally is a separate action that requires explicit user authorization. Always return the built file or its path and mention that it opens locally by double-click.
 
-**Offer to post the tour link on the PR.** The tour is most useful linked from the PR itself — but confirm first rather than doing it automatically: a published artifact stays private until the user shares it (an unshared link is dead for anyone else), and posting to a PR is outward-facing. On their go-ahead, post or update a single PR comment:
+When the user explicitly authorizes publishing, use only the host adapter's supported route. Do not substitute an in-chat visualization for the full review surface. After publishing, offer to post the shareable link on the PR, but confirm before doing so because a private or workspace-only URL may not work for every reviewer and a PR comment is outward-facing. On their go-ahead, post or update a single PR comment:
 
 ```bash
 gh pr comment <N> --repo owner/name --edit-last --create-if-none \
-  --body "📖 **[Code tour](<artifact-url>)** — visual walkthrough of this PR."
+  --body "📖 **[Code tour](<tour-url>)** — visual walkthrough of this PR."
 ```
 
 Then tell the user what the page does beyond reading — it is a review surface:
 
 - Select a line, or drag across a line range, to leave a comment. Comments persist locally, keyed to this exact `pr.diff`.
 - Each diff has a "Viewed" checkbox (checking folds the diff away, GitHub-style); a small counter at the bottom of the nav tracks how many diffs are viewed. Viewed state persists locally too.
-- When they're done, the page generates a Claude-ready review prompt **and** — when the tour set `repo`, `pr`, and `headSha` — a single `gh api` command that posts all comments as one GitHub review, built straight from those props (a stale SHA will be rejected by GitHub). If any of the three is missing, only the Claude prompt is offered.
+- When they're done, the page generates an agent-ready review prompt **and** — when the tour set `repo`, `pr`, and `headSha` — a single `gh api` command that posts all comments as one GitHub review, built straight from those props (a stale SHA will be rejected by GitHub). If any of the three is missing, only the agent prompt is offered.

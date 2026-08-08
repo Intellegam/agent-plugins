@@ -7,11 +7,12 @@ bundles everything into a single self-contained `tour.html` that works offline b
 
 ## Authoring a tour
 
-The [`code-tour` skill](skills/code-tour/SKILL.md) is the front door: it drives the whole flow —
-export the PR diff, scaffold a workspace, author `tour.tsx`, build, publish the result as a
-Claude Artifact, and (on request) post the link back to the PR. Invoke it via the Skill tool (`code-tour`), or ask Claude to "create a code tour
-for PR N". The `setup.sh` → edit `tour.tsx` → `bun run build` commands below are that same flow run
-by hand.
+The [`code-tour` skill](skills/code-tour/SKILL.md) is the front door: it drives the shared flow —
+export the PR diff, scaffold a workspace, author `tour.tsx`, build, and deliver the offline file.
+Host adapters define optional publishing for Claude Code and OpenAI Codex/ChatGPT Work; publishing
+and posting a link to the PR require explicit authorization. Invoke it directly or ask the agent to
+"create a code tour for PR N". The `setup.sh` → edit `tour.tsx` → `bun run build` commands below
+are that same flow run by hand.
 
 ## The contract
 
@@ -35,7 +36,8 @@ Import from `tour-viewer`:
 | `<Graph source="…mermaid…" />` | A Mermaid diagram (bundled, rendered client-side; no CDN). |
 
 `file` is the path exactly as it appears in `pr.diff` (the new path; the old path for deleted
-files). Reference everything relevant; if you deliberately skip some changes, say so in prose.
+files). Every changed line must appear in a `<Diff>`; give low-signal changes minimal prose and
+ship their diff collapsed rather than omitting them.
 
 ### The one check
 
@@ -60,7 +62,7 @@ the product layer around it:
 - user comments created by clicking or dragging line numbers,
 - compact inline comment threads directly beneath their anchored source line,
 - local persistence keyed by the exact `pr.diff`,
-- a final Claude prompt plus one `gh api` command that creates a bundled GitHub review, and
+- a final agent prompt plus one `gh api` command that creates a bundled GitHub review, and
 - a victory easter egg: copying either export fills the screen with a FromSoftware "VICTORY"
   screen and plays the fanfare until you click to dismiss (assets in
   `src/components/assets/`, inlined into `tour.html` like everything else).

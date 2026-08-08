@@ -1,0 +1,29 @@
+{
+  "name": "code-tour",
+  "version": "0.3.0",
+  "description": "Agent-generated visual PR walkthroughs: an authored narrative whose every code snippet is a grounded reference into the real diff, built into a single offline tour.html with a line-level review surface.",
+  "author": {
+    "name": "Intellegam",
+    "email": "burrichter@intellegam.com",
+    "url": "https://intellegam.com"
+  },
+  "homepage": "https://github.com/Intellegam/agent-plugins/tree/main/plugins/code-tour",
+  "repository": "https://github.com/Intellegam/agent-plugins",
+  "license": "MIT",
+  "keywords": ["code-tour", "pr", "walkthrough", "review", "diff"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Code Tour",
+    "shortDescription": "Build grounded visual PR walkthroughs",
+    "longDescription": "Turns a pull request diff into a narrated, semantically grouped, offline HTML walkthrough with source-true diffs and a line-level review surface.",
+    "developerName": "Intellegam",
+    "category": "Engineering",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/Intellegam/agent-plugins/tree/main/plugins/code-tour",
+    "brandColor": "#7C3AED",
+    "defaultPrompt": [
+      "Create a code tour for this pull request",
+      "Explain this PR as a visual walkthrough"
+    ]
+  }
+}

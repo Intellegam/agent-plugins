@@ -71,8 +71,8 @@ describe("build", () => {
     // Self-contained: no external script/style/link references.
     expect(html).not.toContain("<link ");
     expect(html).not.toContain("src=\"http");
-    // The Claude-Artifact deploy rejects any literal U+FFFD; the build re-escapes it, so none
-    // must survive into the published HTML (bundled highlighter grammars contain it as a range).
+    // Some static hosts reject literal U+FFFD; the build re-escapes it, so none must survive
+    // into the published HTML (bundled highlighter grammars contain it as a range).
     expect(html).not.toContain("�");
     // The victory easter egg's image + sound must be inlined as data: URIs, not emitted as
     // separate files — otherwise the "single offline file" guarantee silently breaks.
