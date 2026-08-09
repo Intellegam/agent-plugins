@@ -25,7 +25,8 @@
     "logo": "./assets/logo.png",
     "defaultPrompt": [
       "Create a code tour for this pull request",
-      "Explain this PR as a visual walkthrough"
+      "Turn my current branch into a narrated visual review",
+      "Group this diff into semantic sections and explain each one"
     ]
   }
 }
