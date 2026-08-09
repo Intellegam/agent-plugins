@@ -10,5 +10,5 @@ export { Annotation, type AnnotationProps } from "./Annotation.tsx";
 export { Graph, type GraphProps } from "./Graph.tsx";
 export { FileTree, type FileTreeProps } from "./FileTree.tsx";
 export { DiffContext } from "./context.ts";
-export { resetFailures, getFailures, recordFailure } from "../failures.ts";
+export { consumeValidation, recordCoverage, recordFailure, resetFailures } from "../failures.ts";
 export type { Side, LineRange } from "../diff.ts";

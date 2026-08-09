@@ -23,7 +23,7 @@ export interface GitHubReviewTarget {
   commitId: string;
 }
 
-export function claudeReviewPrompt(comments: ReviewComment[], target?: GitHubReviewTarget): string {
+export function agentReviewPrompt(comments: ReviewComment[], target?: GitHubReviewTarget): string {
   if (comments.length === 0) return "No review comments.";
 
   const pr =

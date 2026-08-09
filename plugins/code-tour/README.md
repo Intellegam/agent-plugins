@@ -7,11 +7,12 @@ bundles everything into a single self-contained `tour.html` that works offline b
 
 ## Authoring a tour
 
-The [`code-tour` skill](skills/code-tour/SKILL.md) is the front door: it drives the whole flow —
-export the PR diff, scaffold a workspace, author `tour.tsx`, build, publish the result as a
-Claude Artifact, and (on request) post the link back to the PR. Invoke it via the Skill tool (`code-tour`), or ask Claude to "create a code tour
-for PR N". The `setup.sh` → edit `tour.tsx` → `bun run build` commands below are that same flow run
-by hand.
+The [`code-tour` skill](skills/code-tour/SKILL.md) is the front door: it drives the shared flow —
+export the PR diff, scaffold a workspace, author `tour.tsx`, build, and deliver the offline file.
+Host adapters define optional publishing for Claude Code and OpenAI Codex/ChatGPT Work; publishing
+and posting a link to the PR require explicit authorization. Invoke it directly or ask the agent to
+"create a code tour for PR N". The `setup.sh` → edit `tour.tsx` → `bun run build` commands below
+are that same flow run by hand.
 
 ## The contract
 
@@ -35,14 +36,22 @@ Import from `tour-viewer`:
 | `<Graph source="…mermaid…" />` | A Mermaid diagram (bundled, rendered client-side; no CDN). |
 
 `file` is the path exactly as it appears in `pr.diff` (the new path; the old path for deleted
-files). Reference everything relevant; if you deliberately skip some changes, say so in prose.
+files). Every changed line must appear in a `<Diff>`; give low-signal changes minimal prose and
+ship their diff collapsed rather than omitting them.
 
-### The one check
+### Build-time validation
 
-There is no coverage gate. The only build-time check is that **every `<Diff>` reference
-resolves**: an unknown file, an out-of-range hunk, or a line slice that doesn't fit inside a
-single hunk fails the build with a readable message. A broken reference also renders a visible
-error box in the page.
+The build enforces both halves of the grounding contract:
+
+- **`pr.diff` is structurally valid.** Git's non-applying parser rejects empty, malformed, or
+  truncated patch input before the tour is rendered.
+- **Every `<Diff>` reference resolves.** An unknown file, an out-of-range hunk, or a line slice
+  that doesn't fit inside a single hunk fails with a readable message. A broken reference also
+  renders a visible error box in the page.
+- **Every inserted and deleted line is covered.** After server rendering, the build compares the
+  side-qualified changed rows shown by all resolved whole-hunk and line-slice references with the
+  complete parsed `pr.diff`. Missing file/side/line ranges fail the build before bundling, and a
+  failed rebuild removes any stale `tour.html`.
 
 `pr.diff` is parsed with react-diff-view's `parseDiff`. A slice selects the rows of one hunk
 whose `{side}` line numbers fall in `[start, end]`, plus opposite-side rows strictly between
@@ -60,7 +69,7 @@ the product layer around it:
 - user comments created by clicking or dragging line numbers,
 - compact inline comment threads directly beneath their anchored source line,
 - local persistence keyed by the exact `pr.diff`,
-- a final Claude prompt plus one `gh api` command that creates a bundled GitHub review, and
+- a final agent prompt plus one `gh api` command that creates a bundled GitHub review, and
 - a victory easter egg: copying either export fills the screen with a FromSoftware "VICTORY"
   screen and plays the fanfare until you click to dismiss (assets in
   `src/components/assets/`, inlined into `tour.html` like everything else).
@@ -82,10 +91,11 @@ against the pinned version instead of copying its renderer into this package.
 
 `tools/tour-viewer/scripts/build.ts` operates on a workspace containing `tour.tsx` + `pr.diff`:
 
-1. **Render** — the tour is rendered once with `react-dom/server`. This does double duty: any
-   unresolved `<Diff>` reference is recorded (the build prints the list and exits 1), and the
-   same markup is embedded so the page reads offline before JS runs. SSR is DOM-free (mermaid
-   only touches the DOM in a browser `useEffect`).
+1. **Validate and render** — Git first parses `pr.diff` without applying it, then the tour is
+   rendered once with `react-dom/server`. Unresolved `<Diff>` references and uncovered changed
+   lines are recorded (the build prints the list and exits 1), and the same markup is embedded so
+   the page reads offline before JS runs. SSR is DOM-free (mermaid only touches the DOM in a
+   browser `useEffect`).
 2. **Single-file build** — `vite` + `vite-plugin-singlefile` bundle the tour, its components
    and the embedded `pr.diff` into one offline `tour.html` (all JS/CSS inline, no requests).
 
@@ -96,15 +106,18 @@ against the pinned version instead of copying its renderer into this package.
 bun install
 bun test                              # slice semantics + e2e build
 
-# scaffold a workspace (copies the template, wires the build, installs deps)
+# scaffold a workspace (copies the template, wires the build, installs deps with a local tempdir)
 skills/code-tour/scripts/setup.sh <targetDir> --diff path/to/pr.diff
 #   or: … --base <ref> --head <ref>   (runs git diff for you)
 
-# build a tour (single-file tour.html; fails on broken diff refs)
+# build a tour (single-file tour.html; fails on broken refs or incomplete coverage)
 cd <targetDir> && bun run build
 
 # print a hunk/line-number map of pr.diff (for lines={{}} slices + annotation targets)
 cd <targetDir> && bun run map
+
+# serve the built file unchanged on loopback for browser-based visual QA
+cd <targetDir> && bun run preview
 ```
 
 ## Layout
@@ -115,10 +128,11 @@ plugins/code-tour/
 └── tools/tour-viewer/
     ├── src/components/                  # Tour, Section, Diff, Annotation, Graph
     ├── src/diff.ts                      # parse + slice + reference resolution
-    ├── src/failures.ts                  # broken-reference sink for the build
+    ├── src/failures.ts                  # reference + changed-line validation sink
     ├── template/tour.tsx                # skeleton the setup script copies
     ├── scripts/build.ts                 # render check + single-file build
     ├── scripts/setup.ts                 # scaffolds a tour workspace
     ├── scripts/map.ts                   # hunk/line-number map of pr.diff (authoring aid)
+    ├── scripts/preview.ts               # byte-preserving loopback server for visual QA
     └── tests/                           # bun test
 ```

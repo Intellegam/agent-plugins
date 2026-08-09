@@ -48,7 +48,7 @@
  *
  * Set `pr`, `repo`, and `headSha` on <Tour> whenever the tour is for a real PR: the reader's
  * GitHub review export is then built straight from them. The GitHub-export block appears only
- * when all three are set; otherwise only the Claude-prompt export shows.
+ * when all three are set; otherwise only the agent-prompt export shows.
  *
  * Components (see the code-tour plugin README for the full contract):
  *   <Section id="slug" title="…">        a navigable section (id is a unique slug)
@@ -85,9 +85,10 @@ export default function TourPage() {
       <Section id="overview" title="What this PR does">
         <p>
           Summarize the change in a sentence or two. Use free JSX — paragraphs, lists,
-          <code>inline code</code>, and diagrams — to tell the story. Note in prose anything
-          you deliberately don't walk through. When the PR has related context — a Linear issue,
-          a doc, the tracking project — link those here (verified URLs only).
+          <code>inline code</code>, and diagrams — to tell the story. When the PR has related
+          context — a Linear issue, a doc, the tracking project — link those here (verified URLs
+          only). Every changed line must appear in a Diff; give low-signal changes minimal prose
+          and ship them collapsed.
         </p>
 
         <Graph source="flowchart TD; A[Request] --> B[Handler] --> C[Store]" />

@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "bun run scripts/build.ts",
+    "preview": "bun run scripts/preview.ts",
     "setup": "bun run scripts/setup.ts"
   },
   "dependencies": {

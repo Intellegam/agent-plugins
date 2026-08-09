@@ -17,9 +17,10 @@ function Phase({ n, title, children }: { n: number; title: string; children: Rea
   );
 }
 
-<Phase n={1} title="render">once, server-side — collect every broken reference</Phase>
-<Phase n={2} title="gate">any broken ref → print them, exit 1, no HTML written</Phase>
-<Phase n={3} title="bundle">vite inlines everything into one offline tour.html</Phase>
+<Phase n={1} title="patch gate">Git validates the raw diff without applying it</Phase>
+<Phase n={2} title="render">once, server-side — collect broken refs and changed-line coverage</Phase>
+<Phase n={3} title="coverage gate">any broken ref or uncovered change → exit 1, no HTML</Phase>
+<Phase n={4} title="bundle">vite inlines everything into one offline tour.html</Phase>
 ```
 
 **The envelope** — the build renders `tour.tsx` once server-side, then hydrates it into one offline single-file HTML. So:

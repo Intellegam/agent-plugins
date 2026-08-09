@@ -44,14 +44,14 @@ Repos declare commands, situational checks, standards docs, and repo-specific re
 
 ### code-tour
 
-Agent-generated visual PR walkthroughs. An agent authors a `tour.tsx` — free JSX for narrative and diagrams — but **never writes code**: every snippet is a reference into a raw `pr.diff`, resolved at build time, so hallucinated diff content is structurally impossible. `bun run build` bundles everything into a single offline `tour.html` that also serves as a line-level review surface.
+Cross-host agent-generated visual PR walkthroughs. An agent authors a `tour.tsx` — free JSX for narrative and diagrams — but **never writes code**: every snippet is a reference into a raw `pr.diff`, resolved at build time, so hallucinated diff content is structurally impossible. `bun run build` bundles everything into a single offline `tour.html` that also serves as a line-level review surface.
 
 **Includes:**
 
-- `code-tour` skill — drives the flow: export the diff, scaffold a workspace, author `tour.tsx`, build, publish the tour as a Claude Artifact, and (on request) post the link back to the PR
-- `tour-viewer` — the reference components (`Tour`, `Section`, `Diff`, `Annotation`, `Graph`), diff parsing/slicing, the `@pierre/diffs` render + review layer (line/range comments, local persistence, Claude-prompt and `gh api` review export), and the single-file build pipeline
+- `code-tour` skill — drives the shared flow: export the diff, scaffold a workspace, author `tour.tsx`, build, deliver the offline file, and optionally use the host's explicitly authorized publishing route
+- `tour-viewer` — the reference components (`Tour`, `Section`, `Diff`, `Annotation`, `Graph`), diff parsing/slicing, the `@pierre/diffs` render + review layer (line/range comments, local persistence, agent-prompt and `gh api` review export), and the single-file build pipeline
 
-Ask Claude to "create a code tour for PR N", or invoke the `code-tour` skill directly.
+Ask Claude Code, Codex, or ChatGPT Work to "create a code tour for PR N", or invoke the `code-tour` skill directly.
 
 ## Claude Code installation
 
@@ -83,7 +83,7 @@ The repo doubles as a Codex plugin marketplace (`.agents/plugins/marketplace.jso
 codex plugin marketplace add Intellegam/agent-plugins
 ```
 
-Then install `claude-code` and `dev-workflow` from the `/plugins` browser in the Codex CLI. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, and `$dev-workflow:babysit-pr`.
+Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, and `$dev-workflow:babysit-pr`; code tours use `$code-tour:code-tour`.
 
 Manual fallback without the plugin system: add the MCP server directly to `~/.codex/config.toml` — snippet in the [claude-code-mcp README](https://github.com/Intellegam/claude-code-mcp#installation).
 

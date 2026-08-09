@@ -22,7 +22,7 @@ import {
 } from "react";
 import { parse, countFiles, type ChangeCount } from "../diff.ts";
 import {
-  claudeReviewPrompt,
+  agentReviewPrompt,
   githubReviewCommand,
   type GitHubReviewTarget,
   type ReviewComment,
@@ -193,8 +193,8 @@ export function Tour({ title, meta, repo, pr, headSha, children }: TourProps) {
   );
 }
 
-// All artifacts share the claude.ai origin, so this width key is shared across every tour;
-// double-clicking a resize handle clears it back to the CSS default.
+// Tours on the same browser origin share this width preference; double-clicking a resize
+// handle clears it back to the CSS default.
 const TOUR_WIDTH_KEY = "code-tour:width";
 const MIN_TOUR_WIDTH = 640;
 
@@ -280,14 +280,14 @@ function useTourWidth() {
 
 function ReviewExport({ repo, pr, headSha }: { repo?: string; pr?: string; headSha?: string }) {
   const review = useContext(ReviewContext);
-  const [copied, setCopied] = useState<"claude" | "github" | null>(null);
+  const [copied, setCopied] = useState<"agent" | "github" | null>(null);
   const [victory, setVictory] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   if (!review || review.comments.length === 0) return null;
 
   // The target is fixed from the tour's own props (the author sets repo/pr/headSha); the
   // fields used to be editable. Without a full target there is nothing to post a GitHub review
-  // against, so only the Claude-prompt export shows.
+  // against, so only the agent-prompt export shows.
   const [owner, repoName] = splitRepo(repo);
   const target: GitHubReviewTarget = {
     owner,
@@ -298,9 +298,9 @@ function ReviewExport({ repo, pr, headSha }: { repo?: string; pr?: string; headS
   const showGitHub = Boolean(target.owner && target.repo && target.pullNumber && target.commitId);
 
   const count = review.comments.length;
-  const claude = claudeReviewPrompt(review.comments, target);
+  const agent = agentReviewPrompt(review.comments, target);
   const command = githubReviewCommand(review.comments, target);
-  const copy = async (kind: "claude" | "github", value: string) => {
+  const copy = async (kind: "agent" | "github", value: string) => {
     await copyText(value);
     setCopied(kind);
     window.setTimeout(() => setCopied(null), 1200);
@@ -342,12 +342,12 @@ function ReviewExport({ repo, pr, headSha }: { repo?: string; pr?: string; headS
 
       <div className="tour-review-output">
         <div className="tour-review-output-title">
-          <strong>Claude prompt</strong>
-          <button type="button" onClick={() => copy("claude", claude)}>
-            {copied === "claude" ? "Copied" : "Copy"}
+          <strong>Agent prompt</strong>
+          <button type="button" onClick={() => copy("agent", agent)}>
+            {copied === "agent" ? "Copied" : "Copy"}
           </button>
         </div>
-        <pre>{claude}</pre>
+        <pre>{agent}</pre>
       </div>
 
       {showGitHub ? (

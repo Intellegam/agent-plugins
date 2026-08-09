@@ -4,20 +4,26 @@
  *
  *   bun run build.ts [workspaceDir] [--tour PATH] [--diff PATH] [--out PATH]
  *
- * Renders the tour once with `react-dom/server`. This does double duty: any `<Diff>` whose
- * reference can't be resolved records a failure, and the same markup is embedded into the
- * page so it reads offline before JS runs. If any reference failed, the failures are printed
- * and the build exits 1. Otherwise vite + vite-plugin-singlefile bundle the tour, its
- * components and the embedded `pr.diff` into one self-contained `tour.html`.
+ * Renders the tour once with `react-dom/server`. This validates that every `<Diff>` resolves
+ * and that their union shows every inserted/deleted line in `pr.diff`; the same markup is
+ * embedded so the page reads offline before JS runs. Validation failures exit 1 before Vite +
+ * vite-plugin-singlefile bundle the self-contained `tour.html`.
  */
 
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
-import { TourProvider, getFailures, resetFailures } from "tour-viewer";
+import { TourProvider, consumeValidation, resetFailures } from "tour-viewer";
+import {
+  changedLineKey,
+  changedLinesInFiles,
+  parse,
+  type ChangedLine,
+} from "../src/diff.ts";
 
 interface Args {
   tour: string;
@@ -45,7 +51,10 @@ function parseArgs(argv: string[]): Args {
 }
 
 /** Render the tour once: collect broken-reference failures and return the SSR markup. */
-async function render(tourPath: string, diffText: string): Promise<{ failures: string[]; html: string }> {
+async function render(
+  tourPath: string,
+  diffText: string,
+): Promise<{ failures: string[]; covered: Set<string>; html: string }> {
   const mod = await import(pathToFileURL(tourPath).href);
   const TourPage = mod.default;
   if (typeof TourPage !== "function") {
@@ -55,7 +64,64 @@ async function render(tourPath: string, diffText: string): Promise<{ failures: s
   const html = renderToString(
     createElement(TourProvider, { diff: diffText }, createElement(TourPage)),
   );
-  return { failures: getFailures(), html };
+  return { ...consumeValidation(), html };
+}
+
+function formatMissingCoverage(lines: ChangedLine[]): string[] {
+  const groups = new Map<string, { file: string; side: ChangedLine["side"]; lines: number[] }>();
+  for (const line of lines) {
+    const key = `${line.file}\0${line.side}`;
+    const group = groups.get(key) ?? { file: line.file, side: line.side, lines: [] };
+    group.lines.push(line.line);
+    groups.set(key, group);
+  }
+
+  return [...groups.values()].map(({ file, side, lines: raw }) => {
+    const lines = [...new Set(raw)].sort((a, b) => a - b);
+    const ranges: string[] = [];
+    let start = lines[0];
+    let end = start;
+    for (const line of lines.slice(1)) {
+      if (line === end + 1) end = line;
+      else {
+        ranges.push(start === end ? `${start}` : `${start}-${end}`);
+        start = end = line;
+      }
+    }
+    ranges.push(start === end ? `${start}` : `${start}-${end}`);
+    return `${file}: ${side} line${lines.length === 1 ? "" : "s"} ${ranges.join(", ")}`;
+  });
+}
+
+function sameFile(a: string, b: string): boolean {
+  if (a === b) return true;
+  try {
+    const left = statSync(a);
+    const right = statSync(b);
+    return left.dev === right.dev && left.ino === right.ino;
+  } catch {
+    return false;
+  }
+}
+
+function gitPatchError(diffText: string): string | null {
+  try {
+    execFileSync("git", ["apply", "--numstat"], {
+      input: diffText,
+      encoding: "utf8",
+      stdio: ["pipe", "ignore", "pipe"],
+      maxBuffer: 256 * 1024 * 1024,
+    });
+    return null;
+  } catch (error) {
+    const detail =
+      error && typeof error === "object" && "stderr" in error
+        ? String(error.stderr).trim()
+        : error instanceof Error
+          ? error.message
+          : String(error);
+    return detail || "git could not parse the patch";
+  }
 }
 
 /** Bundle the (pre-rendered) tour into a single self-contained tour.html. */
@@ -144,8 +210,8 @@ async function bundle(tourPath: string, diffPath: string, prerendered: string, o
     const built = join(distDir, "index.html");
     if (!existsSync(built)) throw new Error("vite build did not produce dist/index.html");
     // Bundled highlighter grammars contain literal U+FFFD as a Unicode range endpoint
-    // (XML NameChar ends at �); the Claude-Artifact deploy rejects any literal
-    // U+FFFD. Re-escaping is semantically identical inside JS string/regex literals.
+    // (XML NameChar ends at �). Some static hosts reject the literal character; re-escaping
+    // is semantically identical inside JS string/regex literals.
     const html = readFileSync(built, "utf8").replaceAll("�", "\\uFFFD");
     writeFileSync(outPath, html);
   } finally {
@@ -163,11 +229,30 @@ function titleFrom(prerendered: string): string {
 async function main(): Promise<number> {
   const args = parseArgs(process.argv.slice(2));
 
+  if (sameFile(args.out, args.tour) || sameFile(args.out, args.diff)) {
+    return err("output must be different from tour.tsx and pr.diff");
+  }
+
+  // A failed rebuild must not leave an older artifact that still looks deliverable.
+  rmSync(args.out, { force: true });
+
   if (!existsSync(args.tour)) return err(`tour not found: ${args.tour}`);
   if (!existsSync(args.diff)) return err(`diff not found: ${args.diff}`);
 
   const diffText = readFileSync(args.diff, "utf8");
-  const { failures, html } = await render(args.tour, diffText);
+  if (diffText.trim().length === 0) return err(`diff is empty: ${args.diff}`);
+  const patchError = gitPatchError(diffText);
+  if (patchError) return err(`diff is not a valid git patch: ${patchError}`);
+  let files;
+  try {
+    files = parse(diffText);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return err(`diff could not be parsed: ${message}`);
+  }
+  if (files.length === 0) return err(`diff does not contain a parseable git patch: ${args.diff}`);
+
+  const { failures, covered, html } = await render(args.tour, diffText);
 
   if (failures.length > 0) {
     console.error(`build FAILED: ${failures.length} broken reference(s). tour.html not built.\n`);
@@ -175,9 +260,22 @@ async function main(): Promise<number> {
     return 1;
   }
 
+  const missing = changedLinesInFiles(files).filter(
+    (line) => !covered.has(changedLineKey(line)),
+  );
+  if (missing.length > 0) {
+    console.error(
+      `build FAILED: ${missing.length} changed line(s) are not shown by any <Diff>. tour.html not built.\n`,
+    );
+    for (const group of formatMissingCoverage(missing)) console.error(`  - ${group}`);
+    return 1;
+  }
+
   await bundle(args.tour, args.diff, html, args.out);
   const resolved = (html.match(/data-tour-diff=/g) ?? []).length;
-  console.error(`${resolved} diff reference(s) resolved, 0 broken — wrote ${args.out}`);
+  console.error(
+    `${resolved} diff reference(s) resolved, 0 broken, complete changed-line coverage — wrote ${args.out}`,
+  );
   return 0;
 }
 
