@@ -26,6 +26,33 @@ export interface ChangeCount {
   removed: number;
 }
 
+export interface ChangedLine {
+  file: string;
+  side: Side;
+  line: number;
+}
+
+/** Stable identity for one changed row. Git paths cannot contain NUL, so this is unambiguous. */
+export function changedLineKey({ file, side, line }: ChangedLine): string {
+  return `${file}\0${side}\0${line}`;
+}
+
+/** Inserted/deleted rows shown by a resolved whole or sliced hunk. Context never counts. */
+export function changedLines(file: FileData, hunk: HunkData): ChangedLine[] {
+  const path = pathOf(file);
+  const lines: ChangedLine[] = [];
+  for (const change of hunk.changes) {
+    if (change.type === "insert") lines.push({ file: path, side: "new", line: change.lineNumber });
+    else if (change.type === "delete") lines.push({ file: path, side: "old", line: change.lineNumber });
+  }
+  return lines;
+}
+
+/** Every changed row in the source diff, with old/new rows kept distinct. */
+export function changedLinesInFiles(files: FileData[]): ChangedLine[] {
+  return files.flatMap((file) => file.hunks.flatMap((hunk) => changedLines(file, hunk)));
+}
+
 /** Changed lines in one hunk: added + removed rows (context/`normal` rows don't count). */
 export function countHunk(hunk: HunkData): ChangeCount {
   let added = 0;

@@ -1,7 +1,14 @@
 /** Slice helper + reference resolution — the rendering semantics the tour depends on. */
 
 import { describe, expect, test } from "bun:test";
-import { countFiles, countHunk, parse, resolveRef } from "../src/diff.ts";
+import {
+  changedLineKey,
+  changedLines,
+  countFiles,
+  countHunk,
+  parse,
+  resolveRef,
+} from "../src/diff.ts";
 
 // app.py hunk 1: [normal, del old2, add new2, normal] — a delete interleaved with the new-side
 // rows. hunk 2: [del old10, add new10, del old11] — an insert between two deletes.
@@ -67,5 +74,12 @@ describe("countHunk / countFiles", () => {
 
   test("the whole diff sums every hunk of every file", () => {
     expect(countFiles(files)).toEqual({ added: 2, removed: 3 });
+  });
+
+  test("coverage identities keep old and new rows with the same line number distinct", () => {
+    const keys = changedLines(files[0], files[0].hunks[1]).map(changedLineKey);
+    expect(keys).toContain(["app.py", "old", "10"].join("\0"));
+    expect(keys).toContain(["app.py", "new", "10"].join("\0"));
+    expect(new Set(keys).size).toBe(3);
   });
 });

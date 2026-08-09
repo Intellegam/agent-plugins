@@ -7,7 +7,7 @@ description: Create a visual PR walkthrough — a "code tour". Use when the user
 
 Author a `tour.tsx` — a narrated, illustrated walkthrough of a pull request — where **you never write code**: every snippet is a reference into a raw `pr.diff`, resolved at build time. `bun run build` bundles it into one offline `tour.html`. The tour explains the PR to a reader with zero prior knowledge and doubles as a line-level review surface.
 
-**Prerequisites:** `bun` ≥ 1.x, a writable workspace, and dependency access for the initial install. Everything runs offline after that install.
+**Prerequisites:** `bun` ≥ 1.x, `git`, a writable workspace, and dependency access for the initial install. Everything runs offline after that install.
 
 Five steps: **export the diff → scaffold → author `tour.tsx` → build & fix → deliver.**
 
@@ -119,9 +119,9 @@ Two authoring gotchas the build can't all catch for you:
 cd <workDir> && bun run build
 ```
 
-The build renders the tour once to validate every `<Diff>` reference and every `<Annotation>` target (an annotation on a line the shown hunk doesn't contain fails the build too), then bundles a single offline `tour.html`. On error it lists the offending refs and exits non-zero — fix them (or the surrounding tour) and rebuild until it exits 0.
+The build first asks Git to validate the raw patch structure, then renders the tour once to validate every `<Diff>` reference, every `<Annotation>` target, and complete changed-line coverage. An annotation on a line the shown hunk doesn't contain fails; so does any inserted or deleted line from `pr.diff` that no `<Diff>` shows. On error it lists the patch error, broken references, or uncovered file/side/line ranges and exits non-zero — fix them (or the surrounding tour) and rebuild until it exits 0.
 
-Once it exits 0, **open the built file and look at it before publishing** — `open <workDir>/tour.html` (offline, by double-click). The build only proves references resolve; eyeball that graphs render, annotations sit on the intended lines, and the layout holds.
+Once it exits 0, follow the loaded host adapter's visual-QA procedure before publishing. Do not assume a macOS opener or claim visual verification merely because a GUI command launched. Inspect that graphs render rather than showing Mermaid source, annotations sit on the intended lines, wide and narrow layouts hold, and no runtime-error panel appears. If the host exposes no browser or vision surface, say explicitly that visual QA was not performed and ask the user to open the local file; the structural build may still pass, but that is not visual verification.
 
 Then run the editorial check the build can't: **skim only the headings, prose, and diagrams — without opening a single code block — and confirm the whole PR is understandable that way, and that every section advances the one thesis.** If a section only makes sense once you read its diff, the explanation above it is missing.
 

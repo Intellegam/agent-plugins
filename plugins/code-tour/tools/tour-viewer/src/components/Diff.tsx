@@ -20,9 +20,18 @@ import {
   type SelectedLineRange,
 } from "@pierre/diffs/react";
 
-import { changeAt, countHunk, patchFor, resolveRef, type LineRange, type Side } from "../diff.ts";
+import {
+  changedLineKey,
+  changedLines,
+  changeAt,
+  countHunk,
+  patchFor,
+  resolveRef,
+  type LineRange,
+  type Side,
+} from "../diff.ts";
 import type { ReviewComment } from "../review.ts";
-import { recordFailure } from "../failures.ts";
+import { recordCoverage, recordFailure } from "../failures.ts";
 import { Annotation, type AnnotationProps } from "./Annotation.tsx";
 import { Chevron } from "./Section.tsx";
 import { ChangeBadge } from "./Stats.tsx";
@@ -175,6 +184,7 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
   // Changed lines in the shown slice — surfaced as a header badge and as data attributes the
   // nav/section aggregators sum up (they can't re-derive this from the DOM Pierre renders).
   const counts = countHunk(resolved.hunk);
+  recordCoverage(changedLines(resolved.file, resolved.hunk).map(changedLineKey));
   const authored = annotationsFrom(children);
   // Build guarantee (parity with broken <Diff> refs): an <Annotation> whose line is not a shown
   // line of this hunk renders nothing — catch it at build time instead of letting it vanish.

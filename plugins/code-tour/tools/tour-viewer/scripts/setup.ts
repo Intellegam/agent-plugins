@@ -17,7 +17,7 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -31,6 +31,10 @@ interface Args {
   head: string | null;
   repo: string;
   install: boolean;
+}
+
+function shellQuote(value: string): string {
+  return `'${value.replaceAll("'", `'"'"'`)}'`;
 }
 
 function parseArgs(argv: string[]): Args {
@@ -104,6 +108,7 @@ function main(): void {
     scripts: {
       build: "bun run node_modules/tour-viewer/scripts/build.ts",
       map: "bun run node_modules/tour-viewer/scripts/map.ts",
+      preview: "bun run node_modules/tour-viewer/scripts/preview.ts",
     },
     dependencies: {
       ...viewerPkg.dependencies,
@@ -137,21 +142,44 @@ function main(): void {
 
   writeFileSync(
     resolve(args.target, ".gitignore"),
-    ["node_modules/", "tour.html", ".tour-build-*/", ""].join("\n"),
+    ["node_modules/", "tour.html", ".tour-build-*/", ".tour-tmp/", ""].join("\n"),
   );
 
   console.error("package.json, tsconfig.json, .gitignore ← written");
 
   if (args.install) {
     console.error("\nrunning bun install …");
-    execFileSync("bun", ["install"], { cwd: args.target, stdio: "inherit" });
+    const installTemp = resolve(args.target, ".tour-tmp");
+    mkdirSync(installTemp, { recursive: true });
+    try {
+      execFileSync("bun", ["install"], {
+        cwd: args.target,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          TMPDIR: installTemp,
+          TMP: installTemp,
+          TEMP: installTemp,
+        },
+      });
+      rmSync(installTemp, { recursive: true, force: true });
+    } catch {
+      console.error("\ndependency install failed; the scaffold was preserved and is safe to resume");
+      console.error("retry only the install step with:");
+      console.error(
+        `  cd ${shellQuote(args.target)} && TMPDIR=${shellQuote(installTemp)} TMP=${shellQuote(installTemp)} TEMP=${shellQuote(installTemp)} bun install`,
+      );
+      process.exitCode = 1;
+      return;
+    }
   }
 
   console.error("\nworkspace ready:");
   console.error(`  cd ${args.target}`);
   if (!args.install) console.error("  bun install");
   console.error("  # edit tour.tsx, then:");
-  console.error("  bun run build      # single-file tour.html (fails on broken diff refs)");
+  console.error("  bun run build      # single-file tour.html (validates refs + full coverage)");
+  console.error("  bun run preview    # loopback URL for browser-based visual QA");
 }
 
 main();

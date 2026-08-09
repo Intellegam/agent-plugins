@@ -4,14 +4,20 @@ Use these mechanics only after reading the shared `code-tour` skill. This adapte
 
 ## Preflight and locate
 
-1. Resolve `<skill-base>` from the installed skill directory and run `<skill-base>/scripts/setup.sh` for the scaffold step.
-2. Confirm `bun` is available, the target directory is writable, and the initial dependency install can run. The setup script performs the Bun check; report missing runtime or dependency access directly.
+1. Resolve `<skill-base>` as the absolute parent directory of the exact `SKILL.md` path announced for the active skill in this session. Expand a catalog root alias first when the announcement uses one. Do not infer it from the repository working directory, `$CODEX_HOME`, or a cache search because multiple plugin versions may coexist. Verify `<skill-base>/scripts/setup.sh` exists; if it does not, stop and report the announced path.
+2. Confirm `bun` and `git` are available, the target directory is writable, and the initial dependency install can run. The setup script performs the Bun check; report missing runtime or dependency access directly.
 3. A checked-out repository is optional when the user supplies `pr.diff`. Without the build runtime, do not call a prose-only explanation a code tour because it lacks build-time reference validation.
+
+## Visual QA
+
+Use a browser or computer-use capability only when it is explicitly exposed in the current session. Open the built file directly when that surface permits local files. If it rejects `file://`, run `bun run preview` in the workspace, open the printed loopback URL, inspect the page, and stop the server afterward. The preview command serves only `tour.html` byte-for-byte; do not substitute a transforming development server.
+
+Check a wide and narrow layout, Mermaid diagrams rather than source fallbacks, annotation placement, diff expand/collapse interaction, and the absence of `[data-tour-runtime-error]`. If no browser or vision capability is exposed, do not probe speculative tools or claim the page was inspected. Deliver it with: “Visual QA was not performed because this session has no browser surface; please open the local file to inspect it.”
 
 ## Deliver
 
-- Codex CLI or IDE: return a clickable local `tour.html` path. Do not claim it renders inline; the user opens it in a browser.
-- ChatGPT Work or Codex in the desktop app: return the built file through the host's file-delivery surface when available, plus its local path.
+- Use attachment delivery only when the current session exposes a documented local-file upload or attachment capability that accepts an existing filesystem path. When it does, attach `tour.html` and also return its absolute local path.
+- Otherwise, return an absolute clickable Markdown link to `tour.html` plus the plain absolute path. Do not infer attachment support from running in a desktop app or ChatGPT Work, and do not probe speculative tools. Do not claim the page renders inline; the user opens it in a browser.
 - Ordinary ChatGPT without the required local runtime: offer a clearly labeled prose PR walkthrough or direct the user to run the full skill in Claude Code, Codex, or ChatGPT Work. Do not silently drop the grounding guarantee.
 
 A request to create a code tour does not by itself authorize deployment. Do not use ChatGPT Visualizations for the full tour: they do not render in Codex CLI or IDE and do not replace the durable browser review surface.
