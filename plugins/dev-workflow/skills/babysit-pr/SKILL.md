@@ -83,12 +83,18 @@ gh pr checks "$pr"
 gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestReviews,comments,reactionGroups,headRefOid
 ```
 
-If a code tour is known to exist, retain its source head SHA plus the set of
-heads for which a refresh was already offered in task context and preserve both
-across compaction or handoff. Compare the tour head with the fetched
-`headRefOid` on every pass; do not depend only on observing a `new-head` event,
-because the waiter may baseline after a push. If the tour exists but its source
-head cannot be recovered, treat freshness as unknown instead of current.
+If a code tour is known to exist, retain its source head SHA and raw-diff
+SHA-256 fingerprint plus the set of snapshot identities for which a refresh was
+already offered in task context, and preserve them across compaction or
+handoff. Compare the tour head with the fetched `headRefOid` on every pass; do
+not depend only on observing a `new-head` event, because the waiter may baseline
+after a push. At a clean milestone, export the current raw PR diff with the
+code-tour skill's canonical `gh pr diff <N> --repo owner/name` form and compare
+its SHA-256 fingerprint too; this catches a retargeted PR or changed merge base
+without a new head. If either retained source value cannot be recovered, treat
+freshness as unknown instead of current. If the current diff cannot be exported
+and fingerprinted, stop and report a monitoring blocker rather than offering or
+re-arming with an identity that cannot be recorded.
 
 The waiter first emits `armed`, then emits one terminal event and exits:
 
@@ -221,14 +227,15 @@ A PR is a clean milestone only when:
 - `mergeable` is positively `MERGEABLE`, `mergeStateStatus` has no blocking
   state, and `reviewDecision` has no blocking review. `UNKNOWN` is not clean.
 
-If a known code tour's source head differs from the current `headRefOid`, or its
-freshness is unknown, offer one refresh at the current head's first clean
-milestone before reporting the milestone and re-arming. Record the current head
-in the offered set before asking so a resumed turn cannot duplicate the offer.
-If refreshed, update the retained tour head. If declined, do not offer again for
-that head; a later head gets one new offer. Do not rebuild after every push.
-Return to the top-level Code Tour phase for the refresh so generation,
-publication, and PR-comment authorization remain owned by the code-tour skill.
+If a known code tour's source head or raw-diff fingerprint differs from the
+current snapshot, or its freshness is unknown, offer one refresh at that
+snapshot's first clean milestone before reporting the milestone and re-arming.
+Record the current `(head SHA, diff SHA-256)` identity in the offered set before
+asking so a resumed turn cannot duplicate the offer. If refreshed, update both
+retained source values. If declined, do not offer again for that snapshot; a
+later head or diff gets one new offer. Do not rebuild after every change. Return
+to the top-level Code Tour phase for the refresh so generation, publication,
+and PR-comment authorization remain owned by the code-tour skill.
 
 Being clean and mergeable is progress, not permission to merge and not a stop
 condition while the PR remains open. Report the milestone and re-arm.
