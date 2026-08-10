@@ -19,7 +19,7 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Cross-host development workflow: setup, checks, multi-perspective review, documentation sync, and PR follow-through for Claude Code and Codex.",
-      "version": "0.7.1",
+      "version": "0.7.2",
       "keywords": ["workflow", "review", "checks", "quality", "process"]
     },
     {

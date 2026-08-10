@@ -1,15 +1,15 @@
 ---
 name: babysit-pr
-description: This skill MUST be used after creating or updating a PR on the current branch. Triage review comments and CI failures until the PR is merged, closed, or needs a user decision. Proactively run after dev-sync creates or updates a PR. Also use when the user asks to babysit or triage a PR, handle review comments, resolve threads, fix CI, or report what a reviewer said.
+description: This skill MUST be used after the Code Tour phase has been handled for a newly created PR, and after updating a PR already being babysat. Triage review comments and CI failures until the PR is merged, closed, or needs a user decision. Also use when the user asks to babysit or triage a PR, handle review comments, resolve threads, fix CI, or report what a reviewer said.
 ---
 
 # Babysit PR
 
 ## Dev Workflow
 
-This is the post-PR step:
+This is the post-tour PR step:
 
-`dev-check` → `dev-review` → `dev-sync` → PR created → **`babysit-pr`**.
+`dev-check` → `dev-review` → `dev-sync` → PR created → optional Code Tour → **`babysit-pr`**.
 
 Invoke `/dev-workflow:babysit-pr` in Claude Code or
 `$dev-workflow:babysit-pr` in Codex. Requires authenticated `gh` and Python 3.
@@ -82,6 +82,13 @@ python3 "<skill-base>/scripts/fetch_open_threads.py" "$pr"
 gh pr checks "$pr"
 gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestReviews,comments,reactionGroups,headRefOid
 ```
+
+If a code tour is known to exist, retain its source head SHA plus the set of
+heads for which a refresh was already offered in task context and preserve both
+across compaction or handoff. Compare the tour head with the fetched
+`headRefOid` on every pass; do not depend only on observing a `new-head` event,
+because the waiter may baseline after a push. If the tour exists but its source
+head cannot be recovered, treat freshness as unknown instead of current.
 
 The waiter first emits `armed`, then emits one terminal event and exits:
 
@@ -213,6 +220,15 @@ A PR is a clean milestone only when:
 - CI is successful, or the user explicitly accepted a non-blocking failure;
 - `mergeable` is positively `MERGEABLE`, `mergeStateStatus` has no blocking
   state, and `reviewDecision` has no blocking review. `UNKNOWN` is not clean.
+
+If a known code tour's source head differs from the current `headRefOid`, or its
+freshness is unknown, offer one refresh at the current head's first clean
+milestone before reporting the milestone and re-arming. Record the current head
+in the offered set before asking so a resumed turn cannot duplicate the offer.
+If refreshed, update the retained tour head. If declined, do not offer again for
+that head; a later head gets one new offer. Do not rebuild after every push.
+Return to the top-level Code Tour phase for the refresh so generation,
+publication, and PR-comment authorization remain owned by the code-tour skill.
 
 Being clean and mergeable is progress, not permission to merge and not a stop
 condition while the PR remains open. Report the milestone and re-arm.
