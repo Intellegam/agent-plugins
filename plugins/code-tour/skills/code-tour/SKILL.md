@@ -20,6 +20,10 @@ Resolve this skill's announced base directory, then read exactly one adapter com
 
 The adapter defines how to locate the setup script and deliver or optionally publish the built tour. If the host cannot be identified or the adapter cannot be read, stop and report the problem rather than guessing.
 
+## Use a fresh authoring worker
+
+When a writable sub-agent is available and you are not already the authoring worker, delegate steps 1–4 to one fresh worker. Pass only the target repo/PR or base/head, audience, user constraints, verified context links, and the absolute skill path — not the parent transcript, explanation, or proposed outline. The worker reads the PR description and directly linked issue/spec itself, follows this skill without delegating again, and returns the workspace, `tour.tsx`, `tour.html`, source head, and build/visual-QA results. The parent handles delivery and any publishing or PR comments. If no suitable worker is available, continue inline.
+
 ## 1. Export the diff
 
 Capture the raw diff verbatim. Never edit or reformat it — it is the source of truth for every line of code the tour shows.

@@ -45,4 +45,4 @@ Committing, pushing, and opening a PR require an explicit user decision. Use the
 - **Commit + PR**
 - **Stop without committing**
 
-For a PR, draft the title/body and obtain confirmation before creation. After creation, continue to `babysit-pr`. Follow repository branch/commit conventions and never merge or land the PR without the user's separate approval.
+For a PR, draft the title/body and obtain confirmation before creation. After creation, return to the top-level workflow's Code Tour phase, then continue to `babysit-pr`. Code-tour eligibility, authorization, and execution belong to that separate phase, not to documentation sync. Follow repository branch/commit conventions and never merge or land the PR without the user's separate approval.

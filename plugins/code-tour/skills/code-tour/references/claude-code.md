@@ -2,6 +2,10 @@
 
 Use these mechanics only after reading the shared `code-tour` skill.
 
+## Authoring worker
+
+Launch one fresh `general-purpose` agent for steps 1–4. Tell it that it is the authoring worker, pass the shared skill path and only the target/audience context defined there, and do not include the parent transcript or an authored summary. Keep delivery and external actions in the parent; if no writable agent is available, continue inline.
+
 ## Locate and build
 
 1. Resolve `<skill-base>` as `${CLAUDE_PLUGIN_ROOT}/skills/code-tour`.

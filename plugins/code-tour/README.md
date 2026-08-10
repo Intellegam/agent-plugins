@@ -9,6 +9,8 @@ bundles everything into a single self-contained `tour.html` that works offline b
 
 The [`code-tour` skill](skills/code-tour/SKILL.md) is the front door: it drives the shared flow —
 export the PR diff, scaffold a workspace, author `tour.tsx`, build, and deliver the offline file.
+When the host supports writable sub-agents, the invoking agent delegates tour creation to one fresh
+worker while retaining delivery and external-action decisions itself.
 Host adapters define optional publishing for Claude Code and OpenAI Codex/ChatGPT Work; publishing
 and posting a link to the PR require explicit authorization. Invoke it directly or ask the agent to
 "create a code tour for PR N". The `setup.sh` → edit `tour.tsx` → `bun run build` commands below
@@ -28,12 +30,14 @@ Import from `tour-viewer`:
 
 | Component | Purpose |
 |---|---|
-| `<Tour title meta>` | Page frame (header + table-of-contents nav). Root of `tour.tsx`. |
+| `<Tour title meta repo pr headSha>` | Page frame (header + table-of-contents nav). `repo`/`pr`/`headSha` enable GitHub review export. |
 | `<Section id="slug" title="…">` | Navigable anchor. `id` is a slug `[a-z0-9][a-z0-9-]*`. |
 | `<Diff file="…" hunk={n} />` | Shows a whole hunk (1-based) of a file in `pr.diff`. |
 | `<Diff file="…" lines={{side,start,end}} />` | Shows a line slice within ONE hunk (`side` = `old`/`new`). |
+| `<Diff … collapsed />` | Ships a low-signal diff folded until the reader expands it. |
 | `<Annotation line={n} side="new">…</Annotation>` | An AI-authored explanation pinned to a shown line (used as a child of `<Diff>`). |
 | `<Graph source="…mermaid…" />` | A Mermaid diagram (bundled, rendered client-side; no CDN). |
+| `<FileTree>…text…</FileTree>` | Renders an indented plain-text file tree. |
 
 `file` is the path exactly as it appears in `pr.diff` (the new path; the old path for deleted
 files). Every changed line must appear in a `<Diff>`; give low-signal changes minimal prose and

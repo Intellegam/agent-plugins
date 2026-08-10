@@ -33,10 +33,11 @@ Cross-host org development workflow for Claude Code and Codex: a setup consultan
 
 **Includes:**
 
-- SessionStart hook — injects the five-phase workflow in Claude Code and Codex and re-fires after compaction
+- SessionStart hook — injects the six-phase workflow in Claude Code and Codex and re-fires after compaction
 - Claude-only SubagentStart matcher — injects the workflow into implementation-capable `general-purpose`/`claude` agents without affecting reviewers; generic Codex sub-agents are intentionally excluded
 - `setup` skill — inspects a repo, recommends checks/reviewers with evidence, configures applicable `AGENTS.md`/`CLAUDE.md`, and generates thin Claude/Codex wrappers for accepted repo-specific reviewers
 - `dev-check`, `dev-review`, `dev-sync` skills — cross-host, risk-tiered validation with 1/2–3/5 independent reviews, targeted re-review, and up to two fresh broad final-gate cycles
+- Optional Code Tour phase — after PR creation, delegates reviewer walkthroughs to the separately installed `code-tour` plugin when requested, required by repository guidance, or useful for a non-trivial change
 - `babysit-pr` skill — one shared event-driven PR policy plus non-invokable Claude Code/Codex host adapters; it verifies and automatically replies to clear feedback, watches reviews, comments, mergeability, pushes, and CI, and continues until the PR closes or needs a user decision
 - One canonical internal reference per lean, quality, correctness-fallback, and sync reviewer; Claude agents are thin wrappers and Codex sub-agents load the same references
 
@@ -48,7 +49,7 @@ Cross-host agent-generated visual PR walkthroughs. An agent authors a `tour.tsx`
 
 **Includes:**
 
-- `code-tour` skill — drives the shared flow: export the diff, scaffold a workspace, author `tour.tsx`, build, deliver the offline file, and optionally use the host's explicitly authorized publishing route
+- `code-tour` skill — delegates tour creation to a fresh worker when available, delivers the offline file, and optionally uses the host's explicitly authorized publishing route
 - `tour-viewer` — the reference components (`Tour`, `Section`, `Diff`, `Annotation`, `Graph`), diff parsing/slicing, the `@pierre/diffs` render + review layer (line/range comments, local persistence, agent-prompt and `gh api` review export), and the single-file build pipeline
 
 Ask Claude Code, Codex, or ChatGPT Work to "create a code tour for PR N", or invoke the `code-tour` skill directly.

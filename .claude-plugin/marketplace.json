@@ -19,14 +19,14 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Cross-host development workflow: setup, checks, multi-perspective review, documentation sync, and PR follow-through for Claude Code and Codex.",
-      "version": "0.7.1",
+      "version": "0.7.2",
       "keywords": ["workflow", "review", "checks", "quality", "process"]
     },
     {
       "name": "code-tour",
       "source": "./plugins/code-tour",
       "description": "Agent-generated visual PR walkthroughs: an authored narrative whose every code snippet is a grounded reference into the real diff, built into a single offline tour.html with a line-level review surface.",
-      "version": "0.3.2",
+      "version": "0.3.3",
       "keywords": ["code-tour", "pr", "walkthrough", "review", "diff"]
     }
   ]

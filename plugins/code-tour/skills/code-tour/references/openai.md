@@ -2,6 +2,10 @@
 
 Use these mechanics only after reading the shared `code-tour` skill. This adapter covers OpenAI Codex and ChatGPT Work sessions that expose a local project runtime.
 
+## Authoring worker
+
+In Codex, use `spawn_agent` with `fork_turns="none"` and a task name such as `code_tour_author` for steps 1–4. Tell it that it is the authoring worker, pass the shared skill path and only the target/audience context defined there, and do not include the parent transcript or an authored summary. Keep delivery and external actions in the parent; if no writable sub-agent is available, continue inline.
+
 ## Preflight and locate
 
 1. Resolve `<skill-base>` as the absolute parent directory of the exact `SKILL.md` path announced for the active skill in this session. Expand a catalog root alias first when the announcement uses one. Do not infer it from the repository working directory, `$CODEX_HOME`, or a cache search because multiple plugin versions may coexist. Verify `<skill-base>/scripts/setup.sh` exists; if it does not, stop and report the announced path.

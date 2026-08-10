@@ -50,7 +50,18 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 
 Follow repository commit conventions. Committing, pushing, and opening a PR require the user's explicit choice; merging or landing requires a separate explicit approval.
 
-### 5. Babysit
+### 5. Code Tour
+
+After opening a PR and before babysitting it, handle the reviewer walkthrough as a separate workflow phase:
+
+- If repository guidance requires a code tour or the user requested one, run `/code-tour:code-tour` in Claude Code or `$code-tour:code-tour` in Codex. If the skill is unavailable, report that instead of silently skipping the requirement.
+- Otherwise, when the code-tour skill is available, offer it for normal and high-risk changes; skip the offer for tiny changes.
+- Creating the local tour does not authorize publishing it or posting to the PR. Follow the code-tour skill's separate authorization boundary for external actions.
+- A tour describes one exact PR head. When one is created, retain that head SHA in task context and preserve it across compaction or handoff. During babysitting, compare it with the current PR head regardless of who pushed; do not rebuild after every push, and offer one refresh when the updated PR first reaches a clean milestone.
+
+Do not install code-tour automatically. It remains an optional companion plugin that owns tour generation and delivery.
+
+### 6. Babysit
 
 After opening a PR, run `/dev-workflow:babysit-pr` in Claude Code or `$dev-workflow:babysit-pr` in Codex to triage feedback and CI until the PR closes or needs a user decision.
 
