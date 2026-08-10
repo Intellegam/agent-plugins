@@ -4,9 +4,7 @@ Use these mechanics only after reading the shared `code-tour` skill.
 
 ## Authoring worker
 
-When acting as orchestrator, launch one fresh `general-purpose` agent and begin its prompt with `CODE_TOUR_WORKER=1`. Pass only the shared contract's narrow handoff, tell it to read the shared skill at the resolved absolute skill-base, and instruct it to write only the external tour workspace. Require it to perform steps 2–4 and return the shared worker output contract. Do not pass the parent transcript or an authored summary of the change, and do not treat the agent as a permission boundary.
-
-Keep delivery, publishing, PR comments, and any active PR waiter in the parent agent. If a fresh writable agent is unavailable, follow the shared inline fallback.
+Launch one fresh `general-purpose` agent for steps 1–4. Tell it that it is the authoring worker, pass the shared skill path and only the target/audience context defined there, and do not include the parent transcript or an authored summary. Keep delivery and external actions in the parent; if no writable agent is available, continue inline.
 
 ## Locate and build
 

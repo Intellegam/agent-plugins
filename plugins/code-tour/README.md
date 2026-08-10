@@ -9,9 +9,8 @@ bundles everything into a single self-contained `tour.html` that works offline b
 
 The [`code-tour` skill](skills/code-tour/SKILL.md) is the front door: it drives the shared flow —
 export the PR diff, scaffold a workspace, author `tour.tsx`, build, and deliver the offline file.
-When the host supports writable sub-agents, the invoking agent pins the diff and delegates
-authoring, build, and visual QA to one fresh, narrowly briefed worker while retaining delivery and
-external-action decisions itself.
+When the host supports writable sub-agents, the invoking agent delegates tour creation to one fresh
+worker while retaining delivery and external-action decisions itself.
 Host adapters define optional publishing for Claude Code and OpenAI Codex/ChatGPT Work; publishing
 and posting a link to the PR require explicit authorization. Invoke it directly or ask the agent to
 "create a code tour for PR N". The `setup.sh` → edit `tour.tsx` → `bun run build` commands below

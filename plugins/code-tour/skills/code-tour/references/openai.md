@@ -4,9 +4,7 @@ Use these mechanics only after reading the shared `code-tour` skill. This adapte
 
 ## Authoring worker
 
-In Codex, use `spawn_agent` with `fork_turns="none"` and a task name such as `code_tour_author`. Begin the message with `CODE_TOUR_WORKER=1`, pass the resolved absolute skill-base plus only the shared contract's narrow handoff, prohibit delegation and external/repository mutations, and require steps 2–4 plus the shared worker output contract. The worker inherits the parent's authority and is not a security sandbox; do not grant extra permissions. The parent retains verification, delivery, publishing, PR comments, and any active PR waiter.
-
-If the session has no writable sub-agent surface, including ordinary ChatGPT Work sessions without delegation, follow the shared inline fallback and say that no worker participated.
+In Codex, use `spawn_agent` with `fork_turns="none"` and a task name such as `code_tour_author` for steps 1–4. Tell it that it is the authoring worker, pass the shared skill path and only the target/audience context defined there, and do not include the parent transcript or an authored summary. Keep delivery and external actions in the parent; if no writable sub-agent is available, continue inline.
 
 ## Preflight and locate
 
