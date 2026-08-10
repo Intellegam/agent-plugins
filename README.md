@@ -49,7 +49,7 @@ Cross-host agent-generated visual PR walkthroughs. An agent authors a `tour.tsx`
 
 **Includes:**
 
-- `code-tour` skill — drives the shared flow: export the diff, scaffold a workspace, author `tour.tsx`, build, deliver the offline file, and optionally use the host's explicitly authorized publishing route
+- `code-tour` skill — pins the source diff, delegates authoring/build/visual QA to a fresh worker when available, delivers the offline file, and optionally uses the host's explicitly authorized publishing route
 - `tour-viewer` — the reference components (`Tour`, `Section`, `Diff`, `Annotation`, `Graph`), diff parsing/slicing, the `@pierre/diffs` render + review layer (line/range comments, local persistence, agent-prompt and `gh api` review export), and the single-file build pipeline
 
 Ask Claude Code, Codex, or ChatGPT Work to "create a code tour for PR N", or invoke the `code-tour` skill directly.

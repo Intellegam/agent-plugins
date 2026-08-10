@@ -1,6 +1,6 @@
 {
   "name": "code-tour",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Agent-generated visual PR walkthroughs: an authored narrative whose every code snippet is a grounded reference into the real diff, built into a single offline tour.html with a line-level review surface.",
   "author": {
     "name": "Intellegam",
