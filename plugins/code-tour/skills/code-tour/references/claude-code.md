@@ -4,7 +4,7 @@ Use these mechanics only after reading the shared `code-tour` skill.
 
 ## Authoring worker
 
-Launch one fresh `general-purpose` agent for steps 1–4. Tell it that it is the authoring worker, pass the shared skill path and only the target/audience context defined there, and do not include the parent transcript or an authored summary. Keep delivery and external actions in the parent; if no writable agent is available, continue inline.
+Launch the packaged `code-tour:code-tour-author` agent for steps 1–4. Pass only the target/audience context defined in the shared skill, not the parent transcript or an authored summary. Keep delivery and external actions in the parent; if the packaged agent is unavailable, continue inline.
 
 ## Locate and build
 
