@@ -42,7 +42,7 @@ If the repo already encodes checks elsewhere, make the accepted conventions sect
 
 For Claude Code, if the plugin is not enabled in `.claude/settings.json`, recommend the `enabledPlugins` entry plus its marketplace when missing. For Codex, report whether the plugin is unavailable from the configured marketplace; do not modify user-level Codex installation state as part of repository setup. Apply project settings only with explicit acceptance.
 
-Do **not** recommend reviewers or checks the plugin already provides: lean, quality, correctness, and documentation-sync contracts are built into the workflow. Custom reviewers are only for additional concerns such as fork maintenance, framework conventions, or domain rules.
+Do **not** recommend reviewers or checks the plugin already provides: structural-and-lean, quality, correctness, and documentation-sync contracts are built into the workflow. Custom reviewers are only for additional concerns such as fork maintenance, framework conventions, or domain rules.
 
 ## Phase 3: Apply
 
@@ -115,6 +115,6 @@ Rules:
 - A Situational Check's action need not be a shell command: "watch the `<name>` CI check on the PR" (for CI-only checks) or "run the `<name>` skill/agent" (for available validation tooling) are both valid.
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
 - **Review Inputs** takes arbitrary labeled entries — register any doc reviewers should read (documentation guidelines, architecture, fork-maintenance rules, ...), not just code/testing standards.
-- **Custom dev-workflow reviewers** means beyond the built-in lean, quality, correctness, and sync contracts. Only list repository-specific reviewers and omit the subsection when none exist.
+- **Custom dev-workflow reviewers** means beyond the built-in structural-and-lean, quality, correctness, and sync contracts. Only list repository-specific reviewers and omit the subsection when none exist.
 - Place new sections after repository overview sections (or at the end if unsure), never before Claude `@import` lines and never inside another tool's managed region.
 - Keep these sections compact: they are always-on context for every session in the repo.

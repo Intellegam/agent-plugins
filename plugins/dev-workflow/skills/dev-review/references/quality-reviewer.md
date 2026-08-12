@@ -23,7 +23,7 @@ For each issue, ask whether it is a symptom of a deeper problem such as the wron
 Scan the overall structure, then examine each function, type, and decision:
 
 - **Structure and refactoring**: clarity, intuitive abstractions, and navigability
-- **Simplicity**: unnecessary indirection or speculative behavior; leave the deep over-engineering hunt to the lean reviewer
+- **Simplicity**: unnecessary indirection or speculative behavior; the structural-and-lean reviewer independently performs a deeper structural-simplicity and over-engineering pass when selected
 - **Function design**: too much responsibility or excessive fragmentation
 - **Duplication and coupling**: extract true shared behavior without coupling unrelated owners
 - **Naming and clarity**: intent-revealing and consistent names

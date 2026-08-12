@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Language-agnostic development workflow with repository checks, multi-perspective review, documentation sync, and PR follow-through.",
   "author": {
     "name": "Intellegam",
