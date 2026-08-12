@@ -42,15 +42,15 @@ Reuse the tier chosen by `dev-check`; otherwise choose it now.
 | **normal** | 2–3 | One broad correctness review plus 1–2 relevant specialists |
 | **high-risk** | 5 | One broad correctness review plus four independent risk-focused specialists |
 
-The main agent chooses specialist focus from lean, quality/tests, applicable repository-specific reviewers, existing-pattern reuse, external API verification, observability, security, or other change-specific risks. Always include a broad/unscoped review. Focus directs attention; it never partitions files. Every reviewer examines the complete target.
+The main agent chooses specialist focus from structural simplicity plus lean cleanup, quality/tests, applicable repository-specific reviewers, existing-pattern reuse, external API verification, observability, security, or other change-specific risks. Always include a broad/unscoped review. Focus directs attention; it never partitions files. Every reviewer examines the complete target.
 
-Prioritize an applicable repository-specific reviewer when its declared trigger matches. For high-risk work, include both lean and quality unless a stronger repository-specific risk displaces one; fill remaining slots with independent focused reviews.
+Prioritize an applicable repository-specific reviewer when its declared trigger matches. For high-risk work, include both structural-and-lean and quality unless a stronger repository-specific risk displaces one; fill remaining slots with independent focused reviews.
 
 ## Internal Reviewer Contracts
 
 Reviewer contracts are non-invokable reference files adjacent to this skill:
 
-- `references/lean-reviewer.md`
+- `references/structural-lean-reviewer.md`
 - `references/quality-reviewer.md`
 - `references/correctness-reviewer.md` (fallback)
 
@@ -60,7 +60,7 @@ Resolve their absolute paths from this skill's directory. Every delegated specia
 
 ### Claude Code
 
-- Launch the plugin's thin `dev-lean-reviewer` and `dev-quality-reviewer` agents when those focuses are selected; their wrappers load the canonical references through `${CLAUDE_PLUGIN_ROOT}`.
+- Launch the plugin's thin `dev-structural-lean-reviewer` and `dev-quality-reviewer` agents when those focuses are selected; their wrappers load the canonical references through `${CLAUDE_PLUGIN_ROOT}`.
 - Launch applicable project custom reviewers declared by repository guidance.
 - Use independent `codex-review` MCP sessions for broad correctness or additional Codex-focused perspectives. In the pinned MCP contract, typed `uncommitted`/`base`/`commit` modes cannot carry review instructions, so use `mode: "custom"` and put the exact target-inspection instructions, goal, constraints, Review Inputs, untracked paths, and focus in `prompt`. Do not attach a prompt to a typed mode: it is ignored. If Codex MCP is unavailable, state the fallback and use `dev-correctness-reviewer` for the required broad review.
 - Paste the actual diff into Claude reviewer prompts because the read-only agents may not have shell access. For very large targets, include the complete file list/stat plus risky hunks and require direct reads of every remaining changed file.
@@ -69,7 +69,7 @@ Resolve their absolute paths from this skill's directory. Every delegated specia
 
 - Use `spawn_agent` for the initial fan-out. Keep reviewers read-only and tell them not to delegate.
 - For broad correctness reviews, explicitly require the built-in `$review-agent` contract. Give the exact uncommitted/base/commit target, Review Inputs, and untracked paths.
-- For lean and quality specialists, pass the resolved absolute internal-reference path and require fail-closed loading before inspection.
+- For structural-and-lean and quality specialists, pass the resolved absolute internal-reference path and require fail-closed loading before inspection.
 - Launch applicable project `.codex/agents/*.toml` reviewers by their declared names. Those wrappers must load their one canonical repository contract.
 - Let reviewers inspect the shared checkout directly; do not paste the full diff unless filesystem access is unavailable.
 
