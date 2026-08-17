@@ -29,7 +29,7 @@ The reverse direction: lets OpenAI Codex consult Claude Code as a second-opinion
 
 ### dev-workflow
 
-Cross-host org development workflow for Claude Code and Codex: a setup consultant plus contract-driven validation and release-promotion workflows (checks → review → docs sync → PR follow-through).
+Cross-host org development workflow for Claude Code and Codex: a setup consultant plus contract-driven validation and branch-promotion workflows (checks → review → docs sync → PR follow-through).
 
 **Includes:**
 
@@ -39,7 +39,7 @@ Cross-host org development workflow for Claude Code and Codex: a setup consultan
 - `dev-check`, `dev-review`, `dev-sync` skills — cross-host, risk-tiered validation with 1/2–3/5 independent reviews, targeted re-review, and up to two fresh broad final-gate cycles
 - Optional Code Tour phase — after PR creation, delegates reviewer walkthroughs to the separately installed `code-tour` plugin when requested, required by repository guidance, or useful for a non-trivial change
 - `babysit-pr` skill — one shared event-driven PR policy plus non-invokable Claude Code/Codex host adapters; it verifies and automatically replies to clear feedback, watches reviews, comments, mergeability, pushes, and CI, and continues until the PR closes or needs a user decision
-- `promote` skill — prepares, gates, merges with separate approval, and verifies GitHub release promotions from remote refs using repository-owned policy
+- `promote` skill — prepares, gates, and directly merges branch-promotion PRs with separate approval, then verifies the conditional release outcome from GitHub evidence
 - One canonical internal reference per structural-and-lean, quality, correctness-fallback, and sync reviewer; Claude agents are thin wrappers and Codex sub-agents load the same references
 
 Repos declare commands, situational checks, standards docs, repo-specific reviewers, and an optional pointer to normal promotion-policy documentation in applicable `AGENTS.md`/`CLAUDE.md`; run `/dev-workflow:setup` in Claude Code or `$dev-workflow:setup` in Codex to onboard a repo.

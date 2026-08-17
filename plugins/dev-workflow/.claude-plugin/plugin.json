@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
   "version": "0.9.0",
-  "description": "Cross-host development workflow: setup, checks, review, documentation sync, PR follow-through, and release promotion for Claude Code and Codex.",
+  "description": "Cross-host development workflow: setup, checks, review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com",

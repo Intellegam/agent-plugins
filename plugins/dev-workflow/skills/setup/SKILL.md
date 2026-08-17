@@ -27,7 +27,7 @@ Gather evidence before recommending anything. Look at:
 
 Use the host's exploration agent for broad scans when available; otherwise search directly. Every recommendation must cite a file path or observed pattern.
 
-Check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md`. Always write the physical target, never retarget a link, and name the fan-out before applying. When both are independent files, identify which already owns the workflow contract. Recommend one canonical owner plus a short explicit read/follow pointer from the other rather than duplicating the contract; ask before introducing that relationship.
+Check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md`. Always write the physical target, never retarget a link, and name the fan-out before applying. When both are independent files, identify which already owns the workflow contract. Recommend one canonical owner plus a short explicit read/follow pointer from the other rather than duplicating the contract; ask before introducing that relationship. For an existing promotion-policy target, normalize the repository-relative path and reject absolute paths, parent-directory escapes, missing targets, symlink cycles, and physical targets outside the repository. For a proposed new document, apply the lexical path checks and require every existing ancestor to remain inside the repository; the missing leaf is expected until Apply creates it.
 
 ## Phase 2: Recommend
 
@@ -39,7 +39,7 @@ Present findings in three groups:
 
 For each item: what, why (with evidence citation), and what applying it would change. Propose — never adopt silently. Anything touching branch/release policy, security, or hooks is always proposed, never auto-applied.
 
-When the repository has a release/promotion workflow or an existing local promotion skill, recommend one compact `Promotion policy` pointer under `## Dev Workflow Plugin`. Point to a normal human-facing repository document, with an optional heading anchor. Never create or infer the underlying branch/release policy silently; identify missing load-bearing facts as user decisions.
+When the repository has a branch-promotion PR workflow or a local skill that implements one, recommend one compact `Promotion policy` pointer under `## Dev Workflow Plugin`. If the repository has only a direct tag, manual workflow, or another non-PR release path, or if promotion requires auto-merge or a merge queue, report shared promotion as unsupported and do not offer or claim onboarding. Point supported repositories to a normal human-facing document, with an optional heading anchor. Never create or infer the underlying branch/release policy silently; identify missing load-bearing facts as user decisions. Before claiming promotion onboarding is complete, require the referenced document to cover the contract used by `dev-workflow:promote`: source and target roles, PR title convention, required gates and merge method, release triggering and no-release cases, the relevant tag namespace, the expected tagged commit or deterministic live configuration that defines it, and the boundary between GitHub evidence and external deployment verification.
 
 When a repository-local promotion skill exists, require an explicit **migrate or retain** decision. Recommend migration when the shared skill supersedes it: inventory its unique repository policy, move that policy to the accepted normal document, add the pointer, and retire the local skill only after every removed line has a mapped home or an explicit reason for removal. If the user retains it, leave it untouched, report the overlapping routing/behavior risk, and do not claim shared promotion onboarding is complete.
 
@@ -53,7 +53,7 @@ Do **not** recommend reviewers or checks the plugin already provides: structural
 
 Use the host's structured user-input mechanism when available, otherwise ask directly, and let the user accept/reject each group or contentious item. Then:
 
-1. When a promotion policy was accepted, write or update its normal human-facing document first. Include only user-approved intent and mechanics verified from live configuration; preserve unrelated existing content and ensure the accepted path/anchor exists.
+1. When a promotion policy was accepted, validate its normalized repository-relative path with the applicable existing-target or new-document checks from Inspect, then write or update its normal human-facing document first. For a new document, immediately validate the created physical target, symlinks, and anchor before continuing. Include only user-approved intent and mechanics verified from live configuration; preserve unrelated existing content.
 2. When migration from a local promotion skill was accepted, map its complete content to the shared workflow, the normal policy document, or an explicit intentional removal before deleting or disabling it. When retention was accepted, leave the local skill unchanged and report that overlapping behavior remains.
 3. Write or update the conventions section in the accepted canonical `AGENTS.md` or `CLAUDE.md`. If both independent files must serve as entry points, add only the accepted explicit pointer in the non-canonical file. Beyond accepted changes, do not restructure or reformat either file.
 4. For every accepted custom reviewer, write the full contract once to `.agents/reviewers/<name>.md`.
@@ -65,7 +65,7 @@ Use the host's structured user-input mechanism when available, otherwise ask dir
 
 ## Re-runs: validate
 
-If conventions already exist, validate commands against manifests/CI and confirm Review Inputs, canonical reviewer contracts, and both host wrappers exist. When a promotion-policy pointer exists, validate the physical guidance target and symlink fan-out, the referenced path and optional heading anchor, and its agreement with live release configuration. Report drift and offer to fix it through the normal Apply flow.
+If conventions already exist, validate commands against manifests/CI and confirm Review Inputs, canonical reviewer contracts, and both host wrappers exist. When a promotion-policy pointer exists, repeat the normalized-path and containment checks, validate the physical guidance target and symlink fan-out, require all promotion-policy pointers present across applicable guidance to resolve to one path and anchor, and check the policy's agreement with live release configuration. Report drift and offer to fix it through the normal Apply flow.
 
 ## Conventions
 
@@ -125,6 +125,6 @@ Rules:
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
 - **Review Inputs** takes arbitrary labeled entries — register any doc reviewers should read (documentation guidelines, architecture, fork-maintenance rules, ...), not just code/testing standards.
 - **Custom dev-workflow reviewers** means beyond the built-in structural-and-lean, quality, correctness, and sync contracts. Only list repository-specific reviewers and omit the subsection when none exist.
-- **Promotion policy** is optional. When present, validate that the referenced path and anchor exist and that its mechanical claims agree with live release configuration. Keep the actual policy in the referenced normal documentation; agent guidance contains only the pointer.
+- **Promotion policy** is optional. When present, require all promotion-policy pointers across applicable guidance to resolve to one normalized repository-contained path and anchor, and validate that its mechanical claims agree with live release configuration. Keep the actual policy in the referenced normal documentation; agent guidance contains only the pointer.
 - Place new sections after repository overview sections (or at the end if unsure), never before Claude `@import` lines and never inside another tool's managed region.
 - Keep these sections compact: they are always-on context for every session in the repo.
