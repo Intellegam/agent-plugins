@@ -1,0 +1,4 @@
+interface:
+  display_name: "Promote Release"
+  short_description: "Promote a staged release through GitHub"
+  default_prompt: "Use $dev-workflow:promote to prepare and verify a repository release promotion."

@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
-  "version": "0.8.0",
-  "description": "Language-agnostic development workflow with repository checks, multi-perspective review, documentation sync, and PR follow-through.",
+  "version": "0.9.0",
+  "description": "Language-agnostic development workflow with repository checks, multi-perspective review, documentation sync, PR follow-through, and release promotion.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com",
@@ -10,12 +10,12 @@
   "homepage": "https://github.com/Intellegam/agent-plugins/tree/main/plugins/dev-workflow",
   "repository": "https://github.com/Intellegam/agent-plugins",
   "license": "MIT",
-  "keywords": ["workflow", "review", "checks", "quality", "process"],
+  "keywords": ["workflow", "review", "checks", "quality", "process", "release"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Dev Workflow",
     "shortDescription": "Run Intellegam's complete development workflow",
-    "longDescription": "Guides implementation through repository-specific checks, risk-scaled multi-perspective review, documentation synchronization, and post-PR monitoring in Claude Code or Codex.",
+    "longDescription": "Guides implementation through repository-specific checks, risk-scaled multi-perspective review, documentation synchronization, post-PR monitoring, and policy-driven release promotion in Claude Code or Codex.",
     "developerName": "Intellegam",
     "category": "Engineering",
     "capabilities": ["Read", "Write"],
@@ -25,7 +25,8 @@
     "logo": "./assets/logo.png",
     "defaultPrompt": [
       "Set up this repository for the dev workflow",
-      "Run the complete dev workflow for my changes"
+      "Run the complete dev workflow for my changes",
+      "Promote staged changes to production"
     ]
   }
 }

@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Set up or validate a repository's cross-host dev-workflow configuration in AGENTS.md and/or CLAUDE.md. Use when onboarding a repo, when commands/checks or reviewer configuration is missing or stale, or when the user asks to set up the dev workflow, check workflow config, or recommend checks and custom reviewers.
+description: Set up or validate a repository's cross-host dev-workflow configuration in AGENTS.md and/or CLAUDE.md. Use when onboarding a repo, when commands/checks, reviewer configuration, or a promotion-policy pointer is missing or stale, or when the user asks to set up the dev workflow, check workflow config, or recommend checks and custom reviewers.
 ---
 
 # Dev Workflow Setup
@@ -21,6 +21,7 @@ Gather evidence before recommending anything. Look at:
 - **CI config** (`.github/workflows/`, etc.): which checks actually gate merges — these are the ground truth for required checks
 - **Existing agent assets**: `AGENTS.md`, `CLAUDE.md`, `.agents/skills/`, `.agents/reviewers/`, `.codex/agents/`, `.claude/skills/`, `.claude/agents/`, and host settings/hooks
 - **Docs**: code standards, testing guidelines, architecture docs — candidates for Review Inputs
+- **Promotion & release**: existing release/promotion docs, release workflows, versioning configuration, and any repository-local promotion skill — evidence for an optional promotion-policy pointer
 - **Repo shape signals**: upstream remotes or fork markers, `custom/` directories, monorepo/workspace layout, generated code, infra-as-code — anything that suggests repo-specific reviewers or situational checks
 - **Git history**: recently deleted or moved workflow assets under `.agents/`, `.codex/`, `.claude/`, `AGENTS.md`, or `CLAUDE.md`
 
@@ -38,6 +39,8 @@ Present findings in three groups:
 
 For each item: what, why (with evidence citation), and what applying it would change. Propose — never adopt silently. Anything touching branch/release policy, security, or hooks is always proposed, never auto-applied.
 
+When the repository has a release/promotion workflow or an existing local promotion skill, recommend one compact `Promotion policy` pointer under `## Dev Workflow Plugin`. Point to a normal human-facing repository document, with an optional heading anchor. Never create or infer the underlying branch/release policy silently; identify missing load-bearing facts as user decisions.
+
 If the repo already encodes checks elsewhere, make the accepted conventions section the single source of truth: recommend pointers or removal of real duplication. Never remove content whose only copy lives in the repository.
 
 For Claude Code, if the plugin is not enabled in `.claude/settings.json`, recommend the `enabledPlugins` entry plus its marketplace when missing. For Codex, report whether the plugin is unavailable from the configured marketplace; do not modify user-level Codex installation state as part of repository setup. Apply project settings only with explicit acceptance.
@@ -48,17 +51,18 @@ Do **not** recommend reviewers or checks the plugin already provides: structural
 
 Use the host's structured user-input mechanism when available, otherwise ask directly, and let the user accept/reject each group or contentious item. Then:
 
-1. Write or update the conventions section in the accepted canonical `AGENTS.md` or `CLAUDE.md`. If both independent files must serve as entry points, add only the accepted explicit pointer in the non-canonical file. Beyond accepted changes, do not restructure or reformat either file.
-2. For every accepted custom reviewer, write the full contract once to `.agents/reviewers/<name>.md`.
-3. Generate two thin wrappers that load that canonical contract and fail closed:
+1. When a promotion policy was accepted, write or update its normal human-facing document first. Include only user-approved intent and mechanics verified from live configuration; preserve unrelated existing content and ensure the accepted path/anchor exists.
+2. Write or update the conventions section in the accepted canonical `AGENTS.md` or `CLAUDE.md`. If both independent files must serve as entry points, add only the accepted explicit pointer in the non-canonical file. Beyond accepted changes, do not restructure or reformat either file.
+3. For every accepted custom reviewer, write the full contract once to `.agents/reviewers/<name>.md`.
+4. Generate two thin wrappers that load that canonical contract and fail closed:
    - `.claude/agents/<name>.md` with Claude frontmatter (description, tools/model as accepted) and a body that reads `${CLAUDE_PROJECT_DIR}/.agents/reviewers/<name>.md`
    - `.codex/agents/<name>.toml` with `name`, `description`, `sandbox_mode = "read-only"`, and `developer_instructions` that reads `.agents/reviewers/<name>.md` from the project root
-4. Apply accepted project settings edits. Do not duplicate reviewer bodies in either wrapper.
-5. **No-loss audit**: map every removed/replaced line to its canonical new home. Restore anything unmapped, then report applied/skipped items and the mapping.
+5. Apply accepted project settings edits. Do not duplicate reviewer bodies in either wrapper.
+6. **No-loss audit**: map every removed/replaced line to its canonical new home. Restore anything unmapped, then report applied/skipped items and the mapping.
 
 ## Re-runs: validate
 
-If conventions already exist, validate commands against manifests/CI and confirm Review Inputs, canonical reviewer contracts, and both host wrappers exist. Report drift and offer to fix it through the normal Apply flow.
+If conventions already exist, validate commands against manifests/CI and confirm Review Inputs, canonical reviewer contracts, and both host wrappers exist. When a promotion-policy pointer exists, validate the physical guidance target and symlink fan-out, the referenced path and optional heading anchor, and its agreement with live release configuration. Report drift and offer to fix it through the normal Apply flow.
 
 ## Conventions
 
@@ -98,6 +102,8 @@ Two ordinary sections in the chosen canonical `AGENTS.md` or `CLAUDE.md`, locate
 
 <optional repo-specific refinements of the shared workflow>
 
+- **Promotion policy**: `<repository-relative path or path#anchor>`
+
 ### Custom dev-workflow reviewers
 
 - `<agent-name>` — <what it reviews and when dev-review should spawn it>
@@ -116,5 +122,6 @@ Rules:
 - Commands must be copy-paste runnable from the repo root. Diff-scoped commands are allowed if that's what CI gates on — name the base branch explicitly (e.g. `--since=origin/main`). When CI is diff-scoped *because* repo-wide runs fail on pre-existing violations, record the diff-scoped mutating form — don't invent a repo-wide command the repo can't actually run clean.
 - **Review Inputs** takes arbitrary labeled entries — register any doc reviewers should read (documentation guidelines, architecture, fork-maintenance rules, ...), not just code/testing standards.
 - **Custom dev-workflow reviewers** means beyond the built-in structural-and-lean, quality, correctness, and sync contracts. Only list repository-specific reviewers and omit the subsection when none exist.
+- **Promotion policy** is optional. When present, validate that the referenced path and anchor exist and that its mechanical claims agree with live release configuration. Keep the actual policy in the referenced normal documentation; agent guidance contains only the pointer.
 - Place new sections after repository overview sections (or at the end if unsure), never before Claude `@import` lines and never inside another tool's managed region.
 - Keep these sections compact: they are always-on context for every session in the repo.
