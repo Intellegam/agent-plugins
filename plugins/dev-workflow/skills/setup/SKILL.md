@@ -41,6 +41,8 @@ For each item: what, why (with evidence citation), and what applying it would ch
 
 When the repository has a release/promotion workflow or an existing local promotion skill, recommend one compact `Promotion policy` pointer under `## Dev Workflow Plugin`. Point to a normal human-facing repository document, with an optional heading anchor. Never create or infer the underlying branch/release policy silently; identify missing load-bearing facts as user decisions.
 
+When a repository-local promotion skill exists, require an explicit **migrate or retain** decision. Recommend migration when the shared skill supersedes it: inventory its unique repository policy, move that policy to the accepted normal document, add the pointer, and retire the local skill only after every removed line has a mapped home or an explicit reason for removal. If the user retains it, leave it untouched, report the overlapping routing/behavior risk, and do not claim shared promotion onboarding is complete.
+
 If the repo already encodes checks elsewhere, make the accepted conventions section the single source of truth: recommend pointers or removal of real duplication. Never remove content whose only copy lives in the repository.
 
 For Claude Code, if the plugin is not enabled in `.claude/settings.json`, recommend the `enabledPlugins` entry plus its marketplace when missing. For Codex, report whether the plugin is unavailable from the configured marketplace; do not modify user-level Codex installation state as part of repository setup. Apply project settings only with explicit acceptance.
@@ -52,13 +54,14 @@ Do **not** recommend reviewers or checks the plugin already provides: structural
 Use the host's structured user-input mechanism when available, otherwise ask directly, and let the user accept/reject each group or contentious item. Then:
 
 1. When a promotion policy was accepted, write or update its normal human-facing document first. Include only user-approved intent and mechanics verified from live configuration; preserve unrelated existing content and ensure the accepted path/anchor exists.
-2. Write or update the conventions section in the accepted canonical `AGENTS.md` or `CLAUDE.md`. If both independent files must serve as entry points, add only the accepted explicit pointer in the non-canonical file. Beyond accepted changes, do not restructure or reformat either file.
-3. For every accepted custom reviewer, write the full contract once to `.agents/reviewers/<name>.md`.
-4. Generate two thin wrappers that load that canonical contract and fail closed:
+2. When migration from a local promotion skill was accepted, map its complete content to the shared workflow, the normal policy document, or an explicit intentional removal before deleting or disabling it. When retention was accepted, leave the local skill unchanged and report that overlapping behavior remains.
+3. Write or update the conventions section in the accepted canonical `AGENTS.md` or `CLAUDE.md`. If both independent files must serve as entry points, add only the accepted explicit pointer in the non-canonical file. Beyond accepted changes, do not restructure or reformat either file.
+4. For every accepted custom reviewer, write the full contract once to `.agents/reviewers/<name>.md`.
+5. Generate two thin wrappers that load that canonical contract and fail closed:
    - `.claude/agents/<name>.md` with Claude frontmatter (description, tools/model as accepted) and a body that reads `${CLAUDE_PROJECT_DIR}/.agents/reviewers/<name>.md`
    - `.codex/agents/<name>.toml` with `name`, `description`, `sandbox_mode = "read-only"`, and `developer_instructions` that reads `.agents/reviewers/<name>.md` from the project root
-5. Apply accepted project settings edits. Do not duplicate reviewer bodies in either wrapper.
-6. **No-loss audit**: map every removed/replaced line to its canonical new home. Restore anything unmapped, then report applied/skipped items and the mapping.
+6. Apply accepted project settings edits. Do not duplicate reviewer bodies in either wrapper.
+7. **No-loss audit**: map every removed/replaced line to its canonical new home. Restore anything unmapped, then report applied/skipped items and the mapping.
 
 ## Re-runs: validate
 

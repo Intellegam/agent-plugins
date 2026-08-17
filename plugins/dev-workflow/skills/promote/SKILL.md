@@ -107,10 +107,10 @@ After merge:
 
 1. Record the GitHub merge commit SHA.
 2. Verify the promotion checks completed for the promoted head.
-3. Match the release workflow run to the merge SHA, not merely the branch name or latest run.
+3. Determine whether live workflow configuration predicts a release-workflow dispatch for this merge. When it does, match the successful run to the merge SHA, not merely the branch name or latest run. When configuration predicts no dispatch, record that expected absence explicitly; if dispatch behavior is uncertain or an expected run is missing, release verification is incomplete.
 4. Determine from policy and live release configuration whether this promotion should produce a version/tag/release. Evaluate the release tool's complete range since the recorded baseline, including previously unreleased commits, rather than only the source-vs-target diff.
 5. When a release is expected, verify the GitHub Release points to the new tag and the dereferenced tag commit resolves to the merge SHA. Do not rely only on `targetCommitish`.
-6. When releases are conditional, accept a successful workflow with no new tag only if the full configured commit range predicts no release and the recorded tag/release baseline remains unchanged. Report that outcome explicitly.
+6. When releases are conditional, accept no new tag only if the full configured commit range predicts no release, the recorded tag/release baseline remains unchanged, and workflow behavior matches configuration (either a successful no-release run or an expected no-dispatch outcome). Report that outcome explicitly.
 
 Report GitHub evidence separately from deployment status. Never claim Vercel, Railway, Kubernetes, a package registry, or another runtime is healthy unless a separately authorized workflow verified it directly.
 
