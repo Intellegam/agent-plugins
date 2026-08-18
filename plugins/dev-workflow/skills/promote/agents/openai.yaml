@@ -1,0 +1,4 @@
+interface:
+  display_name: "Promote Branch"
+  short_description: "Promote a staged branch through a GitHub PR"
+  default_prompt: "Use $dev-workflow:promote to prepare, gate, and verify a branch-promotion PR and its conditional release outcome."

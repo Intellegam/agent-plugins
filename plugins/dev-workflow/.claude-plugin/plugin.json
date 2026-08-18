@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
-  "version": "0.8.0",
-  "description": "Cross-host development workflow: setup, checks, multi-perspective review, documentation sync, and PR follow-through for Claude Code and Codex.",
+  "version": "0.9.0",
+  "description": "Cross-host development workflow: setup, checks, review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com",
@@ -9,5 +9,5 @@
   },
   "homepage": "https://github.com/Intellegam/agent-plugins/tree/main/plugins/dev-workflow",
   "repository": "https://github.com/Intellegam/agent-plugins",
-  "keywords": ["workflow", "review", "checks", "quality", "process"]
+  "keywords": ["workflow", "review", "checks", "quality", "process", "release"]
 }

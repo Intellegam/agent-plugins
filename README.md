@@ -29,7 +29,7 @@ The reverse direction: lets OpenAI Codex consult Claude Code as a second-opinion
 
 ### dev-workflow
 
-Cross-host org development workflow for Claude Code and Codex: a setup consultant plus a contract-driven validation chain (checks → review → docs sync → PR follow-through).
+Cross-host org development workflow for Claude Code and Codex: a setup consultant plus contract-driven validation and branch-promotion workflows (checks → review → docs sync → PR follow-through).
 
 **Includes:**
 
@@ -39,9 +39,10 @@ Cross-host org development workflow for Claude Code and Codex: a setup consultan
 - `dev-check`, `dev-review`, `dev-sync` skills — cross-host, risk-tiered validation with 1/2–3/5 independent reviews, targeted re-review, and up to two fresh broad final-gate cycles
 - Optional Code Tour phase — after PR creation, delegates reviewer walkthroughs to the separately installed `code-tour` plugin when requested, required by repository guidance, or useful for a non-trivial change
 - `babysit-pr` skill — one shared event-driven PR policy plus non-invokable Claude Code/Codex host adapters; it verifies and automatically replies to clear feedback, watches reviews, comments, mergeability, pushes, and CI, and continues until the PR closes or needs a user decision
+- `promote` skill — prepares, gates, and directly merges branch-promotion PRs with separate approval, then verifies the conditional release outcome from GitHub evidence
 - One canonical internal reference per structural-and-lean, quality, correctness-fallback, and sync reviewer; Claude agents are thin wrappers and Codex sub-agents load the same references
 
-Repos declare commands, situational checks, standards docs, and repo-specific reviewers in applicable `AGENTS.md`/`CLAUDE.md`; run `/dev-workflow:setup` in Claude Code or `$dev-workflow:setup` in Codex to onboard a repo.
+Repos declare commands, situational checks, standards docs, repo-specific reviewers, and an optional pointer to normal promotion-policy documentation in applicable `AGENTS.md`/`CLAUDE.md`; run `/dev-workflow:setup` in Claude Code or `$dev-workflow:setup` in Codex to onboard a repo.
 
 ### code-tour
 
@@ -85,7 +86,7 @@ The repo doubles as a Codex plugin marketplace (`.agents/plugins/marketplace.jso
 codex plugin marketplace add Intellegam/agent-plugins
 ```
 
-Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, and `$dev-workflow:babysit-pr`; code tours use `$code-tour:code-tour`.
+Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, `$dev-workflow:babysit-pr`, and `$dev-workflow:promote`; code tours use `$code-tour:code-tour`.
 
 Manual fallback without the plugin system: add the MCP server directly to `~/.codex/config.toml` — snippet in the [claude-code-mcp README](https://github.com/Intellegam/claude-code-mcp#installation).
 
