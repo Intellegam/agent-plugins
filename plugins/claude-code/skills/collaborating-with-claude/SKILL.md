@@ -80,9 +80,10 @@ too. Verify claims against the code before acting.
 Sessions are read-only by default: Claude's built-in mutation tools (file
 writes, shell, subagents) are blocked. Two caveats:
 
-- Read-only blocks *built-in* mutations, **not** the operator's MCP tools —
-  those stay available and may have side effects. When it matters, prohibit
-  external actions explicitly in the prompt.
+- Read-only blocks *built-in* mutations, **not** the operator's non-bridge MCP
+  tools — those stay available and may have side effects. Agent-bridge MCP
+  servers are unavailable to prevent nested agent sessions. When it matters,
+  prohibit external actions explicitly in the prompt.
 - `writable` is set at session creation (`claude`, not `claude-reply`) and
   held in memory — a session resumed after an MCP server restart is read-only
   again regardless of how it started.
