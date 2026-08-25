@@ -5,9 +5,8 @@ description: Audit or safely update project dependencies across package managers
 
 # Update Dependencies
 
-Discover the repository's dependency domains, research update impact, and make
-small, reversible dependency updates without assuming one language or package
-manager.
+Discover dependency domains, assess update impact, and make small, reversible
+changes without assuming one language or package manager.
 
 ## Authority and modes
 
@@ -15,274 +14,232 @@ Infer the mode from the request:
 
 - **Audit**: inventory, research, and recommend. Do not install, sync, relock,
   edit files, or otherwise mutate the project or its environment.
-- **Update**: dependency-file and required migration edits are authorized.
-  Commits, pushes, PRs, toolchain self-updates, and bypassing repository policy
-  are not authorized unless the user explicitly says so.
+- **Update**: dependency files and required migrations may be edited.
+  Commits, pushes, PRs, toolchain self-updates, and policy bypasses require
+  separate explicit authorization.
 
-If the user named packages, focus on them and any coupled packages required for
-a coherent update. Otherwise, provide an overview before selecting update
-groups.
+Focus on named packages and any compatibility-coupled dependencies. Without
+named packages, provide an overview before selecting update groups.
 
 ## 1. Load repository policy
 
-Read every applicable `AGENTS.md` and `CLAUDE.md`, including Commands & Checks,
-Situational Checks, Review Inputs, and custom reviewers. Read dependency-policy
-documents named there and relevant manager configuration, CI, and release docs.
-Repository policy wins over the defaults in this skill.
+Read every applicable `AGENTS.md` and `CLAUDE.md`, including Commands &
+Checks, Situational Checks, Review Inputs, and custom reviewers. Read referenced
+dependency policy plus relevant manager, CI, and release configuration.
+Repository policy wins.
 
-Do not update the package manager or runtime merely because a newer version
-exists. Treat toolchain upgrades as a separate, explicitly requested change,
-especially when the repository pins them.
+Do not update a package manager or runtime merely because a newer version
+exists; treat that as a separately requested toolchain change, especially when
+the repository pins it.
 
-## 2. Discover dependency domains
+## 2. Discover and protect dependency domains
 
-Resolve the repository root with `git rev-parse --show-toplevel`, then use
-Git's view from that root (`git -C <repo-root> ls-files --cached --others
---exclude-standard`) to enumerate manifests, inline dependency metadata,
-lockfiles, workspace declarations, and manager configuration. Do not let the
-invocation directory narrow the inventory. Do not use an unrestricted
-filesystem scan: ignored dependencies, generated output, caches, and nested
-worktrees are not project domains.
+Resolve the Git root with `git rev-parse --show-toplevel`. From that root, use
+`git -C <repo-root> ls-files --cached --others --exclude-standard` to find
+manifests, inline dependency metadata, lockfiles, workspace declarations, and
+manager configuration. Do not let the invocation directory narrow discovery or
+scan ignored dependencies, generated output, caches, or nested worktrees.
 
-A **dependency domain** is one package-manager root, its owned manifests, and
-its lockfile when repository policy commits one. A domain may intentionally be
-lockfile-free, especially for a published library. Associate workspace-member
-manifests with their owning root; prefer the nearest nested lockfile when a
-subtree is intentionally independent.
-Examples include a root Bun application plus a nested npm-only release tool, or
-a UV workspace with many `pyproject.toml` members and one root `uv.lock`.
-Treat each tracked Python script containing a PEP 723 `# /// script` metadata
-block as its own UV domain, with the script as its manifest and an optional
-`<script>.lock` sidecar. Do not infer that a missing sidecar is intentional
-without repository-policy evidence.
+A **dependency domain** is one manager root, its owned declarations, and its
+lockfile when policy commits one. A domain may intentionally be lockfile-free.
+Associate workspace members with their owner, preferring the nearest lockfile
+for intentionally independent subtrees. Treat each tracked Python script with a
+PEP 723 `# /// script` block as a UV domain whose manifest is the script and
+whose optional sidecar is `<script>.lock`; require policy evidence before
+calling a missing sidecar intentional.
 
 For each domain, record:
 
-- root, manager/version, owned manifests or inline-metadata sources, workspace
-  members, and lockfile presence or intentional-absence policy;
-- resolution-affecting configuration and publication-age/quarantine settings;
-- patches, overrides, alternate sources, catalogs, or vendored dependencies;
-- install/update lifecycle hooks, code generators, and their possible outputs;
-- current changes to these guarded files.
+- root, manager/version, declarations, workspace members, and lockfile policy;
+- resolution settings, release-age rules, patches, overrides, alternate
+  sources, catalogs, and vendored dependencies;
+- lifecycle hooks or generators and every path they may change;
+- current tracked and untracked changes to those guarded paths.
 
-Work on one domain at a time. Never run one domain's package manager from
-another domain's root.
+Work on one domain at a time and run its manager only from that domain or the
+explicit owning member.
 
-### Dirty-file gate
+### Mutation safety
 
-Unrelated working-tree changes do not block the workflow and must remain
-untouched. At workflow start, record the full tracked and untracked status as
-the initial user-owned baseline. If a domain's guarded files are changed in that
-baseline, remain in audit mode for that domain and ask how the user wants to
-isolate or reconcile them. Do not stash or discard them automatically.
+Record the full initial status as the user-owned baseline. Unrelated changes do
+not block the workflow and must remain untouched. If baseline changes overlap a
+domain's guarded files, keep that domain in audit mode and ask how to isolate
+them; never stash or discard them automatically.
 
-Guarded files include the domain's manifests or inline-metadata sources,
-existing lockfile, resolution configuration, referenced patch/vendor artifacts,
-and every application or test file the planned migration or an applicable
-lifecycle hook/generator may edit.
-Before each update group, verify that guarded-file changes belong only to
-completed groups; reject newly detected unowned changes. Record a path-scoped
-snapshot or reversible patch from that current authorized state so rollback
-preserves earlier successful groups. If hook output cannot be bounded, require
-a clean working tree or explicit authorization for its declared write scope;
-otherwise keep the domain in audit mode. Record full tracked and untracked
-status before and after every mutation, attribute expected changes to their
-owning group, and stop before another command if an unexpected path changes. If
-a new migration target is discovered later, check it and extend the checkpoint
-before editing it. Rollback must restore every file owned by the group to that
-checkpoint, preserving unrelated files and earlier successful groups. Never use
-broad checkout/restore globs.
+Guard declarations, existing lockfiles, resolution configuration, patch/vendor
+artifacts, migration targets, tests, and bounded hook/generator outputs. Before
+each group:
+
+1. Confirm existing guarded changes belong only to completed groups.
+2. Capture a path-scoped snapshot or reversible patch from that authorized
+   state.
+3. Record full status before and after every mutation, attribute expected
+   changes, and stop before another command if an unexpected path changes.
+
+Verify a newly discovered migration target is clean before extending the
+checkpoint and editing it. If a hook's output cannot be bounded, require a clean
+tree or explicit authorization for its declared scope. Roll back only
+group-owned files to the checkpoint, preserving unrelated work and earlier
+groups; never use broad checkout/restore globs. Whenever no verified safe
+procedure or required authorization exists, keep the domain in audit mode.
 
 ## 3. Map package-manager capabilities
 
-Use these verified examples for lockfile-backed domains as a capability map,
-not as universal syntax:
+These are verified examples for lockfile-backed domains, not universal syntax:
 
 | Operation | UV | Bun |
 | --- | --- | --- |
 | Tool version | `uv --version` | `bun --version` |
-| Check manifest/lock agreement | `uv lock --check` | `bun install --frozen-lockfile --dry-run` |
-| Check installed environment without changing it | `uv sync --all-packages --all-groups --all-extras --check` | no equivalent listed; use repository guidance or report unavailable |
-| List outdated from the lock/project | `uv tree --outdated --frozen --universal --all-groups` | `bun outdated` for a non-workspace domain; explicit `--filter` selectors for a workspace |
-| Update within declared ranges | `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> <pkg>` |
-| Deliberately cross a range | edit the owning declaration, then `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> --latest <pkg>` or edit the manifest, then `bun install --cwd <owner-root>` |
+| Check declaration/lock agreement | `uv lock --check` | `bun install --frozen-lockfile --dry-run` |
+| Check installed environment | `uv sync --all-packages --all-groups --all-extras --check` | use repository guidance or report unavailable |
+| List outdated | `uv tree --outdated --frozen --universal --all-groups` | `bun outdated` outside workspaces; explicit `--filter` selectors in workspaces |
+| Update within ranges | `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> <pkg>` |
+| Cross a range deliberately | edit the declaration, then `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> --latest <pkg>`, or edit then `bun install --cwd <owner-root>` |
 | Synchronize | `uv sync --all-packages --all-groups --all-extras` | `bun install` |
 
-For a lockfile-backed PEP 723 script domain, verify and use the script-aware UV
-equivalents:
-`uv lock --script <script> --check`,
-`uv sync --script <script> --check`,
-`uv tree --script <script> --outdated --frozen --universal`,
-`uv lock --script <script> --upgrade-package <pkg>`, and
-`uv sync --script <script>`. Do not add project or workspace flags to these
-commands. For an intentionally sidecar-free script, skip lock checking and do
-not use `--frozen`. Use `uv tree --script <script> --outdated --universal` for
-read-only discovery only after verifying that the domain's UV version preserves
-sidecar absence and changes no project files; otherwise report outdated
-discovery as unavailable. Use the no-lock synchronization procedure below only
-in update mode.
+For a lockfile-backed PEP 723 script, use verified `--script <script>`
+equivalents for `uv lock --check`, `uv sync --check`,
+`uv tree --outdated --frozen --universal`, targeted locking, and sync; do not
+add project/workspace flags. For an intentionally sidecar-free script, skip
+lock checks and `--frozen`. Use
+`uv tree --script <script> --outdated --universal` only after proving the
+installed UV version preserves sidecar absence and changes no project files;
+otherwise report outdated discovery as unavailable.
 
-For a Bun workspace outdated audit, include the root package with
-`--filter="./"` and every discovered member with an explicit
-`--filter="./<member-path>"`; repeat filters in one command only after confirming
-the installed version supports it, otherwise run one read-only command per
-selector. Do not rely on version-dependent default scope, `--recursive`, or a
-name glob to prove complete coverage. For updates, `<owner-root>` is the domain
-root when it owns the declaration and the workspace-member root otherwise.
-Verify that member-scoped updates preserve the domain's shared lockfile.
+For Bun workspace audits, include the root with `--filter="./"` and every
+discovered member with `--filter="./<member-path>"`. Repeat filters only when
+the installed version supports it; otherwise run one read-only command per
+selector. Do not rely on default scope, `--recursive`, or a name glob for
+complete coverage. For updates, `<owner-root>` is the domain root or the
+member owning the declaration. Verify that member-scoped updates preserve the
+shared lockfile.
 
-An intentionally lockfile-free domain must use a verified no-lock procedure;
-do not run a table command that creates a lockfile by default. For Bun, edit the
-manifest when needed, then use `bun install --cwd <owner-root> --no-save` or
-`bun update --cwd <owner-root> --no-save <pkg>` to update the environment
-without saving a lockfile. For a UV project domain, avoid `uv lock` and project
-`uv sync`; use the repository-approved environment and a verified `uv pip`
-command such as `uv pip install -e .` with the required groups or extras. For an
-intentionally sidecar-free PEP 723 domain, do not use that project fallback:
-verify that `uv sync --script <script>` preserves sidecar absence, then use it
-to synchronize and run `uv run --script <script>` only when repository policy
-allows executing the script. Otherwise remain in audit mode. Confirm every
-no-lock flag and its semantics against the domain's pinned or installed manager
-version and CLI help. These environment-facing commands do not replace
-dependency-declaration edits or an exact-sync policy; report any limitation. For
-another manager, derive and report its no-lock equivalent before mutation. If
-none exists, remain in audit mode. Never create a missing lockfile unless
-repository policy or the user explicitly authorizes it.
+An intentionally lockfile-free domain needs a verified no-lock procedure:
 
-Use workspace flags only when discovery proves the domain is a workspace. An
-outdated command may include transitive packages; reconcile its output against
-owned manifests or inline metadata and focus decisions on direct dependencies.
-Carry the same affected dependency-group selection through outdated discovery,
-environment checking, updating, and synchronization. Carry affected
-optional-extra selections through environment checking and synchronization,
-plus other operations that support them. Use explicit `--group`/`--extra`
-selections or `--all-groups`/`--all-extras` only after confirming support in the
+- Bun: edit the declaration, then use
+  `bun install --cwd <owner-root> --no-save` or
+  `bun update --cwd <owner-root> --no-save <pkg>`.
+- UV project: avoid `uv lock` and project `uv sync`; use the approved
+  environment and a verified `uv pip` command such as
+  `uv pip install -e .` with required groups/extras.
+- Sidecar-free PEP 723 script: verify `uv sync --script <script>` preserves
+  sidecar absence; run `uv run --script <script>` only when executing the
+  script is authorized.
+
+Confirm every no-lock flag and its semantics against the pinned or installed
+manager version and CLI help. Derive an equivalent for other managers; if none
+exists, remain in audit mode.
+
+Never create a missing lockfile without repository-policy or explicit user
+authorization. No-lock environment commands do not replace declaration edits
+or exact-sync policy.
+
+Use workspace flags only for proven workspaces. Reconcile outdated output
+against owned declarations and focus decisions on direct dependencies. Carry
+the affected dependency groups through discovery, environment checks, updates,
+and sync; carry extras through every supporting operation. Confirm support for
+every group/extra flag used, including `--all-groups` and `--all-extras`, in the
 domain's UV version.
 
 For npm, Poetry, pnpm, Yarn, Cargo, or another manager, derive the same
-capabilities from repository documentation, the installed CLI's help, and
-current official documentation. Before the first mutation, report the exact
-domain root and commands selected for lock checking, environment checking when
-available, outdated discovery, within-range updates, deliberate range crossing,
-synchronization, and rollback. Do not infer flags from the UV or Bun examples.
+capabilities from repository guidance, installed CLI help, and current official
+documentation. Before mutation, report the domain root and exact commands for
+lock checks, non-mutating environment checks when available, outdated discovery,
+within-range update, deliberate range crossing, synchronization, and rollback.
+Never infer flags from UV or Bun examples.
 
-## 4. Inventory and policy audit
+## 4. Inventory and assess impact
 
 For each direct dependency in scope, identify:
 
-- owning manifest or inline-metadata block and dependency section/group;
-- declared constraint and currently locked version when a lockfile exists;
-  otherwise record lockfile absence separately, characterize whether the
-  declared constraint is exact or ranged, and use another
-  repository-authoritative current baseline when one exists;
-- latest version allowed by the constraint;
-- latest version eligible under publication-age policy;
-- latest published stable version;
-- workspace, peer, runtime, or platform compatibility constraints.
+- owning declaration and dependency section/group;
+- declared constraint and locked version, or lockfile absence plus whether the
+  declaration is exact or ranged and any repository-authoritative current
+  baseline;
+- latest constraint-allowed, release-age-eligible, and published stable version;
+- workspace, peer, runtime, and platform compatibility constraints.
 
 Do not bypass `exclude-newer`, minimum-release-age, registry, or provenance
-policy to reach a newer version. Report policy-held releases explicitly rather
-than calling the domain fully up to date.
+policy. Report policy-held releases instead of calling the domain up to date.
+Treat exact pins, upper bounds, prerelease ranges, runtime constraints, and
+coordinated versions as potentially deliberate; do not relax them or cross a
+major/pre-1.0 boundary without evidence and a deliberate decision.
 
-Audit constraints using the ecosystem's semantics and repository policy. Exact
-pins, upper bounds, prerelease ranges, runtime constraints, and coordinated
-versions may be deliberate. Do not relax them or cross a major/pre-1.0 boundary
-without evidence and a deliberate decision.
-
-Check whether each target is patched, overridden, vendored, sourced from Git or
-a local path, or coupled to peers/framework packages. A patched or overridden
-dependency is a focused high-risk group: update or regenerate its supporting
-artifact atomically, or defer it.
-
-## 5. Research and assess impact
+Check patches, overrides, vendoring, Git/local sources, peers, and framework
+coupling. Treat patched or overridden dependencies as focused high-risk groups;
+update supporting artifacts atomically or defer them.
 
 Use current authoritative release notes, migration guides, advisories, and
-registry metadata for the exact current-to-target interval. In parallel when
-available, inspect the repository for imports, changed/deprecated APIs,
-integration boundaries, package-size/deployment effects, and focused tests.
-
-Summarize the evidence before updating:
+registry metadata for the exact current-to-target interval. Inspect imports,
+changed or deprecated APIs, integration boundaries, deployment/package-size
+effects, and focused tests. Summarize evidence before updating:
 
 | Package/group | Current | Target | Owner | Relevant changes | Code impact | Risk |
 | --- | --- | --- | --- | --- | --- | --- |
 
-Label uncertain conclusions and do not equate a successful resolution with API
-compatibility.
+Label uncertainty; successful resolution does not prove API compatibility.
 
-## 6. Plan update groups
+## 5. Plan and execute update groups
 
-Prefer the fewest independently reversible groups that preserve compatibility:
+Use the fewest independently reversible groups that preserve compatibility:
 
 - bulk compatible patches and clearly low-risk minors;
-- resolver-coupled or framework/version-aligned clusters;
+- resolver-coupled or version-aligned clusters;
 - risky minors, majors, prereleases, and runtime/tooling changes individually;
 - patched, security-sensitive, storage, auth, or core-infrastructure packages
-  with focused integration verification.
+  with focused integration checks.
 
-Keep a required code migration in the same group as the dependency version that
-needs it. Every group must leave manifests or inline metadata and any existing
-lockfile synchronized and the tree runnable. Preserve an intentional no-lockfile
-policy. Split a constraint-policy-only change from a version bump only when
-relocking moves no package versions; otherwise keep the constraint, resolved
-version, and migration atomic.
-
-Do not commit between update groups. Retain per-group checkpoints until every
-group is complete and the final `dev-check`, `dev-review`, and `dev-sync` gates
-pass. If commits were explicitly authorized, create the validated commit series
-after those gates, using one commit per independently reversible group when
-practical. Otherwise, present the proposed series without committing.
-
-## 7. Update and verify one group at a time
+Keep a required migration with the version that needs it. Each group must leave
+declarations and any existing lockfile synchronized and the tree runnable while
+preserving intentional lockfile absence. Split constraint policy from a version
+bump only when relocking moves no package version; otherwise keep constraint,
+resolution, and migration atomic.
 
 For each group:
 
-1. Record the path-scoped checkpoint and run the selected update command from
-   the domain root.
-2. Inspect manifest or inline-metadata, existing-lockfile, patch, and
-   transitive-version diffs. Investigate unexpected movement instead of
-   accepting resolver output wholesale.
-3. Synchronize the domain without changing repository install policy or
-   silently disabling lifecycle scripts.
-4. Apply the smallest required migration and run focused checks for the
-   affected integration plus applicable Situational Checks.
-5. On failure, use the release/code-impact evidence to fix the root cause,
-   choose a lower compatible target, defer the group, or restore only the
-   recorded group checkpoint and re-synchronize.
+1. Capture the mutation-safety checkpoint and run the selected update command.
+2. Inspect declaration, lockfile, patch, and transitive-version diffs; investigate
+   unexpected movement.
+3. Synchronize without changing install policy or disabling lifecycle scripts.
+4. Apply the smallest required migration and run focused plus applicable
+   Situational Checks.
+5. On failure, fix the evidenced root cause, choose a lower compatible target,
+   defer, or restore the group checkpoint and re-synchronize.
 
-Stop after three failed fixes for the same issue and reassess the target,
-constraint, or grouping assumption before trying again.
+After three failed fixes for one issue, reassess the target, constraint, or
+grouping assumption before trying again.
 
-## 8. Final validation and report
+Do not commit between groups. Retain checkpoints until every group and final
+validation pass. If commits are authorized, create the validated series
+afterward, preferably one commit per independently reversible group; otherwise
+only propose the series.
 
-In audit mode, stop after the read-only report below. Do not invoke validation
-skills that can auto-fix files.
+## 6. Final validation and report
 
-In update mode, run the repository's `dev-check` workflow using a tier
-proportional to the final diff: normal for resolved-version or
-dependency-declaration changes, and high-risk for major crossings or application
-migrations. Use tiny only for a genuinely behavior-neutral metadata-only
-lockfile change where no resolved version moved. Use non-mutating/check-only
-variants for repository-wide commands.
-Allow automatic fixes only for update-caused failures or required migration and
-formatting changes; report unrelated findings even when they occur in a
-checkpointed file unless the user separately authorizes them. Before any
-permitted validation write outside the checkpoint, verify the target is clean,
-extend the checkpoint, and obtain authorization. Then continue through
-`dev-review`. For `dev-sync`, invoke its canonical sync reviewer contract
-directly in read-only mode even when the final diff is tiny; do not use the tiny
-auto-fix path. Report newly discovered drift under the same boundary. If
-`dev-review` or another validation step changes files after the last
-`dev-check`, rerun all Required Checks and newly applicable Situational Checks
-before creating the validated commit series.
+In audit mode, stop after the read-only report; do not invoke validation skills
+that may auto-fix.
 
-Invoke them as `/dev-workflow:<name>` in Claude Code or
+In update mode, run `dev-check` at normal tier for declaration/resolution
+changes and high-risk for major crossings or application migrations. Tiny is
+only for metadata-only lockfile changes where no resolved version moved. Use
+check-only repository-wide commands. Auto-fix only update-caused failures or
+required migration/formatting changes; report unrelated findings unless
+separately authorized. Before a permitted validation write outside a checkpoint,
+verify it is clean, extend the checkpoint, and obtain authorization.
+
+Continue through `dev-review`, then invoke the canonical `dev-sync` reviewer
+directly in read-only mode, including for tiny diffs. If review or validation
+changes files after the last `dev-check`, rerun all Required and newly
+applicable Situational Checks before creating commits. Report sync drift under
+the same authorization boundary.
+
+Invoke as `/dev-workflow:<name>` in Claude Code or
 `$dev-workflow:<name>` in Codex.
 
 Report:
 
-- updated packages by domain/group and their relevant release changes;
-- manifest or inline-metadata, lockfile presence or changes, patch, and
-  application migrations;
-- verification performed and any environmental limitations;
+- updates by domain/group and relevant release changes;
+- declaration, lockfile-policy/change, patch, and application migrations;
+- verification and environmental limitations;
 - skipped, policy-held, or deferred packages with reasons;
-- proposed commit series, while clearly stating whether anything was committed.
+- proposed commit series and whether anything was committed.
