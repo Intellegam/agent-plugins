@@ -36,6 +36,7 @@ Cross-host org development workflow for Claude Code and Codex: a setup consultan
 - SessionStart hook — injects the six-phase workflow in Claude Code and Codex and re-fires after compaction
 - Claude-only SubagentStart matcher — injects the workflow into implementation-capable `general-purpose`/`claude` agents without affecting reviewers; generic Codex sub-agents are intentionally excluded
 - `setup` skill — inspects a repo, recommends checks/reviewers with evidence, configures applicable `AGENTS.md`/`CLAUDE.md`, and generates thin Claude/Codex wrappers for accepted repo-specific reviewers
+- `update-dependencies` skill — discovers package-manager domains, audits constraints and release impact, and performs risk-grouped updates using repository policy and checks
 - `dev-check`, `dev-review`, `dev-sync` skills — cross-host, risk-tiered validation with 1/2–3/5 independent reviews, targeted re-review, and up to two fresh broad final-gate cycles
 - Optional Code Tour phase — after PR creation, delegates reviewer walkthroughs to the separately installed `code-tour` plugin when requested, required by repository guidance, or useful for a non-trivial change
 - `babysit-pr` skill — one shared event-driven PR policy plus non-invokable Claude Code/Codex host adapters; it verifies and automatically replies to clear feedback, watches reviews, comments, mergeability, pushes, and CI, and continues until the PR closes or needs a user decision
@@ -86,7 +87,7 @@ The repo doubles as a Codex plugin marketplace (`.agents/plugins/marketplace.jso
 codex plugin marketplace add Intellegam/agent-plugins
 ```
 
-Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, `$dev-workflow:babysit-pr`, and `$dev-workflow:promote`; code tours use `$code-tour:code-tour`.
+Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:update-dependencies`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, `$dev-workflow:babysit-pr`, and `$dev-workflow:promote`; code tours use `$code-tour:code-tour`.
 
 Manual fallback without the plugin system: add the MCP server directly to `~/.codex/config.toml` — snippet in the [claude-code-mcp README](https://github.com/Intellegam/claude-code-mcp#installation).
 
