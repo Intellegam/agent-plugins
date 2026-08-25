@@ -43,17 +43,21 @@ and manager configuration. Do not let the invocation directory narrow the
 inventory. Do not use an unrestricted filesystem scan: ignored dependencies,
 generated output, caches, and nested worktrees are not project domains.
 
-A **dependency domain** is one package-manager root and the manifests governed
-by its lockfile. Associate workspace-member manifests with their owning root;
-prefer the nearest nested lockfile when a subtree is intentionally independent.
+A **dependency domain** is one package-manager root, its owned manifests, and
+its lockfile when repository policy commits one. A domain may intentionally be
+lockfile-free, especially for a published library. Associate workspace-member
+manifests with their owning root; prefer the nearest nested lockfile when a
+subtree is intentionally independent.
 Examples include a root Bun application plus a nested npm-only release tool, or
 a UV workspace with many `pyproject.toml` members and one root `uv.lock`.
 
 For each domain, record:
 
-- root, manager/version, lockfile, owned manifests, and workspace members;
+- root, manager/version, owned manifests, workspace members, and lockfile
+  presence or intentional-absence policy;
 - resolution-affecting configuration and publication-age/quarantine settings;
 - patches, overrides, alternate sources, catalogs, or vendored dependencies;
+- install/update lifecycle hooks, code generators, and their possible outputs;
 - current changes to these guarded files.
 
 Work on one domain at a time. Never run one domain's package manager from
@@ -66,14 +70,18 @@ untouched. If a domain's guarded files already have changes, remain in audit
 mode for that domain and ask how the user wants to isolate or reconcile them.
 Do not stash or discard them automatically.
 
-Guarded files include the domain's manifests, lockfile, resolution
+Guarded files include the domain's manifests, existing lockfile, resolution
 configuration, referenced patch/vendor artifacts, and every application or test
-file the planned migration will edit. Before each update group, verify those
-files have no pre-existing changes and record a path-scoped snapshot or
-reversible patch. If a new migration target is discovered later, check it and
-extend the checkpoint before editing it. Rollback must restore every file owned
-by the group to that checkpoint, preserving unrelated files and earlier
-successful groups. Never use broad checkout/restore globs.
+file the planned migration or an applicable lifecycle hook/generator may edit.
+Before each update group, verify those files have no pre-existing changes and
+record a path-scoped snapshot or reversible patch. If hook output cannot be
+bounded, require a clean working tree or explicit authorization for its declared
+write scope; otherwise keep the domain in audit mode. Record full tracked and
+untracked status before and after every mutation, and stop before another
+command if an unexpected path changes. If a new migration target is discovered
+later, check it and extend the checkpoint before editing it. Rollback must
+restore every file owned by the group to that checkpoint, preserving unrelated
+files and earlier successful groups. Never use broad checkout/restore globs.
 
 ## 3. Map package-manager capabilities
 
@@ -88,6 +96,10 @@ Use these verified examples as a capability map, not as universal syntax:
 | Update within declared ranges | `uv lock --upgrade-package <pkg>` | `bun update <pkg>` |
 | Deliberately cross a range | edit the owning manifest, then `uv lock` | `bun update --latest <pkg>` or edit the manifest, then `bun install` |
 | Synchronize | `uv sync --all-packages` | `bun install` |
+
+An intentionally lockfile-free domain skips lock-specific operations. Never
+create a missing lockfile unless repository policy or the user explicitly
+authorizes it.
 
 Use workspace flags only when discovery proves the domain is a workspace. An
 outdated command may include transitive packages; reconcile its output against
@@ -105,7 +117,9 @@ synchronization, and rollback. Do not infer flags from the UV or Bun examples.
 For each direct dependency in scope, identify:
 
 - owning manifest and dependency section/group;
-- declared constraint and currently locked version;
+- declared constraint and currently locked version when a lockfile exists;
+  otherwise record the domain as unlocked/unpinned or use another
+  repository-authoritative current baseline;
 - latest version allowed by the constraint;
 - latest version eligible under publication-age policy;
 - latest published stable version;
@@ -151,14 +165,17 @@ Prefer the fewest independently reversible groups that preserve compatibility:
   with focused integration verification.
 
 Keep a required code migration in the same group as the dependency version that
-needs it. Every group must leave manifests and lockfiles synchronized and the
-tree runnable. Split a constraint-policy-only change from a version bump only
-when relocking moves no package versions; otherwise keep the constraint, resolved
-version, and migration atomic.
+needs it. Every group must leave manifests and any existing lockfile synchronized
+and the tree runnable. Preserve an intentional no-lockfile policy. Split a
+constraint-policy-only change from a version bump only when relocking moves no
+package versions; otherwise keep the constraint, resolved version, and migration
+atomic.
 
-If commits were explicitly authorized, one commit per independently reversible
-group is the default. Otherwise, do not commit: maintain per-group checkpoints
-and present the proposed commit series at the end.
+Do not commit between update groups. Retain per-group checkpoints until every
+group is complete and the final `dev-check`, `dev-review`, and `dev-sync` gates
+pass. If commits were explicitly authorized, create the validated commit series
+after those gates, using one commit per independently reversible group when
+practical. Otherwise, present the proposed series without committing.
 
 ## 7. Update and verify one group at a time
 
@@ -166,7 +183,7 @@ For each group:
 
 1. Record the path-scoped checkpoint and run the selected update command from
    the domain root.
-2. Inspect manifest, lockfile, patch, and transitive-version diffs. Investigate
+2. Inspect manifest, existing-lockfile, patch, and transitive-version diffs. Investigate
    unexpected movement instead of accepting resolver output wholesale.
 3. Synchronize the domain without changing repository install policy or
    silently disabling lifecycle scripts.
@@ -188,10 +205,16 @@ In update mode, run the repository's `dev-check` workflow using a tier
 proportional to the final diff: normal for resolved-version or manifest changes,
 and high-risk for major crossings or application migrations. Use tiny only for
 a genuinely behavior-neutral metadata-only lockfile change where no resolved
-version moved. Then continue through `dev-review`. For `dev-sync`, invoke its
+version moved. Use non-mutating/check-only variants for repository-wide commands.
+Allow automatic fixes only for update-caused failures or required migration and
+formatting changes; report unrelated findings even when they occur in a
+checkpointed file unless the user separately authorizes them. Before any
+permitted validation write outside the checkpoint, verify the target is clean,
+extend the checkpoint, and obtain authorization. Then continue through
+`dev-review`. For `dev-sync`, invoke its
 canonical sync reviewer contract directly in read-only mode even when the final
 diff is tiny; do not use the tiny auto-fix path. Report newly discovered drift
-or verify and extend the checkpoint before a separately authorized edit.
+under the same boundary.
 
 Invoke them as `/dev-workflow:<name>` in Claude Code or
 `$dev-workflow:<name>` in Codex.
@@ -199,7 +222,7 @@ Invoke them as `/dev-workflow:<name>` in Claude Code or
 Report:
 
 - updated packages by domain/group and their relevant release changes;
-- manifest, lockfile, patch, and application migrations;
+- manifest, lockfile presence or changes, patch, and application migrations;
 - verification performed and any environmental limitations;
 - skipped, policy-held, or deferred packages with reasons;
 - proposed commit series, while clearly stating whether anything was committed.
