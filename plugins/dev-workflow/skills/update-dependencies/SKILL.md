@@ -66,26 +66,31 @@ another domain's root.
 ### Dirty-file gate
 
 Unrelated working-tree changes do not block the workflow and must remain
-untouched. If a domain's guarded files already have changes, remain in audit
-mode for that domain and ask how the user wants to isolate or reconcile them.
-Do not stash or discard them automatically.
+untouched. At workflow start, record the full tracked and untracked status as
+the initial user-owned baseline. If a domain's guarded files are changed in that
+baseline, remain in audit mode for that domain and ask how the user wants to
+isolate or reconcile them. Do not stash or discard them automatically.
 
 Guarded files include the domain's manifests, existing lockfile, resolution
 configuration, referenced patch/vendor artifacts, and every application or test
 file the planned migration or an applicable lifecycle hook/generator may edit.
-Before each update group, verify those files have no pre-existing changes and
-record a path-scoped snapshot or reversible patch. If hook output cannot be
-bounded, require a clean working tree or explicit authorization for its declared
-write scope; otherwise keep the domain in audit mode. Record full tracked and
-untracked status before and after every mutation, and stop before another
-command if an unexpected path changes. If a new migration target is discovered
-later, check it and extend the checkpoint before editing it. Rollback must
-restore every file owned by the group to that checkpoint, preserving unrelated
-files and earlier successful groups. Never use broad checkout/restore globs.
+Before each update group, verify that guarded-file changes belong only to
+completed groups; reject newly detected unowned changes. Record a path-scoped
+snapshot or reversible patch from that current authorized state so rollback
+preserves earlier successful groups. If hook output cannot be bounded, require
+a clean working tree or explicit authorization for its declared write scope;
+otherwise keep the domain in audit mode. Record full tracked and untracked
+status before and after every mutation, attribute expected changes to their
+owning group, and stop before another command if an unexpected path changes. If
+a new migration target is discovered later, check it and extend the checkpoint
+before editing it. Rollback must restore every file owned by the group to that
+checkpoint, preserving unrelated files and earlier successful groups. Never use
+broad checkout/restore globs.
 
 ## 3. Map package-manager capabilities
 
-Use these verified examples as a capability map, not as universal syntax:
+Use these verified examples for lockfile-backed domains as a capability map,
+not as universal syntax:
 
 | Operation | UV | Bun |
 | --- | --- | --- |
@@ -97,9 +102,19 @@ Use these verified examples as a capability map, not as universal syntax:
 | Deliberately cross a range | edit the owning manifest, then `uv lock` | `bun update --latest <pkg>` or edit the manifest, then `bun install` |
 | Synchronize | `uv sync --all-packages` | `bun install` |
 
-An intentionally lockfile-free domain skips lock-specific operations. Never
-create a missing lockfile unless repository policy or the user explicitly
-authorizes it.
+An intentionally lockfile-free domain must use a verified no-lock procedure;
+do not run a table command that creates a lockfile by default. For Bun, edit the
+manifest when needed and use `bun install --no-save` or `bun update --no-save
+<pkg>` to update the environment without saving a lockfile. For UV, avoid
+`uv lock` and `uv sync`; use the repository-approved environment and a verified
+`uv pip` command such as `uv pip install -e .` with the required groups or
+extras. Confirm every no-lock flag and its semantics against the domain's pinned
+or installed manager version and CLI help; if that cannot be verified, remain
+in audit mode. These environment-facing commands do not replace manifest edits
+or an exact-sync policy; report any limitation. For another manager, derive and
+report its no-lock equivalent before mutation. If none exists, remain in audit
+mode. Never create a missing lockfile unless repository policy or the user
+explicitly authorizes it.
 
 Use workspace flags only when discovery proves the domain is a workspace. An
 outdated command may include transitive packages; reconcile its output against
@@ -118,8 +133,9 @@ For each direct dependency in scope, identify:
 
 - owning manifest and dependency section/group;
 - declared constraint and currently locked version when a lockfile exists;
-  otherwise record the domain as unlocked/unpinned or use another
-  repository-authoritative current baseline;
+  otherwise record lockfile absence separately, characterize whether the
+  manifest constraint is exact or ranged, and use another repository-authoritative
+  current baseline when one exists;
 - latest version allowed by the constraint;
 - latest version eligible under publication-age policy;
 - latest published stable version;
