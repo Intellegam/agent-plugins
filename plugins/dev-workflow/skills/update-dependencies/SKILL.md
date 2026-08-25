@@ -98,20 +98,24 @@ not as universal syntax:
 | Check manifest/lock agreement | `uv lock --check` | `bun install --frozen-lockfile --dry-run` |
 | Check installed environment without changing it | `uv sync --all-packages --all-groups --all-extras --check` | no equivalent listed; use repository guidance or report unavailable |
 | List outdated from the lock/project | `uv tree --outdated --frozen --universal --all-groups` | `bun outdated` for one package root; `bun outdated --filter="*"` for every workspace member |
-| Update within declared ranges | `uv lock --upgrade-package <pkg>` | `bun update <pkg>` |
-| Deliberately cross a range | edit the owning manifest, then `uv lock` | `bun update --latest <pkg>` or edit the manifest, then `bun install` |
+| Update within declared ranges | `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> <pkg>` |
+| Deliberately cross a range | edit the owning manifest, then `uv lock` | `bun update --cwd <owner-root> --latest <pkg>` or edit the manifest, then `bun install --cwd <owner-root>` |
 | Synchronize | `uv sync --all-packages --all-groups --all-extras` | `bun install` |
+
+For Bun, `<owner-root>` is the domain root when it owns the declaration and the
+workspace-member root otherwise. Verify that member-scoped updates preserve the
+domain's shared lockfile.
 
 An intentionally lockfile-free domain must use a verified no-lock procedure;
 do not run a table command that creates a lockfile by default. For Bun, edit the
-manifest when needed, then use `bun install --no-save` or
-`bun update --no-save <pkg>` to update the environment without saving a
-lockfile. For UV, avoid `uv lock` and `uv sync`; use the repository-approved
-environment and a verified `uv pip` command such as `uv pip install -e .` with
-the required groups or
-extras. Confirm every no-lock flag and its semantics against the domain's pinned
-or installed manager version and CLI help; if that cannot be verified, remain
-in audit mode. These environment-facing commands do not replace manifest edits
+manifest when needed, then use `bun install --cwd <owner-root> --no-save` or
+`bun update --cwd <owner-root> --no-save <pkg>` to update the environment
+without saving a lockfile. For UV, avoid `uv lock` and `uv sync`; use the
+repository-approved environment and a verified `uv pip` command such as
+`uv pip install -e .` with the required groups or extras. Confirm every no-lock
+flag and its semantics against the domain's pinned or installed manager
+version and CLI help; if that cannot be verified, remain in audit mode. These
+environment-facing commands do not replace manifest edits
 or an exact-sync policy; report any limitation. For another manager, derive and
 report its no-lock equivalent before mutation. If none exists, remain in audit
 mode. Never create a missing lockfile unless repository policy or the user
