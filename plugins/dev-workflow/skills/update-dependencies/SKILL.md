@@ -121,7 +121,7 @@ An intentionally lockfile-free domain needs a verified no-lock procedure:
   `bun update --cwd <owner-root> --no-save <pkg>`.
 - UV project: avoid `uv lock` and project `uv sync`; use the approved
   environment and a verified `uv pip` command such as
-  `uv pip install -e .` with required groups/extras.
+  `uv pip install --upgrade-package <pkg> -e .` with required groups/extras.
 - Sidecar-free PEP 723 script: verify `uv sync --script <script>` preserves
   sidecar absence; run `uv run --script <script>` only when executing the
   script is authorized.
@@ -137,9 +137,10 @@ or exact-sync policy.
 Use workspace flags only for proven workspaces. Reconcile outdated output
 against owned declarations and focus decisions on direct dependencies. Carry
 the affected dependency groups through discovery, environment checks, updates,
-and sync; carry extras through every supporting operation. Confirm support for
-every group/extra flag used, including `--all-groups` and `--all-extras`, in the
-domain's UV version.
+and sync; carry extras through every supporting operation. Derive compatible
+explicit extra selections from declared extras and `tool.uv.conflicts`, reuse
+them across supporting commands, and do not use `--all-extras` for conflicting
+sets. Confirm support for every group/extra flag used in the domain's UV version.
 
 For npm, Poetry, pnpm, Yarn, Cargo, or another manager, derive the same
 capabilities from repository guidance, installed CLI help, and current official
