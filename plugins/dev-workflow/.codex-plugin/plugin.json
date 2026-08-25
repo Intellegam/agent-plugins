@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
-  "version": "0.9.0",
-  "description": "Language-agnostic development workflow with repository checks, multi-perspective review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
+  "version": "0.10.0",
+  "description": "Language-agnostic development workflow with dependency updates, repository checks, multi-perspective review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com",
@@ -10,12 +10,12 @@
   "homepage": "https://github.com/Intellegam/agent-plugins/tree/main/plugins/dev-workflow",
   "repository": "https://github.com/Intellegam/agent-plugins",
   "license": "MIT",
-  "keywords": ["workflow", "review", "checks", "quality", "process", "release"],
+  "keywords": ["workflow", "dependencies", "review", "checks", "quality", "process", "release"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Dev Workflow",
     "shortDescription": "Run Intellegam's complete development workflow",
-    "longDescription": "Guides implementation through repository-specific checks, risk-scaled multi-perspective review, documentation synchronization, post-PR monitoring, and policy-driven branch promotion with conditional release verification in Claude Code or Codex.",
+    "longDescription": "Guides dependency maintenance and implementation through repository-specific checks, risk-scaled multi-perspective review, documentation synchronization, post-PR monitoring, and policy-driven branch promotion with conditional release verification in Claude Code or Codex.",
     "developerName": "Intellegam",
     "category": "Engineering",
     "capabilities": ["Read", "Write"],
@@ -25,6 +25,7 @@
     "logo": "./assets/logo.png",
     "defaultPrompt": [
       "Set up this repository for the dev workflow",
+      "Audit and safely update this repository's dependencies",
       "Run the complete dev workflow for my changes",
       "Promote a staged branch to production through a GitHub PR"
     ]
