@@ -36,11 +36,12 @@ especially when the repository pins them.
 
 ## 2. Discover dependency domains
 
-Use Git's view of the working tree (`git ls-files --cached --others
+Resolve the repository root with `git rev-parse --show-toplevel`, then use
+Git's view from that root (`git -C <repo-root> ls-files --cached --others
 --exclude-standard`) to enumerate manifests, lockfiles, workspace declarations,
-and manager configuration. Do not use an unrestricted filesystem scan: ignored
-dependencies, generated output, caches, and nested worktrees are not project
-domains.
+and manager configuration. Do not let the invocation directory narrow the
+inventory. Do not use an unrestricted filesystem scan: ignored dependencies,
+generated output, caches, and nested worktrees are not project domains.
 
 A **dependency domain** is one package-manager root and the manifests governed
 by its lockfile. Associate workspace-member manifests with their owning root;
@@ -187,7 +188,10 @@ In update mode, run the repository's `dev-check` workflow using a tier
 proportional to the final diff: normal for resolved-version or manifest changes,
 and high-risk for major crossings or application migrations. Use tiny only for
 a genuinely behavior-neutral metadata-only lockfile change where no resolved
-version moved. Then continue through `dev-review` and `dev-sync`.
+version moved. Then continue through `dev-review`. For `dev-sync`, invoke its
+canonical sync reviewer contract directly in read-only mode even when the final
+diff is tiny; do not use the tiny auto-fix path. Report newly discovered drift
+or verify and extend the checkpoint before a separately authorized edit.
 
 Invoke them as `/dev-workflow:<name>` in Claude Code or
 `$dev-workflow:<name>` in Codex.
