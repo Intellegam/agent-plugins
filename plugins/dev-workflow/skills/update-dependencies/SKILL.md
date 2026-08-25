@@ -234,10 +234,12 @@ formatting changes; report unrelated findings even when they occur in a
 checkpointed file unless the user separately authorizes them. Before any
 permitted validation write outside the checkpoint, verify the target is clean,
 extend the checkpoint, and obtain authorization. Then continue through
-`dev-review`. For `dev-sync`, invoke its
-canonical sync reviewer contract directly in read-only mode even when the final
-diff is tiny; do not use the tiny auto-fix path. Report newly discovered drift
-under the same boundary.
+`dev-review`. For `dev-sync`, invoke its canonical sync reviewer contract
+directly in read-only mode even when the final diff is tiny; do not use the tiny
+auto-fix path. Report newly discovered drift under the same boundary. If
+`dev-review` or another validation step changes files after the last
+`dev-check`, rerun all Required Checks and newly applicable Situational Checks
+before creating the validated commit series.
 
 Invoke them as `/dev-workflow:<name>` in Claude Code or
 `$dev-workflow:<name>` in Codex.
