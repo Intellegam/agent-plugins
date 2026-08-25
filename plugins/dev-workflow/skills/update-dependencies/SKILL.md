@@ -103,9 +103,9 @@ not as universal syntax:
 | Tool version | `uv --version` | `bun --version` |
 | Check manifest/lock agreement | `uv lock --check` | `bun install --frozen-lockfile --dry-run` |
 | Check installed environment without changing it | `uv sync --all-packages --all-groups --all-extras --check` | no equivalent listed; use repository guidance or report unavailable |
-| List outdated from the lock/project | `uv tree --outdated --frozen --universal --all-groups` | `bun outdated` for one package root; `bun outdated --filter="*"` for every workspace member |
+| List outdated from the lock/project | `uv tree --outdated --frozen --universal --all-groups` | `bun outdated` for a non-workspace domain; explicit `--filter` selectors for a workspace |
 | Update within declared ranges | `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> <pkg>` |
-| Deliberately cross a range | edit the owning manifest, then `uv lock` | `bun update --cwd <owner-root> --latest <pkg>` or edit the manifest, then `bun install --cwd <owner-root>` |
+| Deliberately cross a range | edit the owning declaration, then `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> --latest <pkg>` or edit the manifest, then `bun install --cwd <owner-root>` |
 | Synchronize | `uv sync --all-packages --all-groups --all-extras` | `bun install` |
 
 For a PEP 723 script domain, verify and use the script-aware UV equivalents:
@@ -116,9 +116,14 @@ For a PEP 723 script domain, verify and use the script-aware UV equivalents:
 `uv sync --script <script>`. Do not add project or workspace flags to these
 commands.
 
-For Bun, `<owner-root>` is the domain root when it owns the declaration and the
-workspace-member root otherwise. Verify that member-scoped updates preserve the
-domain's shared lockfile.
+For a Bun workspace outdated audit, include the root package with
+`--filter="./"` and every discovered member with an explicit
+`--filter="./<member-path>"`; repeat filters in one command only after confirming
+the installed version supports it, otherwise run one read-only command per
+selector. Do not rely on version-dependent default scope, `--recursive`, or a
+name glob to prove complete coverage. For updates, `<owner-root>` is the domain
+root when it owns the declaration and the workspace-member root otherwise.
+Verify that member-scoped updates preserve the domain's shared lockfile.
 
 An intentionally lockfile-free domain must use a verified no-lock procedure;
 do not run a table command that creates a lockfile by default. For Bun, edit the
