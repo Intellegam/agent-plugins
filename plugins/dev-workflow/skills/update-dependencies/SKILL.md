@@ -97,7 +97,7 @@ not as universal syntax:
 | Tool version | `uv --version` | `bun --version` |
 | Check manifest/lock agreement | `uv lock --check` | `bun install --frozen-lockfile --dry-run` |
 | Check installed environment without changing it | `uv sync --all-packages --all-groups --all-extras --check` | no equivalent listed; use repository guidance or report unavailable |
-| List outdated from the lock/project | `uv tree --outdated --frozen --all-groups` | `bun outdated` for one package root; `bun outdated --recursive` for every workspace member |
+| List outdated from the lock/project | `uv tree --outdated --frozen --all-groups` | `bun outdated` for one package root; `bun outdated --filter="*"` for every workspace member |
 | Update within declared ranges | `uv lock --upgrade-package <pkg>` | `bun update <pkg>` |
 | Deliberately cross a range | edit the owning manifest, then `uv lock` | `bun update --latest <pkg>` or edit the manifest, then `bun install` |
 | Synchronize | `uv sync --all-packages --all-groups --all-extras` | `bun install` |
