@@ -96,11 +96,11 @@ not as universal syntax:
 | --- | --- | --- |
 | Tool version | `uv --version` | `bun --version` |
 | Check manifest/lock agreement | `uv lock --check` | `bun install --frozen-lockfile --dry-run` |
-| Check installed environment without changing it | `uv sync --all-packages --check` | no equivalent listed; use repository guidance or report unavailable |
+| Check installed environment without changing it | `uv sync --all-packages --all-groups --check` | no equivalent listed; use repository guidance or report unavailable |
 | List outdated from the lock/project | `uv tree --outdated --frozen --all-groups` | `bun outdated` |
 | Update within declared ranges | `uv lock --upgrade-package <pkg>` | `bun update <pkg>` |
 | Deliberately cross a range | edit the owning manifest, then `uv lock` | `bun update --latest <pkg>` or edit the manifest, then `bun install` |
-| Synchronize | `uv sync --all-packages` | `bun install` |
+| Synchronize | `uv sync --all-packages --all-groups` | `bun install` |
 
 An intentionally lockfile-free domain must use a verified no-lock procedure;
 do not run a table command that creates a lockfile by default. For Bun, edit the
@@ -118,7 +118,10 @@ explicitly authorizes it.
 
 Use workspace flags only when discovery proves the domain is a workspace. An
 outdated command may include transitive packages; reconcile its output against
-owned manifests and focus decisions on direct dependencies.
+owned manifests and focus decisions on direct dependencies. Carry the same
+affected dependency-group selection through outdated discovery, environment
+checking, updating, and synchronization; use explicit `--group` selections or
+`--all-groups` only after confirming support in the domain's UV version.
 
 For npm, Poetry, pnpm, Yarn, Cargo, or another manager, derive the same
 capabilities from repository documentation, the installed CLI's help, and
