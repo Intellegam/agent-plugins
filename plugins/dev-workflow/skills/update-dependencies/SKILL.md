@@ -108,13 +108,19 @@ not as universal syntax:
 | Deliberately cross a range | edit the owning declaration, then `uv lock --upgrade-package <pkg>` | `bun update --cwd <owner-root> --latest <pkg>` or edit the manifest, then `bun install --cwd <owner-root>` |
 | Synchronize | `uv sync --all-packages --all-groups --all-extras` | `bun install` |
 
-For a PEP 723 script domain, verify and use the script-aware UV equivalents:
+For a lockfile-backed PEP 723 script domain, verify and use the script-aware UV
+equivalents:
 `uv lock --script <script> --check`,
 `uv sync --script <script> --check`,
 `uv tree --script <script> --outdated --frozen --universal`,
 `uv lock --script <script> --upgrade-package <pkg>`, and
 `uv sync --script <script>`. Do not add project or workspace flags to these
-commands.
+commands. For an intentionally sidecar-free script, skip lock checking and do
+not use `--frozen`. Use `uv tree --script <script> --outdated --universal` for
+read-only discovery only after verifying that the domain's UV version preserves
+sidecar absence and changes no project files; otherwise report outdated
+discovery as unavailable. Use the no-lock synchronization procedure below only
+in update mode.
 
 For a Bun workspace outdated audit, include the root package with
 `--filter="./"` and every discovered member with an explicit
