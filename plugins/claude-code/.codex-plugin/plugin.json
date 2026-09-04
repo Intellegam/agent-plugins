@@ -1,6 +1,6 @@
 {
   "name": "claude-code",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Consult Claude Code as a second-opinion agent for brainstorming, plan validation, and code review.\n\nAliases: @claude, @claude-code.",
   "author": {
     "name": "Intellegam",
