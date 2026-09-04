@@ -35,7 +35,7 @@ failure or handshake timeout returns a tool error instead of a false session
 handle. Poll results while doing useful local work, collect the terminal result
 before synthesizing, and cancel sessions you no longer need.
 
-```
+```text
 claude({ prompt: "Complex analysis...", cwd: "/repo" })
 → { sessionId: "019a...", status: "running", done: false }
 
