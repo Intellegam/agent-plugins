@@ -81,6 +81,46 @@ function PersonAvatar() {
   );
 }
 
+/** The write surface shared by the new-comment composer and the edit form of a saved comment. */
+function CommentEditor({
+  mode,
+  value,
+  onChange,
+  onSave,
+  onCancel,
+}: {
+  mode: "add" | "edit";
+  value: string;
+  onChange(next: string): void;
+  onSave(): void;
+  onCancel(): void;
+}) {
+  return (
+    <div className="tour-comment-composer">
+      <div className="tour-comment-head">
+        <PersonAvatar />
+        <strong>{mode === "edit" ? "Edit review comment" : "Add review comment"}</strong>
+      </div>
+      <textarea
+        autoFocus
+        value={value}
+        placeholder="What should change here?"
+        onChange={(event) => onChange(event.target.value)}
+        onKeyDown={(event) => {
+          if ((event.metaKey || event.ctrlKey) && event.key === "Enter") onSave();
+        }}
+      />
+      <div className="tour-composer-actions">
+        <span>⌘ Enter to save</span>
+        <button type="button" className="secondary" onClick={onCancel}>Cancel</button>
+        <button type="button" disabled={!value.trim()} onClick={onSave}>
+          {mode === "edit" ? "Save" : "Add comment"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function annotationsFrom(children: ReactNode): AnnotationProps[] {
   const out: AnnotationProps[] = [];
   Children.forEach(children, (child) => {
@@ -101,6 +141,7 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [selection, setSelection] = useState<SelectedLineRange | null>(null);
   const [draft, setDraft] = useState("");
+  const [editing, setEditing] = useState<{ id: string; draft: string } | null>(null);
   const resolved = files ? resolveRef(files, file, { hunk, lines }) : null;
 
   // The reference props are a stable identity within a tour: the viewed-persistence key and the
@@ -255,6 +296,14 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
     setSelection(null);
   };
 
+  const saveEdit = () => {
+    if (!editing || !review) return;
+    const body = editing.draft.trim();
+    if (!body) return;
+    review.updateComment(editing.id, body);
+    setEditing(null);
+  };
+
   const renderCard = (metadata: ReviewAnnotation) => {
     if (metadata.kind === "ai") {
       return (
@@ -266,34 +315,36 @@ export function Diff({ file, hunk, lines, collapsed: initialCollapsed = false, c
     }
     if (metadata.kind === "comment") {
       const comment = metadata.comment;
+      if (editing?.id === comment.id) {
+        return (
+          <CommentEditor
+            mode="edit"
+            value={editing.draft}
+            onChange={(next) => setEditing({ id: comment.id, draft: next })}
+            onSave={saveEdit}
+            onCancel={() => setEditing(null)}
+          />
+        );
+      }
       return (
         <div className="tour-comment">
           <div className="tour-comment-head"><PersonAvatar /><strong>Your review</strong></div>
           <div className="tour-comment-body">{comment.body}</div>
           <div className="tour-comment-actions">
-            <button type="button" onClick={() => review?.removeComment(comment.id)}>Delete</button>
+            <button type="button" onClick={() => setEditing({ id: comment.id, draft: comment.body })}>Edit</button>
+            <button type="button" className="danger" onClick={() => review?.removeComment(comment.id)}>Delete</button>
           </div>
         </div>
       );
     }
     return (
-      <div className="tour-comment-composer">
-        <div className="tour-comment-head"><PersonAvatar /><strong>Add review comment</strong></div>
-        <textarea
-          autoFocus
-          value={draft}
-          placeholder="What should change here?"
-          onChange={(event) => setDraft(event.target.value)}
-          onKeyDown={(event) => {
-            if ((event.metaKey || event.ctrlKey) && event.key === "Enter") addComment();
-          }}
-        />
-        <div className="tour-composer-actions">
-          <span>⌘ Enter to save</span>
-          <button type="button" className="secondary" onClick={() => { setDraft(""); setSelection(null); }}>Cancel</button>
-          <button type="button" disabled={!draft.trim()} onClick={addComment}>Add comment</button>
-        </div>
-      </div>
+      <CommentEditor
+        mode="add"
+        value={draft}
+        onChange={setDraft}
+        onSave={addComment}
+        onCancel={() => { setDraft(""); setSelection(null); }}
+      />
     );
   };
 

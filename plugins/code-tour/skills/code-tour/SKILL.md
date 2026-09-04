@@ -143,5 +143,6 @@ gh pr comment <N> --repo owner/name --edit-last --create-if-none \
 Then tell the user what the page does beyond reading — it is a review surface:
 
 - Select a line, or drag across a line range, to leave a comment. Comments persist locally, keyed to this exact `pr.diff`.
+- A saved comment has **Edit** and **Delete** buttons, so wording can be reworked before the review is handed off.
 - Each diff has a "Viewed" checkbox (checking folds the diff away, GitHub-style); a small counter at the bottom of the nav tracks how many diffs are viewed. Viewed state persists locally too.
 - When they're done, the page generates an agent-ready review prompt **and** — when the tour set `repo`, `pr`, and `headSha` — a single `gh api` command that posts all comments as one GitHub review, built straight from those props (a stale SHA will be rejected by GitHub). If any of the three is missing, only the agent prompt is offered.

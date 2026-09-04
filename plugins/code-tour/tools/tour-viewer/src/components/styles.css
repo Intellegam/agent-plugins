@@ -589,6 +589,12 @@ body.tour-resizing {
 }
 
 .tour-comment-actions button:hover {
+  color: var(--tour-fg);
+  background: #f6f8fa;
+  border-color: #8c959f;
+}
+
+.tour-comment-actions button.danger:hover {
   color: #cf222e;
   background: #ffebe9;
   border-color: #cf222e;
