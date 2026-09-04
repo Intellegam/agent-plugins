@@ -18,28 +18,33 @@ tool results — pass the task constraints and evidence explicitly in the prompt
 
 ## Tools
 
-- `claude` — Start a new session (read-only by default, `writable: true` for file writes and commands)
-- `claude-reply` — Continue a session with prior context (pass `cwd` when resuming after an MCP restart — it must match the session's original `cwd`)
-- `claude-result` — Get latest turn status/result (`wait: true` blocks until done)
+- `claude` — Start a new session; returns after initialization (read-only by default, `writable: true` for file writes and commands)
+- `claude-reply` — Continue the same stable session; returns after the reply initializes (pass `cwd` when resuming after an MCP restart — it must match the session's original `cwd`)
+- `claude-result` — Get the latest turn status/result immediately
 - `claude-cancel` — Cancel the active turn on a session
 
 Always pass `cwd` (repo root) on `claude` so Claude loads the right project's
 configuration and memory.
 
-### Async mode
+### Session lifecycle
 
-`claude` and `claude-reply` accept `async: true` to return a `sessionId`
-immediately instead of blocking. Use async only when you have real parallel
-work to do while Claude thinks; otherwise default to sync. Collect every
-outstanding result before synthesizing, and cancel sessions you no longer need.
+`claude` and `claude-reply` wait for Claude's initialization handshake (normally
+about 0.3–3 seconds, with a 30-second safety bound), then return the same stable
+native `sessionId` while the answer continues in the background. A startup
+failure or handshake timeout returns a tool error instead of a false session
+handle. Poll results while doing useful local work, collect the terminal result
+before synthesizing, and cancel sessions you no longer need.
 
 ```
-claude({ prompt: "Complex analysis...", cwd: "/repo", async: true })
-→ { sessionId: "019a...", status: "starting" }
+claude({ prompt: "Complex analysis...", cwd: "/repo" })
+→ { sessionId: "019a...", status: "running", done: false }
 
-claude-result({ sessionId: "019a...", wait: true })
+claude-result({ sessionId: "019a..." })
 → { sessionId: "019a...", status: "succeeded", output: "...", done: true }
 ```
+
+The same `sessionId` is used with `claude-reply`, `claude-result`, and
+`claude-cancel`; there is no separate task or turn identifier.
 
 Multiple independent sessions can run in parallel — useful when separate
 perspectives (e.g. a correctness pass and a security pass) improve coverage.
