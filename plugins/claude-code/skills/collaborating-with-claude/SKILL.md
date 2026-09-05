@@ -47,10 +47,8 @@ The same `sessionId` is used with `claude-reply`, `claude-result`, and
 `claude-cancel`; there is no separate task or turn identifier.
 
 Terminal snapshots also report context usage, the effective auto-compaction
-state, observed compact boundaries, and a process-local `cacheLikelyCold`
-heuristic. When a completed session is over 150k context tokens and that flag is
-true, prefer a fresh session with a short handoff unless the next turn needs the
-prior evidence in detail.
+state and observed compact boundaries. These describe context, not provider
+cache hits. Include a short handoff when a fresh session needs prior conclusions.
 
 Multiple independent sessions can run in parallel — useful when separate
 perspectives (e.g. a correctness pass and a security pass) improve coverage.
