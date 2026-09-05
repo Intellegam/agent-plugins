@@ -46,6 +46,12 @@ claude-result({ sessionId: "019a..." })
 The same `sessionId` is used with `claude-reply`, `claude-result`, and
 `claude-cancel`; there is no separate task or turn identifier.
 
+Snapshots include `contextTokens` (latest observed request's input tokens,
+including cached input; null until observed, not exact post-turn fullness) and
+`compactedThisTurn` (an observed compact boundary in this turn). Both reset on
+each reply; neither reports cache freshness or subscription usage. Include a
+short handoff when a fresh session needs prior conclusions.
+
 Multiple independent sessions can run in parallel — useful when separate
 perspectives (e.g. a correctness pass and a security pass) improve coverage.
 
@@ -107,6 +113,8 @@ Well-scoped writable prompts:
 
 - Form your own analysis first, then consult — independent perspectives are the point
 - Treat disagreement as signal: when Claude's view conflicts with yours, resolve it with evidence, not seniority
-- Continue existing sessions via `claude-reply` rather than starting over
+- Start a fresh session at meaningful task or topic boundaries; use
+  `claude-reply` only for tightly related follow-ups that benefit from exact
+  conversational continuity
 - Synthesize conclusions — present a joint recommendation, not raw Claude output
 - Match effort to complexity — skip the consult for trivial changes
