@@ -46,9 +46,11 @@ claude-result({ sessionId: "019a..." })
 The same `sessionId` is used with `claude-reply`, `claude-result`, and
 `claude-cancel`; there is no separate task or turn identifier.
 
-Terminal snapshots also report context usage, the effective auto-compaction
-state and observed compact boundaries. These describe context, not provider
-cache hits. Include a short handoff when a fresh session needs prior conclusions.
+Snapshots include `contextTokens` (latest observed request's input tokens,
+including cached input; null until observed, not exact post-turn fullness) and
+`compactedThisTurn` (an observed compact boundary in this turn). Both reset on
+each reply; neither reports cache freshness or subscription usage. Include a
+short handoff when a fresh session needs prior conclusions.
 
 Multiple independent sessions can run in parallel — useful when separate
 perspectives (e.g. a correctness pass and a security pass) improve coverage.
