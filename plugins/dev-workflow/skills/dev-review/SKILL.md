@@ -58,6 +58,9 @@ Resolve their absolute paths from this skill's directory. Every delegated specia
 
 ## Host Adapters
 
+Read and apply the shared sub-agent model policy at
+`../../references/sub-agent-model-policy.md` to every review sub-agent launch.
+
 ### Claude Code
 
 - Launch the plugin's thin `dev-structural-lean-reviewer` and `dev-quality-reviewer` agents when those focuses are selected; their wrappers load the canonical references through `${CLAUDE_PLUGIN_ROOT}`.

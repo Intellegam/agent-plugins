@@ -19,14 +19,14 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Cross-host development workflow: setup, dependency updates, checks, review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
-      "version": "0.10.0",
+      "version": "0.10.1",
       "keywords": ["workflow", "dependencies", "review", "checks", "quality", "process", "release"]
     },
     {
       "name": "code-tour",
       "source": "./plugins/code-tour",
       "description": "Agent-generated visual PR walkthroughs: an authored narrative whose every code snippet is a grounded reference into the real diff, built into a single offline tour.html with a line-level review surface.",
-      "version": "0.3.4",
+      "version": "0.3.5",
       "keywords": ["code-tour", "pr", "walkthrough", "review", "diff"]
     }
   ]
