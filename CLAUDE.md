@@ -29,10 +29,10 @@ agent-plugins/
 ```
 
 `dev-workflow` and `code-tour` target both hosts from one plugin root and carry
-both manifests. `codex` targets Claude Code; `claude-code` targets Codex. Both
-hosts use an `mcpServers` map in `.mcp.json`. Trust the installed Codex CLI over
-online plugin docs when they disagree and validate structural changes with a
-local marketplace install.
+both manifests. `codex` and `product-qa` target Claude Code; `claude-code`
+targets Codex. Both hosts use an `mcpServers` map in `.mcp.json`. Trust the
+installed Codex CLI over online plugin docs when they disagree and validate
+structural changes with a local marketplace install.
 
 ## Development
 

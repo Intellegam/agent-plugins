@@ -57,6 +57,18 @@ Cross-host agent-generated visual PR walkthroughs. An agent authors a `tour.tsx`
 
 Ask Claude Code, Codex, or ChatGPT Work to "create a code tour for PR N", or invoke the `code-tour` skill directly.
 
+### product-qa
+
+Product QA handover gate for Intellegam assistants: the test plan a product must pass before it goes to external QA (IFM/Infomedia), and the report that proves it. The subject is product behaviour checked against customer ground truth, not code. Claude Code only for now.
+
+**Includes:**
+
+- `qa-handover` skill — runs the six-category QA gate against customer ground truth and writes the Markdown handover report
+- `references/test-plan.md` — what is tested, how it is judged, and what the report must contain
+- `references/ground-truth.md` — where the capability truth comes from and how conflicts are handled
+
+Run it from a checkout of the product repository (today `intellegam-python`, with `uv run ig` available): `/product-qa:qa-handover infomedia/simplepart-customer-assistant`. Version 0.1.0 runs only the cases the product's existing eval suite already covers and produces Markdown; HTML/PDF rendering is planned.
+
 ## Claude Code installation
 
 Add the marketplace to your project's `.claude/settings.json`:
@@ -74,7 +86,8 @@ Add the marketplace to your project's `.claude/settings.json`:
   "enabledPlugins": {
     "codex@intellegam-agent-plugins": true,
     "dev-workflow@intellegam-agent-plugins": true,
-    "code-tour@intellegam-agent-plugins": true
+    "code-tour@intellegam-agent-plugins": true,
+    "product-qa@intellegam-agent-plugins": true
   }
 }
 ```

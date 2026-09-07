@@ -1,0 +1,10 @@
+{
+  "name": "product-qa",
+  "version": "0.1.0",
+  "description": "Product QA handover gate for Intellegam assistants: the test plan a product must pass before it goes to external QA (IFM/Infomedia) and the handover report that proves it. Capability matrix against customer ground truth, guardrails, escalation, grounding, real-traffic latency and outcomes, regression.",
+  "author": {
+    "name": "Intellegam",
+    "email": "burrichter@intellegam.com"
+  },
+  "keywords": ["product-qa", "qa", "handover", "test-plan", "evaluation", "report"]
+}

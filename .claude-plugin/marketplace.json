@@ -28,6 +28,13 @@
       "description": "Agent-generated visual PR walkthroughs: an authored narrative whose every code snippet is a grounded reference into the real diff, built into a single offline tour.html with a line-level review surface.",
       "version": "0.3.4",
       "keywords": ["code-tour", "pr", "walkthrough", "review", "diff"]
+    },
+    {
+      "name": "product-qa",
+      "source": "./plugins/product-qa",
+      "description": "Product QA handover gate for Intellegam assistants: the test plan a product must pass before it goes to external QA (IFM/Infomedia) and the handover report that proves it. Capability matrix against customer ground truth, guardrails, escalation, grounding, real-traffic latency and outcomes, regression.",
+      "version": "0.1.0",
+      "keywords": ["product-qa", "qa", "handover", "test-plan", "evaluation", "report"]
     }
   ]
 }
