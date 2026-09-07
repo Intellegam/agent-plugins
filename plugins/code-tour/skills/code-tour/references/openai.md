@@ -4,7 +4,7 @@ Use these mechanics only after reading the shared `code-tour` skill. This adapte
 
 ## Authoring worker
 
-In Codex, use `spawn_agent` with `fork_turns="none"` and a task name such as `code_tour_author` for steps 1–4. Tell it that it is the authoring worker, pass the shared skill path and only the target/audience context defined there, and do not include the parent transcript or an authored summary. Keep delivery and external actions in the parent; if no writable sub-agent is available, continue inline.
+In Codex, use `spawn_agent` with `fork_turns="none"`, an explicit economical model, and a task name such as `code_tour_author` for steps 1–4. For instance, an Astra main agent can use a Sol authoring worker. Tell it that it is the authoring worker, pass the shared skill path and only the target/audience context defined there, and do not include the parent transcript or an authored summary. Keep delivery and external actions in the parent; if no writable sub-agent is available, continue inline.
 
 ## Preflight and locate
 
