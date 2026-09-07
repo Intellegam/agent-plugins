@@ -70,6 +70,10 @@ Summarize the release surface by theme, not only commit titles. Call out migrati
 
 Review the full promotion diff without modifying it:
 
+Read and apply the shared sub-agent model policy at
+`../../references/sub-agent-model-policy.md` to every review sub-agent used
+below.
+
 1. Run one independent broad pass with the opposite coding agent when available. Give it the exact remote base/head SHAs, the repository policy, and explicit read-only instructions. If that bridge is unavailable, use a fresh independent read-only reviewer and report the fallback; never silently skip the broad pass.
 2. Add at most two focused reviewers when the risk inventory justifies them, such as migrations, security, or release automation.
 3. Validate concrete findings against the diff and classify each as `release blocker`, `deferred follow-up`, or `false alarm`.

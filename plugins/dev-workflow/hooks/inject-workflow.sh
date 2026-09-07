@@ -3,4 +3,5 @@
 # hosts fire SessionStart after compaction. The Claude-specific SubagentStart
 # matcher intentionally excludes generic Codex sub-agents.
 cat > /dev/null  # drain stdin
+cat "$(dirname "$0")/../references/sub-agent-model-policy.md"
 cat "$(dirname "$0")/dev-workflow.md"

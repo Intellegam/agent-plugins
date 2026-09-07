@@ -57,9 +57,9 @@ Use the host's structured user-input mechanism when available, otherwise ask dir
 2. When migration from a local promotion skill was accepted, map its complete content to the shared workflow, the normal policy document, or an explicit intentional removal before deleting or disabling it. When retention was accepted, leave the local skill unchanged and report that overlapping behavior remains.
 3. Write or update the conventions section in the accepted canonical `AGENTS.md` or `CLAUDE.md`. If both independent files must serve as entry points, add only the accepted explicit pointer in the non-canonical file. Beyond accepted changes, do not restructure or reformat either file.
 4. For every accepted custom reviewer, write the full contract once to `.agents/reviewers/<name>.md`.
-5. Generate two thin wrappers that load that canonical contract and fail closed:
-   - `.claude/agents/<name>.md` with Claude frontmatter (description, tools/model as accepted) and a body that reads `${CLAUDE_PROJECT_DIR}/.agents/reviewers/<name>.md`
-   - `.codex/agents/<name>.toml` with `name`, `description`, `sandbox_mode = "read-only"`, and `developer_instructions` that reads `.agents/reviewers/<name>.md` from the project root
+5. Read and apply the shared sub-agent model policy at `../../references/sub-agent-model-policy.md` when selecting each wrapper's model. Generate two thin wrappers that load that canonical contract and fail closed:
+   - `.claude/agents/<name>.md` with Claude frontmatter (description, tools, and explicit model as accepted) and a body that reads `${CLAUDE_PROJECT_DIR}/.agents/reviewers/<name>.md`
+   - `.codex/agents/<name>.toml` with `name`, `description`, `model`, `sandbox_mode = "read-only"`, and `developer_instructions` that reads `.agents/reviewers/<name>.md` from the project root
 6. Apply accepted project settings edits. Do not duplicate reviewer bodies in either wrapper.
 7. **No-loss audit**: map every removed/replaced line to its canonical new home. Restore anything unmapped, then report applied/skipped items and the mapping.
 

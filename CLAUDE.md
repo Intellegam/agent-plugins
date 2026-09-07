@@ -39,3 +39,4 @@ local marketplace install.
 - Claude Code plugins: update the manifest and `.claude-plugin/marketplace.json`. Codex plugins: update `.codex-plugin/plugin.json`; Codex marketplace entries are unversioned. Dual-host plugins coordinate both manifests to the same release version.
 - MCP servers are separate repos (e.g., `codex-mcp`, `claude-code-mcp`) referenced via GitHub
 - The codex and claude-code plugins' `.mcp.json` pin their server to a git tag (`#v{version}`). When releasing a new server version, update the tag pin in `.mcp.json` and bump the plugin version to force a cache refresh
+- Apply `plugins/dev-workflow/references/sub-agent-model-policy.md` to sub-agent delegation inside and outside the plugin.

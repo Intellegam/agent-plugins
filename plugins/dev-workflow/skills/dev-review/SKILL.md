@@ -58,6 +58,9 @@ Resolve their absolute paths from this skill's directory. Every delegated specia
 
 ## Host Adapters
 
+Read and apply the shared sub-agent model policy at
+`../../references/sub-agent-model-policy.md` to every review sub-agent launch.
+
 ### Claude Code
 
 - Launch the plugin's thin `dev-structural-lean-reviewer` and `dev-quality-reviewer` agents when those focuses are selected; their wrappers load the canonical references through `${CLAUDE_PLUGIN_ROOT}`.
@@ -95,7 +98,7 @@ Before fixing and before further review, inspect findings as a set. If several c
 
 Do not rerun the full panel after every fix.
 
-1. Send a bounded follow-up to the reviewer that found a fixed issue and ask it to verify only the affected changed files plus its prior finding. In Codex, use `followup_task` when available.
+1. Send a bounded follow-up to the reviewer that found a fixed issue and ask it to verify only the affected changed files plus its prior finding. In Codex, use `followup_task` only when the original reviewer used a permitted model; otherwise launch a fresh reviewer with an explicit permitted model.
 2. After all fixes, run one **fresh broad correctness review** of the complete updated target. Always do this for high-risk work; for tiny/normal work, do it when review produced fixes.
 3. On Claude Code, use a fresh `codex-review` session for the final gate, falling back explicitly to `dev-correctness-reviewer` when Codex MCP is unavailable.
 4. On Codex, use a fresh sub-agent with `$review-agent`.

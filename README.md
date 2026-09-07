@@ -42,6 +42,7 @@ Cross-host org development workflow for Claude Code and Codex: a setup consultan
 - `babysit-pr` skill — one shared event-driven PR policy plus non-invokable Claude Code/Codex host adapters; it verifies and automatically replies to clear feedback, watches reviews, comments, mergeability, pushes, and CI, and continues until the PR closes or needs a user decision
 - `promote` skill — prepares, gates, and directly merges branch-promotion PRs with separate approval, then verifies the conditional release outcome from GitHub evidence
 - One canonical internal reference per structural-and-lean, quality, correctness-fallback, and sync reviewer; Claude agents are thin wrappers and Codex sub-agents load the same references
+- Explicit economical sub-agent selection, with Astra and Fable prohibited for review sub-agents unless the user authorizes that model for the review
 
 Repos declare commands, situational checks, standards docs, repo-specific reviewers, and an optional pointer to normal promotion-policy documentation in applicable `AGENTS.md`/`CLAUDE.md`; run `/dev-workflow:setup` in Claude Code or `$dev-workflow:setup` in Codex to onboard a repo.
 

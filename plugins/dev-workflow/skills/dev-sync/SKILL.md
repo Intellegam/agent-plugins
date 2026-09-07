@@ -18,6 +18,9 @@ Read every applicable `AGENTS.md` and `CLAUDE.md` by directory scope. If both ex
 - **Tiny**: read and apply the canonical sync contract directly as a quick self-check when the change has no behavior/interface impact.
 - **Normal/high-risk**: delegate one read-only sync review over the complete target.
 
+Read and apply the shared sub-agent model policy at
+`../../references/sub-agent-model-policy.md` when delegating a sync review.
+
 ## Canonical Sync Contract
 
 The non-invokable reviewer contract is `references/sync-reviewer.md` adjacent to this skill. Resolve its absolute path and require the reviewer to read it completely. Fail closed: if it cannot load the reference, it must stop and report the path/error rather than perform a generic review.
