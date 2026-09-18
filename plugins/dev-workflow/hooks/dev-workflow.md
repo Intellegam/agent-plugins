@@ -48,7 +48,7 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 
 ### 4. Commit and Push
 
-Follow repository commit conventions. Committing, pushing, and opening a PR require the user's explicit choice; merging or landing requires a separate explicit approval.
+Follow repository commit conventions. Committing, pushing, and opening a PR require the user's explicit choice; merging or landing requires a separate explicit approval. For branch promotions, the `promote` skill's authorization contract controls: an explicit promotion request authorizes merging once ready, unless the user or repository requires a separate checkpoint that the user has not explicitly waived.
 
 ### 5. Code Tour
 
