@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "Language-agnostic development workflow with dependency updates, repository checks, multi-perspective review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
   "author": {
     "name": "Intellegam",
