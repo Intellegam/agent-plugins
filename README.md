@@ -33,7 +33,7 @@ Cross-host org development workflow for Claude Code and Codex: a setup consultan
 
 **Includes:**
 
-- SessionStart hook — injects the six-phase workflow in Claude Code and Codex and re-fires after compaction
+- SessionStart hook — injects a scope-aware six-phase workflow with conditional plan consultation, persistent completion, and explicit authorization boundaries in Claude Code and Codex and re-fires after compaction
 - Claude-only SubagentStart matcher — injects the workflow into implementation-capable `general-purpose`/`claude` agents without affecting reviewers; generic Codex sub-agents are intentionally excluded
 - `setup` skill — inspects a repo, recommends checks/reviewers with evidence, configures applicable `AGENTS.md`/`CLAUDE.md`, and generates thin Claude/Codex wrappers for accepted repo-specific reviewers
 - `update-dependencies` skill — discovers package-manager domains, audits constraints and release impact, and performs risk-grouped updates using repository policy and checks

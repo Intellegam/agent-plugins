@@ -3,9 +3,7 @@
 Internal agent plugins for Claude Code and OpenAI Codex in the Intellegam
 workspace.
 
-You MUST read the following file for more information:
-
-- @README.md
+Consult `README.md` for setup and usage when needed.
 
 ## Structure
 

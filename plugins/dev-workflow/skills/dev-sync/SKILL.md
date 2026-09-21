@@ -1,6 +1,6 @@
 ---
 name: dev-sync
-description: This skill MUST be used after dev-review and before pushing or creating a PR. Proactively run it after review completes. Also use when the user asks to sync docs, check documentation, update AGENTS.md or CLAUDE.md, or ensure agent components are current.
+description: Check documentation and agent guidance against the completed change after review and before publication. Also use for requests to sync documentation, update AGENTS.md or CLAUDE.md, or check for documentation drift.
 ---
 
 # Sync Check
@@ -11,7 +11,7 @@ This skill follows `dev-check` → `dev-review` and precedes commit/push/PR. Inv
 
 ## Repository Guidance
 
-Read every applicable `AGENTS.md` and `CLAUDE.md` by directory scope. If both exist, follow both; the nearer-scoped file wins when they conflict. Use the Review Inputs and custom workflow configuration from whichever file defines them.
+Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. If both exist, follow both; the nearer-scoped file wins when they conflict. Use the Review Inputs and custom workflow configuration from whichever file defines them.
 
 ## Scale to Risk
 
@@ -41,11 +41,12 @@ If review or sync changes any file after the last `dev-check`, rerun all Require
 
 ## Commit/Push/PR Decision
 
-Committing, pushing, and opening a PR require an explicit user decision. Use the host's user-input mechanism when available; otherwise ask directly. Offer:
+Honor existing explicit authorization for commits, feature-branch pushes, and
+PR creation. An explicit request for a PR includes preparing its title/body and
+creating it after validation; do not ask for the same approval again. If scope
+is unclear, prepare the reviewable local result and ask only for the missing
+decision (commit, push, or PR).
 
-- **Just commit**
-- **Commit + push**
-- **Commit + PR**
-- **Stop without committing**
-
-For a PR, draft the title/body and obtain confirmation before creation. After creation, return to the top-level workflow's Code Tour phase, then continue to `babysit-pr`. Code-tour eligibility, authorization, and execution belong to that separate phase, not to documentation sync. Follow repository branch/commit conventions and never merge or land the PR without the user's separate approval.
+Ask before force-pushing. Never merge or land a PR without the user’s separate
+approval for that exact PR. After creation, handle the top-level Code Tour phase
+and continue to `babysit-pr`; tour publication has its own authorization boundary.

@@ -1,6 +1,6 @@
 ---
 name: dev-check
-description: This skill MUST be used before committing changes and after completing implementation work. Proactively run this (1) before any git commit, (2) after a plan has been fully implemented, (3) when a coding task is complete. Also use when user asks to "run checks", "format and lint", "run tests", "validate code", or names the repo's check tools directly (e.g. "run ruff", "run biome", "run the type check").
+description: Run repository checks after implementation and before committing, scaled to the changed behavior. Also use for requests to run checks, format or lint, run tests, or invoke a repository checker such as Ruff or the type checker.
 ---
 
 # Pre-Commit Checks
@@ -21,11 +21,11 @@ Skills can be chained in one prompt or invoked sequentially through the host's s
 
 Run checks, **auto-fix what you can**, only ask when genuinely unsure.
 
-**Loop until all checks pass.** Fix issues and re-run until clean.
+Fix failures caused by the change and rerun affected checks. Reassess after repeated failed fixes; report unrelated failures or concrete blockers rather than looping without new evidence.
 
 ## The Contract
 
-Read every applicable `AGENTS.md` and `CLAUDE.md` by directory scope. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, invoke `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
+Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, invoke `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
 
 ## Scale to the Change
 
