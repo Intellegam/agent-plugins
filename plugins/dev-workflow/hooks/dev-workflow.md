@@ -1,42 +1,39 @@
 <dev-workflow>
 The dev-workflow plugin is active. Apply the phases that fit the coding task's scope, whether acting as the main agent or an implementation owner. Skip commit/PR phases when a parent agent owns them.
 
-Read every applicable `AGENTS.md` and `CLAUDE.md` by directory scope. Repository-specific commands, checks, Review Inputs, and Dev Workflow Plugin sections win over generic workflow defaults. If both guidance variants exist, follow both; let the nearer-scoped file win on conflicts.
+Follow the repository and directory-scoped instructions for the files you touch.
+Read any applicable instructions not already in context; do not reread symlink
+aliases of the same file. Repository checks, Review Inputs, and workflow policy
+take precedence over generic defaults. Consult supporting docs for the task at
+hand rather than loading the whole repository map.
 
 ### 1. Explore and Plan
 
-For non-trivial tasks:
+Choose exploration, planning, and delegation to fit the work. Reuse existing
+code, platform features, and dependencies before adding an abstraction. A small
+supporting refactor is appropriate when it simplifies the requested outcome.
 
-- Use the host's exploration sub-agent when useful; otherwise search directly for relevant code, existing utilities, tests, and documentation.
-- Use official documentation or a focused research agent for unfamiliar external APIs.
-- Ask whether a small refactor makes the change simpler before adding new behavior.
-- Plan the smallest complete solution and challenge every new abstraction or file.
-- Get an independent perspective from the other coding agent:
-  - In Claude Code, read `collaborating-with-codex` and use the Codex MCP tools.
-  - In Codex, read `collaborating-with-claude` and use the Claude-agent MCP tools.
-  - If the opposite-host tools are unavailable, state the fallback and use a fresh independent read-only reviewer rather than implying the external agent participated.
-- Stress-test non-trivial plans with that independent perspective before presenting them.
+For material design choices, trust-boundary changes, or uncertain approaches,
+get an independent perspective before implementation: Claude Code uses the
+`collaborating-with-codex` skill and Codex MCP; Codex uses
+`collaborating-with-claude` and Claude-agent MCP. Form your own view first.
+If the other host is unavailable, disclose the fallback and use a fresh
+read-only reviewer. Routine implementation choices do not need a separate
+plan-review round; the validation review below still applies.
 
 ### 2. Implement
 
-Follow repository standards and Review Inputs.
+Complete the requested outcome through relevant verification and repair of
+failures caused by the change. Resolve reversible implementation details within
+scope; ask when the answer materially changes requirements, compatibility,
+security, cost, or authority. Preserve unrelated user work.
 
-Before adding code, climb this ladder and stop at the first rung that holds:
-
-1. Does this need to exist at all?
-2. Does the codebase already provide it?
-3. Does the standard library or native platform cover it?
-4. Does an installed dependency cover it?
-5. Only then add the minimum new implementation.
-
-Never trim trust-boundary validation, data-loss-preventing error handling, security, accessibility, tests for non-trivial behavior, or explicitly requested behavior.
-
-For larger implementations, consider delegation to preserve orchestration context:
-
-- Claude Code: use `dev-workflow:dev-coder`.
-- Codex: use an implementation-focused worker sub-agent with explicit file ownership and validation requirements.
-
-Review delegated output before accepting it.
+Retain trust-boundary validation, data-loss protections, security, accessibility,
+tests for non-trivial behavior, and explicitly requested behavior. For larger
+work, delegate bounded implementation when useful and review it before accepting
+it. In Claude Code, use `dev-workflow:dev-coder` for implementation delegation;
+in Codex, use a worker with explicit file ownership and validation requirements.
+Apply the shared sub-agent model policy to delegated work.
 
 ### 3. Validate
 
@@ -48,7 +45,17 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 
 ### 4. Commit and Push
 
-Follow repository commit conventions. Committing, pushing, and opening a PR require the user's explicit choice; merging or landing requires a separate explicit approval. For branch promotions, the `promote` skill's authorization contract controls: an explicit promotion request authorizes merging once ready, unless the user or repository requires a separate checkpoint that the user has not explicitly waived.
+Follow repository commit conventions and the user’s existing authorization for
+commits, feature-branch pushes, and PR creation. An explicit request for the
+action is sufficient; do not request the same approval again. If authorization
+is missing, finish the reviewable local work before asking. Ask before a force
+push. Never infer permission for external communication, deployments, or
+destructive operations from an implementation request.
+
+Merging or landing requires separate approval for the exact PR. For branch
+promotions, the `promote` skill’s authorization contract applies, including any
+user or repository requirement for a separate per-PR checkpoint that has not
+been explicitly waived.
 
 ### 5. Code Tour
 

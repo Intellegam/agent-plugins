@@ -1,6 +1,6 @@
 ---
 name: dev-review
-description: This skill MUST be used before pushing or creating a PR. Proactively run it before any git push or PR creation and after dev-check. Also use when the user asks to review code, check code quality, find bugs, or run multi-perspective review.
+description: Independently review a completed change before pushing or opening a PR, or when a review is requested. Also use for requests to review code, check code quality, or perform a pre-PR review.
 ---
 
 # Code Review
@@ -11,7 +11,7 @@ This skill is the middle of `dev-check` → `dev-review` → `dev-sync`. Invoke 
 
 ## Repository Contract
 
-Read every applicable `AGENTS.md` and `CLAUDE.md` by directory scope. If both exist, follow both; the nearer-scoped file wins when they conflict. Find the repository's commands/checks, Review Inputs, and custom dev-workflow reviewers in whichever guidance file defines them.
+Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. If both exist, follow both; the nearer-scoped file wins when they conflict. Find the repository's commands/checks, Review Inputs, and custom dev-workflow reviewers in whichever guidance file defines them.
 
 ## Choose the Review Target Once
 
