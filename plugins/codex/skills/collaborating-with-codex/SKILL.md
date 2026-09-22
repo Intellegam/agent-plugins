@@ -1,6 +1,6 @@
 ---
 name: collaborating-with-codex
-description: Use whenever entering plan mode, discussing architecture, designing a solution, or before presenting a plan to the user. Also use when asked to "consult codex", "ask codex", "get a second opinion", "validate this plan", "have codex review", or "run it by codex". Guides collaboration with OpenAI Codex for brainstorming, plan validation, and code review.
+description: Consult Codex for independent plan validation or review. Use for material design decisions, trust-boundary changes, uncertain approaches, or an explicit request to consult Codex.
 ---
 
 # Codex Collaboration Guidelines
@@ -86,11 +86,13 @@ Match the prompt style to the intent:
 
 ### Planning & Architecture
 
-For non-trivial tasks, validate plans with Codex before presenting to the user:
+For material design choices, trust-boundary changes, or uncertain approaches,
+validate the plan with Codex. Routine implementation choices do not require a
+separate plan-review round:
 
 1. **Form your own analysis first** — draft independently to avoid anchoring bias
 2. **Get Codex's independent view** — share the problem context and constraints via `codex`, let Codex form its own approach
-3. **Compare and converge** — iterate via `codex-reply`, challenge differences, refine until aligned
+3. **Compare the evidence** — use `codex-reply` for substantive disagreements; resolve them with evidence or report the remaining decision
 4. **Present to user** — the plan should reflect the joint conclusion
 
 ### Code Review

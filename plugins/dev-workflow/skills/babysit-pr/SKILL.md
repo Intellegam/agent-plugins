@@ -1,6 +1,6 @@
 ---
 name: babysit-pr
-description: This skill MUST be used after the Code Tour phase has been handled for a newly created PR, and after any update to an existing PR. Triage review comments and CI failures until the PR is merged, closed, or needs a user decision. Also use when the user asks to babysit or triage a PR, handle review comments, resolve threads, fix CI, or report what a reviewer said.
+description: Triage review feedback and CI after opening or updating a PR, following the Code Tour phase, until it closes or needs a user decision. Also use for requested PR triage, review-thread handling, or CI fixes.
 ---
 
 # Babysit PR

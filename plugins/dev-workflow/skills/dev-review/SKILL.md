@@ -5,7 +5,7 @@ description: Independently review a completed change before pushing or opening a
 
 # Code Review
 
-Run risk-scaled, multi-perspective review. Fix verified obvious issues directly and ask only for non-obvious trade-offs.
+Run risk-scaled, multi-perspective review. During validation of an authorized implementation, fix verified obvious issues directly and ask only for non-obvious trade-offs. For review-only requests, report findings without editing; the fix actions below apply only within an authorized implementation.
 
 This skill is the middle of `dev-check` → `dev-review` → `dev-sync`. Invoke workflow skills through the host's skill selector: `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
