@@ -19,7 +19,7 @@ Skills can be chained in one prompt or invoked sequentially through the host's s
 
 ---
 
-Run checks, **auto-fix what you can**, only ask when genuinely unsure.
+Run checks and fix change-caused failures within the authorized scope.
 
 Fix failures caused by the change and rerun affected checks. Reassess after repeated failed fixes; report unrelated failures or concrete blockers rather than looping without new evidence.
 
@@ -34,14 +34,24 @@ Pick a tier before running anything, and state which one you picked:
 | Tier          | Typical change                                              | Check scope                                                          |
 | ------------- | ----------------------------------------------------------- | -------------------------------------------------------------------- |
 | **tiny**      | Typo, doc-only, comment, config one-liner                   | Format/lint on changed files; typecheck/tests only if plausibly affected |
-| **normal**    | Default for code changes                                    | All Required Checks (whole repository) + Situational Checks whose conditions clearly match |
+| **normal**    | Default for code changes                                    | All Required Checks at their declared scope + matching Situational Checks |
 | **high-risk** | Auth, data migrations, public APIs, large multi-file change | Same as normal, but lean toward running Situational Checks when in doubt |
 
 When in doubt, go one tier up.
 
 ## Required Checks
 
-Run the commands under **Required Checks**, fix failures automatically (report what a tool couldn't auto-fix). For normal and high-risk tiers, check the entire repository — avoid targeting only specific files or directories.
+Run every applicable **Required Check** at the scope the repository declares;
+use repository-wide checks for normal/high-risk changes unless a narrower
+check is explicitly documented. Checking broadly does not authorize broad edits.
+
+Use non-mutating check modes for validation. If a declared formatter/linter
+command writes files, establish its equivalent check-only command from local
+CLI help or repository configuration before running it. Apply fixes only to
+explicit task-owned files, preserving unrelated and pre-existing edits; report
+unrelated failures. Recheck affected files after repairs and complete the
+remaining declared checks. Do not narrow types, tests, or security checks merely
+to hide a failure.
 
 ## Situational Checks
 
@@ -62,7 +72,8 @@ Either way, report the declared checks as **stale** — visibly, before any comm
 
 ## Output
 
-Summarize results, report what was fixed, confirm all checks pass. Include any drift findings.
+Summarize checks actually run and what was fixed. Distinguish passed, failed,
+and skipped or blocked checks; report drift and unrelated failures explicitly.
 
 ## Next Step
 

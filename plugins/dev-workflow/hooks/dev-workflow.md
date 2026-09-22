@@ -28,6 +28,11 @@ failures caused by the change. Resolve reversible implementation details within
 scope; ask when the answer materially changes requirements, compatibility,
 security, cost, or authority. Preserve unrelated user work.
 
+Keep changes within the requested outcome. Fix adjacent issues only when that
+outcome depends on them; report independent improvements separately. Preserve
+meaningful regression coverage; keep scratch checks only when they provide
+durable regression value. Assessment requests end with findings, not edits.
+
 Retain trust-boundary validation, data-loss protections, security, accessibility,
 tests for non-trivial behavior, and explicitly requested behavior. For larger
 work, delegate bounded implementation when useful and review it before accepting
