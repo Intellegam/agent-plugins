@@ -26,6 +26,32 @@ tool results — pass the task constraints and evidence explicitly in the prompt
 Always pass `cwd` (repo root) on `claude` so Claude loads the right project's
 configuration and memory.
 
+### Model selection
+
+`claude` and `claude-reply` accept `model: "fable" | "opus" | "sonnet" | "haiku"`.
+Use Fable for planning and discussion when a top-tier perspective is needed;
+prefer Opus for bounded implementation and reviews. Start a separate implementation
+session with the agreed plan, file scope, and validation requirements; set
+`writable: true` only when edits or commands are authorized. Keep the Fable
+conversation for follow-up discussion that benefits from its context.
+
+```text
+claude({ prompt: "Review this plan...", cwd: "/repo", model: "fable" })
+claude({ prompt: "Implement the agreed change in src/parser.js...", cwd: "/repo", model: "opus", writable: true })
+```
+
+The CLI resolves the family using its runtime, provider, and configuration;
+aliases do not guarantee the newest release on an old runtime or override a
+configured family mapping. Exact model IDs are not accepted by these tools.
+Omitting `model` on a new session preserves the operator's default. Replies
+inherit the last selected family while the server remembers it; an explicit
+`model` switches it. After an MCP restart, pass `model` again to retain the
+selection, or the CLI uses its normal defaults. This does not grant write access.
+
+The result's `model` is the latest observed serving model, not the requested
+family. It starts as `null` and updates from SDK initialization and assistant
+responses, including fallback responses. Use it to verify routing.
+
 ### Session lifecycle
 
 `claude` and `claude-reply` wait for Claude's initialization handshake (normally

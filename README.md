@@ -20,7 +20,7 @@ OpenAI Codex collaboration MCP server for brainstorming, plan validation, and co
 
 ### claude-code
 
-The reverse direction: lets OpenAI Codex consult Claude Code as a second-opinion agent for brainstorming, plan validation, and code review. This is a **Codex plugin** (`.codex-plugin/`), not a Claude Code plugin — install it via the Codex marketplace below.
+The reverse direction: lets OpenAI Codex consult Claude Code as a second-opinion agent for brainstorming, plan validation, and code review, or delegate scoped implementation. Select the Fable, Opus, Sonnet, or Haiku family per session; results report the observed serving model. This is a **Codex plugin** (`.codex-plugin/`), not a Claude Code plugin — install it via the Codex marketplace below.
 
 **Includes:**
 
