@@ -71,7 +71,7 @@ the product layer around it:
 - a persistent top-right 1-column / 2-column preference (narrow blocks fall back to unified),
 - Pierre's word-level intraline highlighting and source-line selection,
 - AI explanations authored through `<Annotation>`,
-- user comments created by clicking or dragging line numbers,
+- user comments created by clicking or dragging line numbers, editable and deletable in place,
 - compact inline comment threads directly beneath their anchored source line,
 - local persistence keyed by the exact `pr.diff`,
 - a final agent prompt plus one `gh api` command that creates a bundled GitHub review, and

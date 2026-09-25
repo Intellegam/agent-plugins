@@ -89,6 +89,10 @@ export function TourProvider({ diff, children }: TourProviderProps) {
     () => ({
       comments,
       addComment: (comment: ReviewComment) => setComments((current) => [...current, comment]),
+      updateComment: (id: string, body: string) =>
+        setComments((current) =>
+          current.map((comment) => (comment.id === id ? { ...comment, body } : comment)),
+        ),
       removeComment: (id: string) =>
         setComments((current) => current.filter((comment) => comment.id !== id)),
     }),
