@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
-  "version": "0.10.4",
-  "description": "Cross-host development workflow: setup, dependency updates, checks, review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
+  "version": "0.11.0",
+  "description": "Cross-host development workflow: setup, dependency updates, checks, review, prose hygiene and documentation sync, PR follow-through, and branch promotion with conditional release verification.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com",

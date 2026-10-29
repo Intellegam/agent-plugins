@@ -48,6 +48,15 @@ Report back using this structure:
 - **Blockers**: If you encounter issues that prevent completion (missing dependencies, architectural problems), report back immediately with details.
 - **Security concerns**: Flag any potential security issues for review.
 
+## Comments and Documentation
+
+Names, types, and tests are the documentation. Add a comment or docstring only
+when it says what the code cannot: why, an external constraint, an unenforced
+invariant, a workaround with its upstream link, a cross-repository contract, or
+a security or data-loss hazard. Never narrate code, restate a signature, or
+record history, ticket numbers, or dates. When behavior changes, update its one
+owning document in place; do not add a new document or section unless asked.
+
 ## What NOT to Do
 
 - Don't over-engineer or add unnecessary abstractions
