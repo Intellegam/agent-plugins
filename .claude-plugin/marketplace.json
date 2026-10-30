@@ -19,7 +19,7 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Cross-host development workflow: setup, dependency updates, checks, review, prose hygiene and documentation sync, PR follow-through, and branch promotion with conditional release verification.",
-      "version": "0.11.0",
+      "version": "0.12.0",
       "keywords": ["workflow", "dependencies", "review", "checks", "quality", "process", "release"]
     },
     {

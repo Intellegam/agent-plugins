@@ -29,9 +29,8 @@ scope; ask when the answer materially changes requirements, compatibility,
 security, cost, or authority. Preserve unrelated user work.
 
 Keep changes within the requested outcome. Fix adjacent issues only when that
-outcome depends on them; report independent improvements separately. Preserve
-meaningful regression coverage; keep scratch checks only when they provide
-durable regression value. Assessment requests end with findings, not edits.
+outcome depends on them; report independent improvements separately.
+Assessment requests end with findings, not edits.
 
 Write every line of prose (docs, guides, docstrings, comments) to pass the keep
 test: true today, not derivable from the code in about a minute, costly to
@@ -41,11 +40,18 @@ workaround with its link, a cross-repository contract, or a hazard. No
 narration, signature restatement, history, or ticket numbers. Update the owning
 document instead of adding new prose elsewhere.
 
+No new test is a valid outcome: add one only when a material contract
+(authorization, persistence, data loss, API or protocol, concurrency, limits,
+consequential logic) could credibly fail unnoticed by existing tests. Preserve
+detection of material contracts; remove or consolidate redundant tests;
+replacing coverage requires evidence the surviving test exercises the same
+failure.
+
 Retain trust-boundary validation, data-loss protections, security, accessibility,
-tests for non-trivial behavior, and explicitly requested behavior. For larger
-work, delegate bounded implementation when useful and review it before accepting
-it. In Claude Code, use `dev-workflow:dev-coder` for implementation delegation;
-in Codex, use a worker with explicit file ownership and validation requirements.
+and explicitly requested behavior. For larger work, delegate bounded
+implementation when useful and review it before accepting it. In Claude Code,
+use `dev-workflow:dev-coder` for implementation delegation; in Codex, use a
+worker with explicit file ownership and validation requirements.
 Apply the shared sub-agent model policy to delegated work.
 
 ### 3. Validate
