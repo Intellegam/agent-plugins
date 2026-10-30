@@ -127,8 +127,8 @@ lower rung than it could have:
   helpers, modes, or conditionals without requiring a broader state-model or
   ownership redesign
 - **Verbose prose**: docs, docstrings, and comments that restate a signature,
-  narrate the code, record history or ticket numbers, or were not requested;
-  the default for a comment is none
+  narrate the code, record history or ticket numbers, or otherwise fail the
+  prose keep test; the default for a comment is none
 - **Excess tests**: trivial assertions, fragmented coverage that belongs in
   existing tests, over-mocked internals, or redundant permutations; never flag
   the minimum meaningful test for non-trivial logic

@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
   "version": "0.11.0",
-  "description": "Language-agnostic development workflow with dependency updates, repository checks, multi-perspective review, documentation sync, PR follow-through, and branch promotion with conditional release verification.",
+  "description": "Language-agnostic development workflow with dependency updates, repository checks, multi-perspective review, prose hygiene and documentation sync, PR follow-through, and branch promotion with conditional release verification.",
   "author": {
     "name": "Intellegam",
     "email": "burrichter@intellegam.com",
@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Dev Workflow",
     "shortDescription": "Run Intellegam's complete development workflow",
-    "longDescription": "Guides dependency maintenance and implementation through repository-specific checks, risk-scaled multi-perspective review, documentation synchronization, post-PR monitoring, and policy-driven branch promotion with conditional release verification in Claude Code or Codex.",
+    "longDescription": "Guides dependency maintenance and implementation through repository-specific checks, risk-scaled multi-perspective review, prose hygiene and documentation synchronization, post-PR monitoring, and policy-driven branch promotion with conditional release verification in Claude Code or Codex.",
     "developerName": "Intellegam",
     "category": "Engineering",
     "capabilities": ["Read", "Write"],

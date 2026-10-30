@@ -46,7 +46,9 @@ the file the repository designates for them.
 Never flag: lint and type directives with their reason; prose that other
 documents, guides, or tests point to as a rule's home, unless you also name the
 new home; inventories the repository requires; public integration contracts;
-and accessibility, security, or lifetime rationale that passes the test.
+and accessibility, security, or lifetime rationale that passes the test. These
+exemptions cover the keep test only; still flag them under Needs update when
+the change makes them false.
 
 ## Review process
 

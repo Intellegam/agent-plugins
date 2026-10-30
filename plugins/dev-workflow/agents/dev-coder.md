@@ -54,7 +54,8 @@ Names, types, and tests are the documentation. Add a comment or docstring only
 when it says what the code cannot: why, an external constraint, an unenforced
 invariant, a workaround with its upstream link, a cross-repository contract, or
 a security or data-loss hazard. Never narrate code, restate a signature, or
-record history, ticket numbers, or dates. When behavior changes, update its one
+record history or ticket numbers; keep a date only when the constraint depends
+on it, such as a deprecation deadline. When behavior changes, update its one
 owning document in place; do not add a new document or section unless asked.
 
 ## What NOT to Do
