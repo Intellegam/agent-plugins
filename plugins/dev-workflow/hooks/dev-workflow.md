@@ -33,6 +33,14 @@ outcome depends on them; report independent improvements separately. Preserve
 meaningful regression coverage; keep scratch checks only when they provide
 durable regression value. Assessment requests end with findings, not edits.
 
+Write every line of prose (docs, guides, docstrings, comments) to pass the keep
+test: true today, not derivable from the code in about a minute, costly to
+lose, and stated once. Write comments and docstrings only where the code cannot
+speak for itself: why, an external constraint, an unenforced invariant, a
+workaround with its link, a cross-repository contract, or a hazard. No
+narration, signature restatement, history, or ticket numbers. Update the owning
+document instead of adding new prose elsewhere.
+
 Retain trust-boundary validation, data-loss protections, security, accessibility,
 tests for non-trivial behavior, and explicitly requested behavior. For larger
 work, delegate bounded implementation when useful and review it before accepting
@@ -46,7 +54,7 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 
 1. `dev-check` — formatting, lint, types, and tests
 2. `dev-review` — risk-scaled independent review
-3. `dev-sync` — documentation and agent-surface alignment
+3. `dev-sync` — prose hygiene and accuracy: docs, guides, docstrings, comments
 
 ### 4. Commit and Push
 

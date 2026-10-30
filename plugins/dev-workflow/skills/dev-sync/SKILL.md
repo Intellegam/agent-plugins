@@ -1,11 +1,11 @@
 ---
 name: dev-sync
-description: Check documentation and agent guidance against the completed change after review and before publication. Also use for requests to sync documentation, update AGENTS.md or CLAUDE.md, or check for documentation drift.
+description: Keep the prose a change touches lean and accurate — documentation, AGENTS.md/CLAUDE.md, skills, docstrings, and code comments — after review and before publication. Also use for requests to sync or trim documentation, update AGENTS.md or CLAUDE.md, clean up comments, or check for documentation drift.
 ---
 
-# Sync Check
+# Prose Hygiene and Sync
 
-Ensure documentation and agent components match the completed change and that new content lives in the right document. Fix clear drift and ask only for non-obvious decisions.
+Review every prose surface the change touches — documentation, folder guides, skills and agent definitions, docstrings, and code comments. Delete what fails the keep test in the canonical contract, condense or move what lives in the wrong place, and fix what the change made false. Prose should shrink or stay flat unless the change needs more; apply clear findings and ask only for non-obvious decisions.
 
 This skill follows `dev-check` → `dev-review` and precedes commit/push/PR. Invoke workflow skills through `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
@@ -15,8 +15,8 @@ Follow the applicable repository and touched-directory instructions; read any mi
 
 ## Scale to Risk
 
-- **Tiny**: read and apply the canonical sync contract directly as a quick self-check when the change has no behavior/interface impact.
-- **Normal/high-risk**: delegate one read-only sync review over the complete target.
+- **Tiny**: apply the canonical contract directly as a self-check.
+- **Normal/high-risk**: delegate one read-only review over the complete target, including its comments and docstrings.
 
 Read and apply the shared sub-agent model policy at
 `../../references/sub-agent-model-policy.md` when delegating a sync review.
