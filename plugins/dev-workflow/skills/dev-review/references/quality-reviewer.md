@@ -36,10 +36,10 @@ Scan the overall structure, then examine each function, type, and decision:
 
 ### Pass 2: Test value
 
-Judge tests by the failures they detect, never by test count, test-to-code ratio, or coverage percentage. Give all three verdicts when the target adds, changes, or removes tests; otherwise give only the first.
+Judge tests by the failures they detect, never by test count, test-to-code ratio, or coverage percentage. Repository testing standards and explicit user requests override this bar; existing test density is not a standard. Give all three verdicts when the target adds, changes, or removes tests; otherwise give only the first.
 
-1. **Material risks missed**: a consequential failure (authorization, persistence, data loss, protocol or API contract, concurrency or cancellation, limits, consequential logic, or a fixed bug's silent return) that no test would catch. Name the failure and why existing coverage misses it; untested branches alone are not a finding.
-2. **Redundant or brittle checks** to delete or consolidate: implementation-coupled assertions, call transcripts, prop forwarding, copied inventories, expectations derived from the implementation, internal mocks that supply the asserted behavior, and permutations of one failure mechanism.
+1. **Material risks missed**: a material contract (authorization and trust-boundary validation, persistence and data loss, API or protocol contracts, concurrency or cancellation, limits, errors that would otherwise fail silently, and consequential logic (a wrong result that silently reaches users, stored data, money, or another system); a fixed bug in one of these counts) that no test or type check would catch. Name a concrete input or plausible code change that breaks the contract while every existing test still passes; untested branches alone are not a finding.
+2. **Redundant or brittle checks** to delete or consolidate: implementation-coupled assertions, call transcripts, prop forwarding, copied inventories, expectations derived from the implementation, internal mocks that supply the asserted behavior, assertions the type checker or a schema already enforces, field round-trips, and permutations of one failure mechanism. Each deletion names the surviving test that still fails if the contract breaks, or states that no material contract is involved.
 3. **Real vs mocked boundaries**: whether each test exercises the real boundary its contract depends on, or a double that would pass even if that boundary broke.
 
 ### Pass 3: Testability bridge
@@ -75,7 +75,7 @@ Group findings by priority, or write `No findings`. Lead with a shared root caus
 
 ### Test Value
 
-One line per Pass 2 verdict, then `net tests: +N / -M lines if applied`.
+One line per Pass 2 verdict, then `net tests: +N / -M lines if applied` (bookkeeping, not a verdict).
 
 ### Summary
 

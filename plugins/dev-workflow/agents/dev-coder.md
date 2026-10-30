@@ -28,6 +28,7 @@ Report back using this structure:
   - Brief descriptions of what changed
 - `path/to/test_file`
   - Tests added (the contract each protects) or removed (the surviving test that still catches it, or no material contract)
+  - Material contracts changed without a new test: the existing test that fails if each breaks
 
 ### Key Decisions
 
@@ -50,12 +51,17 @@ Report back using this structure:
 ## Tests
 
 No new test is a valid outcome. Add one only when a material contract
-(authorization, persistence, data loss, protocol or API contract, concurrency or
-cancellation, limits, consequential logic) could credibly fail without any
-existing test noticing. Test at the boundary callers use (public API, route,
-package export), never internals. List the failure modes first and derive
-expectations independently of the implementation. For a bug fix, show the
-owning test fails before the fix and passes after, where feasible.
+(authorization and trust-boundary validation, persistence and data loss, API
+or protocol contracts, concurrency or cancellation, limits, errors that would
+otherwise fail silently, and consequential logic (a wrong result that silently
+reaches users, stored data, money, or another system); a fixed bug in one of these counts) could credibly break while
+existing tests and the type checker stay green. Test at the narrowest exported
+boundary that owns the contract (module export, public API, route), never
+private helpers. List the failure modes first and derive expectations
+independently of the implementation. For a bug fix that meets this bar, show
+the owning test fails before the fix and passes after, where feasible. Never
+remove or weaken the last test that detects a material contract. Repository
+testing standards and explicit user requests override this bar.
 
 ## Comments and Documentation
 

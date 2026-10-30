@@ -112,7 +112,7 @@ triage. On `pr-closed`, stop the waiter and report the final state.
 | --- | --- | --- |
 | `already-addressed` | A prior commit fixed a stale claim | Reply with commit/test evidence; resolve bot threads only |
 | `false-alarm` | The claim does not match reality | Reply with empirical disproof; resolve bot threads only |
-| `real-fix-obvious` | Clear, small, self-contained bug | Fix and test; batch with other obvious fixes; push once; reply with evidence |
+| `real-fix-obvious` | Clear, small, self-contained bug | Fix and verify (a test only under the material-contract bar); batch with other obvious fixes; push once; reply with evidence |
 | `real-fix-nonobvious` | Real issue with ambiguous or broad fix | Ask the user; keep thread open; stop until decided |
 | `judgment-call` | Subjective product or style tradeoff | Ask the user; keep thread open; stop until decided |
 
@@ -148,7 +148,7 @@ URL and report what is observable.
 Classify each failure:
 
 - `our-bug` — caused by this change: apply the same obvious versus non-obvious
-  boundary as review findings; fix/test only an obvious issue and ask the user
+  boundary as review findings; fix and verify only an obvious issue and ask the user
   before an architectural, migration, or product decision.
 - `flaky` — intermittent test or unrelated transient infrastructure: rerun.
 - `external-dep` — transient dependency outside the PR: report and monitor.

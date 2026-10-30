@@ -130,8 +130,11 @@ lower rung than it could have:
   narrate the code, record history or ticket numbers, or otherwise fail the
   prose keep test; the default for a comment is none
 - **Excess tests**: implementation-coupled assertions, call transcripts, prop
-  forwarding, copied inventories, expectations derived from the implementation, internal mocks that
-  supply the asserted behavior, and permutations of one failure mechanism
+  forwarding, copied inventories, expectations derived from the implementation,
+  internal mocks that supply the asserted behavior, type- or schema-enforced
+  assertions, and permutations of one failure mechanism; each test deletion
+  names the surviving test that still fails if the contract breaks, or states
+  that no material contract is involved
 - **Shrinkable logic**: identical behavior expressed in fewer lines
 
 ### Overlap With Structural Findings

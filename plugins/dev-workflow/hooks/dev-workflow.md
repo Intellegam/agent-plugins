@@ -41,11 +41,16 @@ narration, signature restatement, history, or ticket numbers. Update the owning
 document instead of adding new prose elsewhere.
 
 No new test is a valid outcome: add one only when a material contract
-(authorization, persistence, data loss, API or protocol, concurrency, limits,
-consequential logic) could credibly fail unnoticed by existing tests. Preserve
-detection of material contracts; remove or consolidate redundant tests;
-replacing coverage requires evidence the surviving test exercises the same
-failure.
+(authorization and trust-boundary validation, persistence and data loss, API
+or protocol contracts, concurrency or cancellation, limits, errors that would
+otherwise fail silently, and consequential logic (a wrong result that silently
+reaches users, stored data, money, or another system); a fixed bug in one of these counts) could credibly break while
+existing tests and the type checker stay green. Never remove the last test that
+detects a material contract; a removal names the surviving test and assertion
+that fails when the contract breaks. Remove or consolidate redundant tests in
+files the change touches and report others; discard scratch and repro checks
+that do not meet this bar. Repository testing standards and explicit user
+requests override this bar; existing test density is not a standard.
 
 Retain trust-boundary validation, data-loss protections, security, accessibility,
 and explicitly requested behavior. For larger work, delegate bounded
