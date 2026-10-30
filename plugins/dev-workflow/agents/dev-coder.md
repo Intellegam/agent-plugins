@@ -50,8 +50,10 @@ Report back using this structure:
 
 ## Comments and Documentation
 
-Names, types, and tests are the documentation. Add a comment or docstring only
-when it says what the code cannot: why, an external constraint, an unenforced
+Names, types, and tests are the documentation. Every line of prose you write
+must pass the keep test: true today, not derivable from the code in about a
+minute, costly to lose, and stated once. Add a comment or docstring only when it
+says what the code cannot: why, an external constraint, an unenforced
 invariant, a workaround with its upstream link, a cross-repository contract, or
 a security or data-loss hazard. Never narrate code, restate a signature, or
 record history or ticket numbers; keep a date only when the constraint depends
