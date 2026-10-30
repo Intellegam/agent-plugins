@@ -49,8 +49,12 @@ existing tests and the type checker stay green. Never remove the last test that
 detects a material contract; a removal names the surviving test and assertion
 that fails when the contract breaks. Remove or consolidate redundant tests in
 files the change touches and report others; discard scratch and repro checks
-that do not meet this bar. Repository testing standards and explicit user
-requests override this bar; existing test density is not a standard.
+that do not meet this bar. Replace a dependency only at a process or network
+edge, through one shared double per edge; never replace a module of the code
+under test or add a test-only setter to production code. A failure that real
+state cannot produce may be forced for one test only. Repository testing
+standards and explicit user requests override this bar; existing test density
+is not a standard.
 
 Retain trust-boundary validation, data-loss protections, security, accessibility,
 and explicitly requested behavior. For larger work, delegate bounded
