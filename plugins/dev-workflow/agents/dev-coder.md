@@ -58,8 +58,8 @@ reaches users, stored data, money, or another system); a fixed bug in one of the
 existing tests and the type checker stay green. Test at the narrowest exported
 boundary that owns the contract (module export, public API, route), never
 private helpers. Run the real code behind that boundary: replace a dependency
-only at a process or network edge (a language model, an outside service, the
-clock), through one shared double per edge. Never replace a module of the code
+only at an outside edge (another process or service such as a language model,
+the network, the clock), through one shared double per edge. Never replace a module of the code
 under test or add a test-only setter to production code. A failure that real
 state cannot produce may be forced for one test only. List the failure modes
 first and derive expectations independently of the implementation. For a bug
