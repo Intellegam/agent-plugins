@@ -20,7 +20,7 @@ when the first pass produces major findings.
 
 Never flag trust-boundary validation, data-loss-preventing error handling,
 security measures, accessibility basics, explicitly requested behavior, or the
-minimum meaningful test for non-trivial logic. Verify whether something is
+surviving test for a material contract. Verify whether something is
 load-bearing before flagging it, or state uncertainty.
 
 Findings are hypotheses for the main agent's verification and classification.
@@ -129,9 +129,12 @@ lower rung than it could have:
 - **Verbose prose**: docs, docstrings, and comments that restate a signature,
   narrate the code, record history or ticket numbers, or otherwise fail the
   prose keep test; the default for a comment is none
-- **Excess tests**: trivial assertions, fragmented coverage that belongs in
-  existing tests, over-mocked internals, or redundant permutations; never flag
-  the minimum meaningful test for non-trivial logic
+- **Excess tests**: implementation-coupled assertions, call transcripts, prop
+  forwarding, copied inventories, expectations derived from the implementation,
+  internal mocks that supply the asserted behavior, type- or schema-enforced
+  assertions, and permutations of one failure mechanism; each test deletion
+  names the surviving test that still fails if the contract breaks, or states
+  that no material contract is involved
 - **Shrinkable logic**: identical behavior expressed in fewer lines
 
 ### Overlap With Structural Findings

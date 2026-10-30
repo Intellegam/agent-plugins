@@ -38,13 +38,13 @@ Reuse the tier chosen by `dev-check`; otherwise choose it now.
 
 | Tier | Initial reviewers | Composition |
 | --- | ---: | --- |
-| **tiny** | 1 | One fresh broad correctness review |
+| **tiny** | 1 | One fresh broad correctness review (+ quality when tests or material contracts change) |
 | **normal** | 2–3 | One broad correctness review plus 1–2 relevant specialists |
 | **high-risk** | 5 | One broad correctness review plus four independent risk-focused specialists |
 
 The main agent chooses specialist focus from structural simplicity plus lean cleanup, quality/tests, applicable repository-specific reviewers, existing-pattern reuse, external API verification, observability, security, or other change-specific risks. Always include a broad/unscoped review. Focus directs attention; it never partitions files. Every reviewer examines the complete target.
 
-Prioritize an applicable repository-specific reviewer when its declared trigger matches. For high-risk work, include both structural-and-lean and quality unless a stronger repository-specific risk displaces one; fill remaining slots with independent focused reviews.
+Prioritize an applicable repository-specific reviewer when its declared trigger matches. For high-risk work, include both structural-and-lean and quality unless a stronger repository-specific risk displaces one; fill remaining slots with independent focused reviews. Whenever the target adds, changes, or removes tests, or changes a material contract without touching tests, include the quality reviewer at every tier for its test-value verdicts; it cannot be displaced then.
 
 ## Internal Reviewer Contracts
 
@@ -85,7 +85,7 @@ Reviewer findings are hypotheses. Before fixing a behavioral claim, prove or dis
 | Class | Meaning | Action |
 | --- | --- | --- |
 | **already-addressed** | Existing code/test already covers it | Note and skip |
-| **false-alarm** | Claim does not match verified behavior | Skip; optionally add a useful regression test |
+| **false-alarm** | Claim does not match verified behavior | Skip |
 | **real-fix-obvious** | Small, unambiguous defect | Fix directly |
 | **real-fix-nonobvious** | Real but ambiguous or far-reaching | Present options to the user |
 | **judgment-call** | Subjective trade-off | Present options to the user |

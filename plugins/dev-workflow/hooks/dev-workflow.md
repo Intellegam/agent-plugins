@@ -29,9 +29,8 @@ scope; ask when the answer materially changes requirements, compatibility,
 security, cost, or authority. Preserve unrelated user work.
 
 Keep changes within the requested outcome. Fix adjacent issues only when that
-outcome depends on them; report independent improvements separately. Preserve
-meaningful regression coverage; keep scratch checks only when they provide
-durable regression value. Assessment requests end with findings, not edits.
+outcome depends on them; report independent improvements separately.
+Assessment requests end with findings, not edits.
 
 Write every line of prose (docs, guides, docstrings, comments) to pass the keep
 test: true today, not derivable from the code in about a minute, costly to
@@ -41,11 +40,23 @@ workaround with its link, a cross-repository contract, or a hazard. No
 narration, signature restatement, history, or ticket numbers. Update the owning
 document instead of adding new prose elsewhere.
 
+No new test is a valid outcome: add one only when a material contract
+(authorization and trust-boundary validation, persistence and data loss, API
+or protocol contracts, concurrency or cancellation, limits, errors that would
+otherwise fail silently, and consequential logic (a wrong result that silently
+reaches users, stored data, money, or another system); a fixed bug in one of these counts) could credibly break while
+existing tests and the type checker stay green. Never remove the last test that
+detects a material contract; a removal names the surviving test and assertion
+that fails when the contract breaks. Remove or consolidate redundant tests in
+files the change touches and report others; discard scratch and repro checks
+that do not meet this bar. Repository testing standards and explicit user
+requests override this bar; existing test density is not a standard.
+
 Retain trust-boundary validation, data-loss protections, security, accessibility,
-tests for non-trivial behavior, and explicitly requested behavior. For larger
-work, delegate bounded implementation when useful and review it before accepting
-it. In Claude Code, use `dev-workflow:dev-coder` for implementation delegation;
-in Codex, use a worker with explicit file ownership and validation requirements.
+and explicitly requested behavior. For larger work, delegate bounded
+implementation when useful and review it before accepting it. In Claude Code,
+use `dev-workflow:dev-coder` for implementation delegation; in Codex, use a
+worker with explicit file ownership and validation requirements.
 Apply the shared sub-agent model policy to delegated work.
 
 ### 3. Validate

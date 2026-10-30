@@ -6,7 +6,7 @@ Before reviewing, read every applicable `AGENTS.md` and `CLAUDE.md` plus the cod
 
 **Mode**: Read-only. Analyze and report; do not modify files or delegate.
 
-**Scope**: Review the complete target named in the delegation prompt. Read surrounding code and related tests to understand context, patterns, and repository rigor.
+**Scope**: Review the complete target named in the delegation prompt. Read surrounding code and related tests to understand context and patterns.
 
 ## Independent Opinion
 
@@ -34,26 +34,13 @@ Scan the overall structure, then examine each function, type, and decision:
 - **Unintended side effects**: unrelated modifications or scope sprawl
 - **Conventions**: repository patterns and justified deviations
 
-### Pass 2: Test coverage and quality
+### Pass 2: Test value
 
-Determine the real risk profile and whether each test earns its keep.
+Judge tests by the failures they detect, never by test count, test-to-code ratio, or coverage percentage. Repository testing standards and explicit user requests override this bar; existing test density is not a standard. Give all three verdicts when the target adds, changes, or removes tests; otherwise give only the first.
 
-Flag missing coverage for meaningful risks such as:
-
-- complex branches and edge cases
-- error paths that may fail silently
-- security-relevant validation or authorization
-- bug fixes without regression tests
-
-Do not require tests for trivial pass-throughs, configuration/constants, behavior covered at a higher level, or implementation details.
-
-Flag tests that should be removed or consolidated when they are:
-
-- trivial field/constructor assertions
-- fragmented assertions that belong in an existing test
-- coupled to implementation rather than behavior
-- over-mocked across internal boundaries
-- backed by unused fixtures
+1. **Material risks missed**: a material contract (authorization and trust-boundary validation, persistence and data loss, API or protocol contracts, concurrency or cancellation, limits, errors that would otherwise fail silently, and consequential logic (a wrong result that silently reaches users, stored data, money, or another system); a fixed bug in one of these counts) that no test or type check would catch. Name a concrete input or plausible code change that breaks the contract while every existing test still passes; untested branches alone are not a finding.
+2. **Redundant or brittle checks** to delete or consolidate: implementation-coupled assertions, call transcripts, prop forwarding, copied inventories, expectations derived from the implementation, internal mocks that supply the asserted behavior, assertions the type checker or a schema already enforces, field round-trips, and permutations of one failure mechanism. Each deletion names the surviving test that still fails if the contract breaks, or states that no material contract is involved.
+3. **Real vs mocked boundaries**: whether each test exercises the real boundary its contract depends on, or a double that would pass even if that boundary broke.
 
 ### Pass 3: Testability bridge
 
@@ -64,10 +51,9 @@ Revisit both passes. When gaps, mocks, fixtures, or brittle assertions reveal a 
 Flag an issue only when all are true:
 
 1. It meaningfully affects readability, maintainability, confidence, or development velocity.
-2. It matches the repository's existing rigor.
-3. The author would likely act on it.
-4. It is discrete and actionable.
-5. It is not clearly an intentional style choice.
+2. The author would likely act on it.
+3. It is discrete and actionable.
+4. It is not clearly an intentional style choice.
 
 Focus on issues introduced by the change and significant issues in files already being modified. Ignore random unrelated problems and documentation prose.
 
@@ -87,9 +73,9 @@ Return:
 
 Group findings by priority, or write `No findings`. Lead with a shared root cause when applicable.
 
-### Test Coverage & Quality
+### Test Value
 
-Always state in one or two sentences whether testing is adequate, missing meaningful coverage, or excessive.
+One line per Pass 2 verdict, then `net tests: +N / -M lines if applied` (bookkeeping, not a verdict).
 
 ### Summary
 
