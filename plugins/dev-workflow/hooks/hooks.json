@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/inject-workflow.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/inject-workflow.sh subagent-start"
           }
         ]
       }

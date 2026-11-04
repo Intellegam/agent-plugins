@@ -1,3 +1,5 @@
+import json
+import os
 import re
 import subprocess
 import unittest
@@ -32,6 +34,28 @@ class SubAgentModelPolicyTests(unittest.TestCase):
                 reference = "../../references/sub-agent-model-policy.md"
                 self.assertIn(reference, content)
                 self.assertEqual((skill_path.parent / reference).resolve(), policy_path)
+
+    def test_configured_hooks_return_plain_session_and_json_subagent_context(self):
+        hooks = json.loads((DEV_WORKFLOW / "hooks" / "hooks.json").read_text())["hooks"]
+        env = {**os.environ, "CLAUDE_PLUGIN_ROOT": str(DEV_WORKFLOW)}
+
+        def run(event):
+            command = hooks[event][0]["hooks"][0]["command"]
+            return subprocess.run(
+                command, shell=True, input="", env=env, text=True, capture_output=True, check=True
+            ).stdout
+
+        plain = run("SessionStart")
+        self.assertIn("<dev-workflow>", plain)
+        self.assertEqual(
+            json.loads(run("SubagentStart")),
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "SubagentStart",
+                    "additionalContext": plain,
+                }
+            },
+        )
 
     def test_packaged_claude_reviewers_use_an_explicit_permitted_model(self):
         reviewer_paths = sorted((DEV_WORKFLOW / "agents").glob("*reviewer.md"))
