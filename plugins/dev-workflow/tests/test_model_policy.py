@@ -38,6 +38,7 @@ class SubAgentModelPolicyTests(unittest.TestCase):
     def test_configured_hooks_return_plain_session_and_json_subagent_context(self):
         hooks = json.loads((DEV_WORKFLOW / "hooks" / "hooks.json").read_text())["hooks"]
         env = {**os.environ, "CLAUDE_PLUGIN_ROOT": str(DEV_WORKFLOW)}
+        self.assertIsNotNone(re.fullmatch(hooks["SubagentStart"][0]["matcher"], "general-purpose"))
 
         def run(event):
             command = hooks[event][0]["hooks"][0]["command"]

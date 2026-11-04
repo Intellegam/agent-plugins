@@ -10,7 +10,7 @@ if [ "${1:-}" != subagent-start ]; then
   cat "${files[@]}"
   exit 0
 fi
-text=$(cat "${files[@]}"; printf x)
+text=$(cat "${files[@]}" && printf x) || exit 1
 text=${text%x}
 text=${text//\\/\\\\}
 text=${text//\"/\\\"}
