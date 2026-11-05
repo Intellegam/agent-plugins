@@ -48,10 +48,12 @@ commit authorization), give the reviewer that commit's diff against the merge
 base and the baseline, and record both SHAs for the card. Act only on its drift
 list, within the review loop's existing budget: lower a drifted item, or keep
 it and write a one-line reason in its `kept` field. A better design can justify
-more risk.
+more risk. Without commit authorization, do not commit to get a rating: finish
+the local work and rate once the commit is authorized.
 
-If the reviewer cannot run or returns invalid output, say so in the card's
-Merge risk section instead of filling in verdicts yourself.
+If the reviewer cannot run or returns invalid output, write the card without a
+data block and say in its Merge risk section that no rating was produced; never
+fill in verdicts yourself.
 
 Only the reviewer sets verdicts; never edit its rows to look better.
 
@@ -67,10 +69,14 @@ first. Only when the commits since change no behavior (docs, comments, a clean
 rebase) may the writer move `head` and `base` forward without a new rating.
 
 To update a body: fetch the latest body, replace only the managed region, and
-write once.
+write once. Reread the body just before writing; if it changed, redo the
+replacement on the new body.
 
 ## 4. Refresh
 
 While babysitting, check the card's freshness against the PR head on every
-pass, whoever pushed, and rewrite the card when it is stale. Drift found here
-is reported on the card, not fixed in a new loop, unless the user asks.
+pass, whoever pushed, and rewrite the card when it is stale. Rate the PR's head
+commit (fetch it when it is not local) without changing the checkout, and use
+the card's `risk.planned` as the baseline, keeping it in the rewritten card.
+Drift found here is reported on the card, not fixed in a new loop, unless the
+user asks.

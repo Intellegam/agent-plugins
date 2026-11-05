@@ -52,7 +52,7 @@ it. A body with more than one region or data block is invalid.
    Use ✓ for `ok`, 👀 for `watch` and ⚠ for `risk`. Omit "To lower it" when `lower` is null, and "Riskier
    than planned" when `drift` is empty; with `planned` null, write "no plan
    profile" there instead.
-5. The data block.
+5. The data block, only when the reviewer returned a valid rating.
 
 ## Data Block
 
@@ -121,5 +121,5 @@ no card.
   `verdict`.
 - The card writer fills `mode`, `head`, `base`, `planned` and each
   `drift[].kept`; the reviewer returns the rest.
-- A card whose `risk.head` is not the PR's current head is stale; readers say
-  so rather than show it as current.
+- A card is stale when `risk.head` is not the PR's head or `risk.base` is not
+  its merge base; readers say so rather than show it as current.
