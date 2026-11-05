@@ -106,6 +106,9 @@ The waiter first emits `armed`, then emits one terminal event and exits:
 Every event except `pr-closed` re-enters this step: re-arm first, then fetch and
 triage. On `pr-closed`, stop the waiter and report the final state.
 
+When the PR body has a PR card, refresh it on each pass as the `merge-risk`
+skill's Refresh step describes.
+
 ### 2. Verify and classify findings
 
 | Class | Meaning | Action |

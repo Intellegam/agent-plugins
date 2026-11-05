@@ -25,6 +25,7 @@ class SubAgentModelPolicyTests(unittest.TestCase):
         for relative in (
             "skills/dev-review/SKILL.md",
             "skills/dev-sync/SKILL.md",
+            "skills/merge-risk/SKILL.md",
             "skills/promote/SKILL.md",
             "skills/setup/SKILL.md",
         ):
