@@ -32,7 +32,27 @@ it. A body with more than one region or data block is invalid.
    change faster than the sentences.
 3. **Evidence** (optional): one sentence on what showed the problem or proves
    the change, with a link.
-4. **Merge risk**: the reviewer's Markdown section.
+4. **Merge risk**, rendered from `risk`:
+
+   ```markdown
+   ### Merge risk: Medium
+
+   | | Row | Why |
+   | --- | --- | --- |
+   | ✓ | Alignment | ... |
+   | 👀 | Impact | ... |
+
+   **Areas:** 👀 `agent-runtime`: ... · ✓ `access`: ... · minor: `core` (...)
+
+   **To lower it:** ...
+
+   **Riskier than planned:** ... Kept because ...
+   ```
+
+   Use ✓ for `ok`, 👀 for `watch` and ⚠ for `risk`, and list meaningful
+   areas riskiest first. Omit "To lower it" when `lower` is null, and "Riskier
+   than planned" when `drift` is empty; with `planned` null, write "no plan
+   profile" there instead.
 5. The data block.
 
 ## Data Block
@@ -43,7 +63,8 @@ it. A body with more than one region or data block is invalid.
 -->
 ```
 
-Write `>` as `>` inside JSON strings so the comment cannot end early.
+Escape every `>` inside JSON strings as `\u003e`, so no string can contain
+`-->` and end the comment early.
 Readers ignore a block whose `v` they do not know and treat malformed JSON as
 no card.
 
@@ -57,7 +78,7 @@ no card.
   "visual": [
     { "type": "flow", "title": "How it works", "before": ["Step", "Fails"], "after": ["Step", "Works"], "afterKey": 1 },
     { "type": "numbers", "caption": "...", "rows": [{ "label": "...", "before": "...", "after": "..." }] },
-    { "type": "message", "where": "chat", "before": "...", "after": "..." }
+    { "type": "message", "where": "error toast", "before": "...", "after": "..." }
   ],
   "evidence": { "text": "One sentence.", "url": "https://...", "linkText": "Report", "series": [0, 3, 12] },
   "risk": {
@@ -85,8 +106,9 @@ no card.
 }
 ```
 
-- `type` is the conventional-commit type; `fix` and `feat` pick their labels,
-  every other value uses Why / Change / How.
+- `type` is the PR's conventional-commit type.
+- `afterKey` is the index of the After step that is new (shown in bold);
+  `evidence.series` is a short count series for a sparkline, oldest first.
 - Enums: `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `medium` or
   `high`; `mode` is `diff` on a PR. `rows` holds each of the five rows exactly
   once.

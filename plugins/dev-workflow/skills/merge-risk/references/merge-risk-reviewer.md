@@ -76,40 +76,22 @@ riskiest first.
 
 ## Overall Level
 
-Score `ok` = 1, `watch` = 2, `risk` = 3 and weight Impact 2, Verification 2,
-Rollback 1.5, Error detection 1, Alignment 1. The weighted mean gives `low`
-below 1.5, `medium` below 2.25, otherwise `high`. Keep the arithmetic internal.
+Impact, Verification and Rollback weigh most. As a guide: `high` when any of
+those three is `risk`; `low` when every row is `ok`, or only Alignment or Error
+detection is `watch`; otherwise `medium`. Depart from the guide only with a
+reason in the most affected row's line.
 
 ## Drift (diff mode)
 
 Rate the diff on its own first; only then compare it with the baseline. Drift
-is any row with a worse verdict, a higher overall level, or a meaningful area
-the baseline did not expect. For each, say what changed and the cheapest way to
-bring it back, if one exists. Equal or lower risk is not drift. Leave `kept`
-empty: the implementer fills it. Without a baseline, report no drift and say
-so.
+is any row or area with a worse verdict, a higher overall level, or a
+meaningful area the baseline did not expect. For each, say what changed and
+the cheapest way to bring it back, if one exists. Equal or lower risk is not
+drift. Leave `kept` null: the implementer fills it. Without a baseline, return
+an empty drift list.
 
 ## Output
 
-Return exactly two blocks.
-
-1. The Markdown section:
-
-   ```markdown
-   ### Merge risk: <Low|Medium|High>
-
-   | | Row | Why |
-   | --- | --- | --- |
-   | ✓ | Alignment | ... |
-   | ... | ... | ... |
-
-   **Areas:** ⚠ `access`: ... · 👀 `db`: ... · minor: `core` (...), `ui` (...)
-
-   **To lower it:** one or two concrete steps, or `Nothing cheap`.
-
-   **Riskier than planned:** one line per drift item, `No`, or `No plan
-   profile`.
-   ```
-
-2. A fenced `json` block with the `risk` object defined in `pr-card.md` next to
-   this file, matching the Markdown.
+Return one fenced `json` block holding the `risk` object defined in
+`pr-card.md` next to this file, without the fields that file assigns to the
+card writer.
