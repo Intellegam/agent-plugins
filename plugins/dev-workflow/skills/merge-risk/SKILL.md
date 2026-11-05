@@ -43,8 +43,9 @@ agreement.
 
 ## 2. Diff Mode
 
-Give the reviewer the review target and the baseline. Act only on its drift
-list, within the review loop's existing budget:
+Rate a commit: commit the change first, give the reviewer that commit's diff
+against the merge base and the baseline, and record both SHAs for the card. Act
+only on its drift list, within the review loop's existing budget:
 
 - Lower a drifted item, or keep it and write a one-line reason in the item's
   `kept` field. A better design can justify more risk.
@@ -57,10 +58,12 @@ Only the reviewer sets verdicts; never edit its rows to look better.
 Follow `references/pr-card.md`. Write the card when opening the PR.
 
 Freshness: before writing or refreshing the card, compare the assessed `head`
-with the commit being published. If any commit since then changes behavior
-(review fixes and `dev-sync` edits included), rerun diff mode first. Only when
-the commits since change no behavior (docs, comments, a clean rebase) may the
-writer move `head` forward without a new rating.
+and `base` with the PR's head and merge base. A new merge base from retargeting
+or a base merge that changes the diff needs a new rating. If any commit since
+the assessed head changes behavior (review fixes and `dev-sync` edits
+included), rerun diff mode first. Only when the commits since change no
+behavior (docs, comments, a clean rebase) may the writer move `head` forward
+without a new rating.
 
 To update a body: fetch the latest body, replace only the managed region, and
 write once. Keep everything outside the region, including template sections

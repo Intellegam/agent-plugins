@@ -112,8 +112,10 @@ no card.
 - Enums: `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `medium` or
   `high`; `mode` is `diff` on a PR. `rows` holds each of the five rows exactly
   once.
-- A drift `item` is a row key, `level`, or `area:<name>`; for a new area
-  `planned` is null.
+- A drift `item` is a row key, `level`, or `area:<name>`. `planned` and `now`
+  are verdicts for rows and areas and levels for `level`; for an area,
+  `planned` is `"minor"` when the baseline listed it as minor and null when it
+  did not list it.
 - Optional: `visual`, `evidence`, `evidence.series`, `lower`, `drift`.
   `planned` is null when no plan was rated. A `meaningful: false` area has no
   `verdict`.
