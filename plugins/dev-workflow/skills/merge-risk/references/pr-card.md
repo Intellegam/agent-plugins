@@ -49,8 +49,7 @@ it. A body with more than one region or data block is invalid.
    **Riskier than planned:** ... Kept because ...
    ```
 
-   Use ✓ for `ok`, 👀 for `watch` and ⚠ for `risk`, and list meaningful
-   areas riskiest first. Omit "To lower it" when `lower` is null, and "Riskier
+   Use ✓ for `ok`, 👀 for `watch` and ⚠ for `risk`. Omit "To lower it" when `lower` is null, and "Riskier
    than planned" when `drift` is empty; with `planned` null, write "no plan
    profile" there instead.
 5. The data block.
@@ -84,7 +83,7 @@ no card.
   "risk": {
     "mode": "diff",
     "head": "<commit SHA assessed>",
-    "base": "<base commit SHA>",
+    "base": "<merge-base SHA>",
     "level": "medium",
     "rows": [
       { "row": "alignment", "verdict": "ok", "line": "..." },
@@ -106,7 +105,8 @@ no card.
 }
 ```
 
-- `type` is the PR's conventional-commit type.
+- `type` is the PR's conventional-commit type. The `visual` example shows each
+  type once; a card holds at most two.
 - `afterKey` is the index of the After step that is new (shown in bold);
   `evidence.series` is a short count series for a sparkline, oldest first.
 - Enums: `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `medium` or

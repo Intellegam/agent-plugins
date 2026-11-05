@@ -49,9 +49,10 @@ Prioritize an applicable repository-specific reviewer when its declared trigger 
 ## Merge Risk
 
 When the change will be published as a PR, run the `merge-risk` skill's diff
-mode beside the tier's panel; it does not count toward the tier. It is the one
-reviewer that receives the plan's baseline profile. Handle its drift list as
-that skill describes, inside this review loop.
+mode, which rates a local commit, beside the tier's panel; it does not count
+toward the tier. It is the one reviewer that receives the plan's baseline
+profile. Handle its drift list as that skill describes, inside this review
+loop.
 
 ## Internal Reviewer Contracts
 

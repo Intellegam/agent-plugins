@@ -34,7 +34,7 @@ well-scoped changes are low risk.
 
 ## Rows
 
-Give each row one verdict, `ok` (✓), `watch` (👀) or `risk` (⚠), and one line
+Give each row one verdict, `ok`, `watch` or `risk`, and one line
 that says why. Name a file or test when it is the reason.
 
 - **Alignment**: does the change do what the task source asked, and only that?
@@ -70,8 +70,8 @@ recognise. Mark each one:
   tests, or docs. An added export or log line is meaningful when it widens
   access, exposes a privileged operation, or logs sensitive data.
 
-Write one plain sentence per area saying what changed there, e.g. "access:
-share links now also grant read access to project files". Order areas
+Write one plain sentence per area saying what changed there, e.g. "share
+links now also grant read access to project files". Order areas
 riskiest first.
 
 ## Overall Level
@@ -87,8 +87,8 @@ Rate the diff on its own first; only then compare it with the baseline. Drift
 is any row or area with a worse verdict, a higher overall level, or a
 meaningful area the baseline did not expect. For each, say what changed and
 the cheapest way to bring it back, if one exists. Equal or lower risk is not
-drift. Leave `kept` null: the implementer fills it. Without a baseline, return
-an empty drift list.
+drift. The implementer fills `kept`. Without a baseline, return an empty drift
+list.
 
 ## Output
 

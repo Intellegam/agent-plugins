@@ -33,23 +33,25 @@ results for the assessed commit, when any exist.
 ## 1. Plan Mode
 
 After drafting a plan and before implementing, run the reviewer in plan mode
-with the plan text. This rating is separate from the optional plan consultation
-and applies to every PR-bound change beyond a tiny one. Weigh any safer
-approach it names where that costs little, and include its profile in plan
-validation. The profile you implement against is the baseline; keep it in task
-context, across compaction and handoff, until the PR card records it. Revising
-the plan later replaces the baseline only with the user's or plan reviewer's
-agreement.
+with the plan text. This rating is separate from the optional plan
+consultation; skip it when a parent agent owns the PR. Weigh any safer approach
+it names where that costs little, and include its profile in any plan
+consultation. The profile you implement against is the baseline; keep it in
+task context, across compaction and handoff, until the PR card records it.
+Revising the plan later replaces the baseline only with the user's or plan
+reviewer's agreement.
 
 ## 2. Diff Mode
 
-Rate a commit: commit the change first, give the reviewer that commit's diff
-against the merge base and the baseline, and record both SHAs for the card. Act
-only on its drift list, within the review loop's existing budget:
+Rate a commit: make a local commit of the change first (within the existing
+commit authorization), give the reviewer that commit's diff against the merge
+base and the baseline, and record both SHAs for the card. Act only on its drift
+list, within the review loop's existing budget: lower a drifted item, or keep
+it and write a one-line reason in its `kept` field. A better design can justify
+more risk.
 
-- Lower a drifted item, or keep it and write a one-line reason in the item's
-  `kept` field. A better design can justify more risk.
-- Equal or lower risk needs no action.
+If the reviewer cannot run or returns invalid output, say so in the card's
+Merge risk section instead of filling in verdicts yourself.
 
 Only the reviewer sets verdicts; never edit its rows to look better.
 
@@ -60,14 +62,12 @@ Follow `references/pr-card.md`. Write the card when opening the PR.
 Freshness: before writing or refreshing the card, compare the assessed `head`
 and `base` with the PR's head and merge base. A new merge base from retargeting
 or a base merge that changes the diff needs a new rating. If any commit since
-the assessed head changes behavior (review fixes and `dev-sync` edits
-included), rerun diff mode first. Only when the commits since change no
-behavior (docs, comments, a clean rebase) may the writer move `head` forward
-without a new rating.
+the assessed head changes behavior (review fixes included), rerun diff mode
+first. Only when the commits since change no behavior (docs, comments, a clean
+rebase) may the writer move `head` and `base` forward without a new rating.
 
 To update a body: fetch the latest body, replace only the managed region, and
-write once. Keep everything outside the region, including template sections
-and checklists.
+write once.
 
 ## 4. Refresh
 

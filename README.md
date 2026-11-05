@@ -89,7 +89,7 @@ The repo doubles as a Codex plugin marketplace (`.agents/plugins/marketplace.jso
 codex plugin marketplace add Intellegam/agent-plugins
 ```
 
-Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:update-dependencies`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, `$dev-workflow:babysit-pr`, and `$dev-workflow:promote`; code tours use `$code-tour:code-tour`.
+Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:update-dependencies`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, `$dev-workflow:merge-risk`, `$dev-workflow:babysit-pr`, and `$dev-workflow:promote`; code tours use `$code-tour:code-tour`.
 
 Manual fallback without the plugin system: add the MCP server directly to `~/.codex/config.toml` — snippet in the [claude-code-mcp README](https://github.com/Intellegam/claude-code-mcp#installation).
 
