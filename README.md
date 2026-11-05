@@ -39,9 +39,10 @@ Cross-host org development workflow for Claude Code and Codex: a setup consultan
 - `update-dependencies` skill — discovers package-manager domains, audits constraints and release impact, and performs risk-grouped updates using repository policy and checks
 - `dev-check`, `dev-review`, `dev-sync` skills — cross-host, risk-tiered validation with 1/2–3/5 independent reviews, targeted re-review, and up to two fresh broad final-gate cycles
 - Optional Code Tour phase — after PR creation, delegates reviewer walkthroughs to the separately installed `code-tour` plugin when requested, required by repository guidance, or useful for a non-trivial change
+- `merge-risk` skill — an independent reviewer rates merge risk (alignment, impact per package or area, verification, rollback, error detection) on the plan and again on the diff, steers implementation only when the work got riskier than planned, and writes the PR card (summary, visual, evidence, merge risk, and a JSON data block) at the top of every PR body except branch promotions
 - `babysit-pr` skill — one shared event-driven PR policy plus non-invokable Claude Code/Codex host adapters; it verifies and automatically replies to clear feedback, watches reviews, comments, mergeability, pushes, and CI, and continues until the PR closes or needs a user decision
 - `promote` skill — prepares, gates, and directly merges branch-promotion PRs once an explicitly requested promotion passes its gates (assessment and PR-only requests do not merge), then verifies the conditional release outcome from GitHub evidence
-- One canonical internal reference per structural-and-lean, quality, correctness-fallback, and sync reviewer; Claude agents are thin wrappers and Codex sub-agents load the same references
+- One canonical internal reference per structural-and-lean, quality, merge-risk, correctness-fallback, and sync reviewer; Claude agents are thin wrappers and Codex sub-agents load the same references
 - Explicit economical sub-agent selection, with Astra and Fable prohibited for review sub-agents unless the user authorizes that model for the review
 
 Repos declare commands, situational checks, standards docs, repo-specific reviewers, and an optional pointer to normal promotion-policy documentation in applicable `AGENTS.md`/`CLAUDE.md`; run `/dev-workflow:setup` in Claude Code or `$dev-workflow:setup` in Codex to onboard a repo.
@@ -88,7 +89,7 @@ The repo doubles as a Codex plugin marketplace (`.agents/plugins/marketplace.jso
 codex plugin marketplace add Intellegam/agent-plugins
 ```
 
-Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:update-dependencies`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, `$dev-workflow:babysit-pr`, and `$dev-workflow:promote`; code tours use `$code-tour:code-tour`.
+Then install `claude-code`, `dev-workflow`, and `code-tour` from the Plugins Directory in ChatGPT Work or Codex. The collaboration skill is `$claude-code:collaborating-with-claude`; workflow entrypoints are `$dev-workflow:setup`, `$dev-workflow:update-dependencies`, `$dev-workflow:dev-check`, `$dev-workflow:dev-review`, `$dev-workflow:dev-sync`, `$dev-workflow:merge-risk`, `$dev-workflow:babysit-pr`, and `$dev-workflow:promote`; code tours use `$code-tour:code-tour`.
 
 Manual fallback without the plugin system: add the MCP server directly to `~/.codex/config.toml` — snippet in the [claude-code-mcp README](https://github.com/Intellegam/claude-code-mcp#installation).
 

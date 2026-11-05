@@ -21,6 +21,9 @@ If the other host is unavailable, disclose the fallback and use a fresh
 read-only reviewer. Routine implementation choices do not need a separate
 plan-review round; the validation review below still applies.
 
+Separately, rate the plan with the `merge-risk` skill before implementing
+when the work goes beyond a tiny change and will become a PR.
+
 ### 2. Implement
 
 Complete the requested outcome through relevant verification and repair of
@@ -79,6 +82,9 @@ action is sufficient; do not request the same approval again. If authorization
 is missing, finish the reviewable local work before asking. Ask before a force
 push. Never infer permission for external communication, deployments, or
 destructive operations from an implementation request.
+
+Open each PR body, except branch promotions, with the PR card from the
+`merge-risk` skill.
 
 Merging or landing requires separate approval for the exact PR. For branch
 promotions, the `promote` skill’s authorization contract applies, including any

@@ -46,6 +46,14 @@ The main agent chooses specialist focus from structural simplicity plus lean cle
 
 Prioritize an applicable repository-specific reviewer when its declared trigger matches. For high-risk work, include both structural-and-lean and quality unless a stronger repository-specific risk displaces one; fill remaining slots with independent focused reviews. Whenever the target adds, changes, or removes tests, or changes a material contract without touching tests, include the quality reviewer at every tier for its test-value verdicts; it cannot be displaced then.
 
+## Merge Risk
+
+When the change will be published as a PR, run the `merge-risk` skill's diff
+mode, which rates a local commit, beside the tier's panel; it does not count
+toward the tier. It is the one reviewer that receives the plan's baseline
+profile. Handle its drift list as that skill describes, inside this review
+loop.
+
 ## Internal Reviewer Contracts
 
 Reviewer contracts are non-invokable reference files adjacent to this skill:
