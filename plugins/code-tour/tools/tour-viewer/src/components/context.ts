@@ -13,6 +13,7 @@ export const DiffContext = createContext<FileData[] | null>(null);
 export interface ReviewContextValue {
   comments: ReviewComment[];
   addComment(comment: ReviewComment): void;
+  updateComment(id: string, body: string): void;
   removeComment(id: string): void;
 }
 
