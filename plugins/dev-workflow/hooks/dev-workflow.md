@@ -7,6 +7,10 @@ aliases of the same file. Repository checks, Review Inputs, and workflow policy
 take precedence over generic defaults. Consult supporting docs for the task at
 hand rather than loading the whole repository map.
 
+Before working on or filing a Linear issue, read the Linear document
+"Linear guide for agents"
+(https://linear.app/intellegam/document/linear-guide-for-agents-d28a18ae44b9).
+
 ### 1. Explore and Plan
 
 Choose exploration, planning, and delegation to fit the work. Reuse existing
