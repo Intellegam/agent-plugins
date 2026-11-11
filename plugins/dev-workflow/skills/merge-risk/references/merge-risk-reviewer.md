@@ -89,8 +89,9 @@ Rate the diff on its own first; only then compare it with the baseline. Drift
 is any row or area with a worse verdict, a higher overall level, or a
 meaningful area the baseline did not expect. For each, say what changed and
 the cheapest way to bring it back, if one exists. Equal or lower risk is not
-drift. Read a baseline level of `medium`, from before the four levels, as
-`typical`. The implementer fills `kept`. Without a baseline, return an empty drift
+drift. Read a baseline from before the four levels by the current guide:
+`medium` as `typical`, and `high` as `very_high` when two or more of Impact,
+Verification and Rollback are `risk`. The implementer fills `kept`. Without a baseline, return an empty drift
 list.
 
 ## Output
