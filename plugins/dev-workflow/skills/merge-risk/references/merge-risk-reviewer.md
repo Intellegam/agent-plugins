@@ -30,7 +30,7 @@ Risk is a trade-off, not a fault. A larger, riskier change is often the right
 call when it produces a better design or removes a recurring problem. Make the
 risk visible and name what would lower it cheaply; do not push every change
 toward the smallest diff. Do not inflate verdicts to look thorough: most
-well-scoped changes are low risk.
+well-scoped changes are low or typical risk.
 
 ## Rows
 
@@ -76,10 +76,12 @@ riskiest first.
 
 ## Overall Level
 
-Impact, Verification and Rollback weigh most. As a guide: `high` when any of
-those three is `risk`; `low` when every row is `ok`, or only Alignment or Error
-detection is `watch`; otherwise `medium`. Depart from the guide only with a
-reason in the most affected row's line.
+Use Linear's four review levels, so the card and Linear's risk badge agree:
+`low`, `typical`, `high`, `very_high`. Impact, Verification and Rollback weigh
+most. As a guide: `low` when every row is `ok`, or only Alignment or Error
+detection is `watch`; `high` when one of those three is `risk`; `very_high`
+when two or more of them are `risk`; otherwise `typical`. Depart from the guide
+only with a reason in the most affected row's line.
 
 ## Drift (diff mode)
 
@@ -87,7 +89,9 @@ Rate the diff on its own first; only then compare it with the baseline. Drift
 is any row or area with a worse verdict, a higher overall level, or a
 meaningful area the baseline did not expect. For each, say what changed and
 the cheapest way to bring it back, if one exists. Equal or lower risk is not
-drift. The implementer fills `kept`. Without a baseline, return an empty drift
+drift. Read a baseline from before the four levels by the current guide:
+`medium` as `typical`, and `high` as `very_high` when two or more of Impact,
+Verification and Rollback are `risk`. The implementer fills `kept`. Without a baseline, return an empty drift
 list.
 
 ## Output

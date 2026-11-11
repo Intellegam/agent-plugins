@@ -11,7 +11,7 @@ The card sits between two markers at the very top of the body:
 
 ```markdown
 <!-- pr-card:start -->
-...rendered card, then the data block...
+...rendered card, then the data block, then the Linear block...
 <!-- pr-card:end -->
 ```
 
@@ -35,7 +35,7 @@ it. A body with more than one region or data block is invalid.
 4. **Merge risk**, rendered from `risk`:
 
    ```markdown
-   ### Merge risk: Medium
+   ### Merge risk: Typical
 
    | | Row | Why |
    | --- | --- | --- |
@@ -49,10 +49,12 @@ it. A body with more than one region or data block is invalid.
    **Riskier than planned:** ... Kept because ...
    ```
 
-   Use ✓ for `ok`, 👀 for `watch` and ⚠ for `risk`. Omit "To lower it" when `lower` is null, and "Riskier
+   Write the level as Low, Typical, High or Very high. Use ✓ for `ok`, 👀 for
+   `watch` and ⚠ for `risk`. Omit "To lower it" when `lower` is null, and "Riskier
    than planned" when `drift` is empty; with `planned` null, write "no plan
    profile" there instead.
-5. The data block, only when the reviewer returned a valid rating.
+5. The data block and the Linear block, only when the reviewer returned a
+   valid rating.
 
 ## Data Block
 
@@ -84,7 +86,7 @@ no card.
     "mode": "diff",
     "head": "<commit SHA assessed>",
     "base": "<merge-base SHA>",
-    "level": "medium",
+    "level": "typical",
     "rows": [
       { "row": "alignment", "verdict": "ok", "line": "..." },
       { "row": "impact", "verdict": "watch", "line": "..." },
@@ -109,9 +111,10 @@ no card.
   type once; a card holds at most two.
 - `afterKey` is the index of the After step that is new (shown in bold);
   `evidence.series` is a short count series for a sparkline, oldest first.
-- Enums: `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `medium` or
-  `high`; `mode` is `diff` on a PR. `rows` holds each of the five rows exactly
-  once.
+- Enums: `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `typical`,
+  `high` or `very_high` (cards written before 0.15.0 say `medium`, which
+  readers treat as `typical`); `mode` is `diff` on a PR. `rows` holds each
+  of the five rows exactly once.
 - A drift `item` is a row key, `level`, or `area:<name>`. `planned` and `now`
   are verdicts for rows and areas and levels for `level`; for an area,
   `planned` is `"minor"` when the baseline listed it as minor and null when it
@@ -123,3 +126,25 @@ no card.
   `drift[].kept`; the reviewer returns the rest.
 - A card is stale when `risk.head` is not the PR's head or `risk.base` is not
   its merge base; readers say so rather than show it as current.
+
+## Linear Block
+
+Linear's review view reads a `linear:extension` comment from the PR and shows
+the level as its risk badge and the agent as the PR's author on someone's
+behalf. Write it as one line after the data block:
+
+```markdown
+<!-- linear:extension {"version":1,"plugins":[{"plugin":"riskScore","sha":"<risk.head>","level":2,"explanations":["..."]},{"plugin":"onBehalfOf","agent":"claude"}]} -->
+```
+
+- `sha`: the full 40-character `risk.head`.
+- `level`: `low` 1, `typical` 2, `high` 3, `very_high` 4.
+- `explanations`: the lines of rows that are not `ok`, riskiest first, then
+  `lower` when set; the Impact line when every row is `ok`. At most 8, each cut
+  to 200 characters before escaping.
+- `onBehalfOf`: only when an agent wrote the change. `agent` is `claude` or
+  `codex`, the host that wrote it, which is not always the host refreshing the
+  card: on a refresh, keep the existing block's `agent`, and leave the plugin
+  out when the author is unknown. Leave out `model`.
+- Escape `>` as in the data block. Linear's format:
+  <https://linear.app/docs/diffs#risk-score>.

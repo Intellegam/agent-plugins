@@ -51,9 +51,9 @@ it and write a one-line reason in its `kept` field. A better design can justify
 more risk. Without commit authorization, do not commit to get a rating: finish
 the local work and rate once the commit is authorized.
 
-If the reviewer cannot run or returns invalid output, write the card without a
-data block and say in its Merge risk section that no rating was produced; never
-fill in verdicts yourself.
+If the reviewer cannot run or returns invalid output, write the card without
+the data and Linear blocks and say in its Merge risk section that no rating was
+produced; never fill in verdicts yourself.
 
 Only the reviewer sets verdicts; never edit its rows to look better.
 
