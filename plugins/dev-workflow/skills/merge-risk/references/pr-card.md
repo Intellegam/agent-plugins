@@ -143,6 +143,8 @@ behalf. Write it as one line after the data block:
   `lower` when set; the Impact line when every row is `ok`. At most 8, each cut
   to 200 characters before escaping.
 - `onBehalfOf`: only when an agent wrote the change. `agent` is `claude` or
-  `codex`, the host writing the card; leave out `model`.
+  `codex`, the host that wrote it, which is not always the host refreshing the
+  card: on a refresh, keep the existing block's `agent`, and leave the plugin
+  out when the author is unknown. Leave out `model`.
 - Escape `>` as in the data block. Linear's format:
   <https://linear.app/docs/diffs#risk-score>.
