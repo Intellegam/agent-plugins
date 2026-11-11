@@ -30,7 +30,7 @@ Risk is a trade-off, not a fault. A larger, riskier change is often the right
 call when it produces a better design or removes a recurring problem. Make the
 risk visible and name what would lower it cheaply; do not push every change
 toward the smallest diff. Do not inflate verdicts to look thorough: most
-well-scoped changes are low risk.
+well-scoped changes are low or typical risk.
 
 ## Rows
 
@@ -76,10 +76,12 @@ riskiest first.
 
 ## Overall Level
 
-Impact, Verification and Rollback weigh most. As a guide: `high` when any of
-those three is `risk`; `low` when every row is `ok`, or only Alignment or Error
-detection is `watch`; otherwise `medium`. Depart from the guide only with a
-reason in the most affected row's line.
+Use Linear's four review levels, so the card and Linear's risk badge agree:
+`low`, `typical`, `high`, `very_high`. Impact, Verification and Rollback weigh
+most. As a guide: `low` when every row is `ok`, or only Alignment or Error
+detection is `watch`; `high` when one of those three is `risk`; `very_high`
+when two or more of them are `risk`; otherwise `typical`. Depart from the guide
+only with a reason in the most affected row's line.
 
 ## Drift (diff mode)
 
