@@ -137,10 +137,11 @@ behalf. Write it as one line after the data block:
 <!-- linear:extension {"version":1,"plugins":[{"plugin":"riskScore","sha":"<risk.head>","level":2,"explanations":["..."]},{"plugin":"onBehalfOf","agent":"claude"}]} -->
 ```
 
+- `sha`: the full 40-character `risk.head`.
 - `level`: `low` 1, `typical` 2, `high` 3, `very_high` 4.
 - `explanations`: the lines of rows that are not `ok`, riskiest first, then
   `lower` when set; the Impact line when every row is `ok`. At most 8, each cut
-  to 200 characters.
+  to 200 characters before escaping.
 - `onBehalfOf`: only when an agent wrote the change. `agent` is `claude` or
   `codex`, the host writing the card; leave out `model`.
 - Escape `>` as in the data block. Linear's format:
