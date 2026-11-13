@@ -91,12 +91,12 @@ Use Linear's four review levels, so the card and Linear's risk badge agree:
 `low`, `typical`, `high`, `very_high`. Impact and Rollback set the stakes;
 Verification and Error detection say how sure we are and how soon we would
 know. Weigh an evidence gap by the stakes: an unproven change whose mistake
-stays contained and reverts cleanly can still be `low`. As a guide: `low` when
-Impact and Rollback are `ok` and no row is `risk`; `high` when Impact or
-Rollback is `risk`, or Verification is `risk` while Impact or Rollback is
-`watch`; `very_high` when two or more of Impact, Verification and Rollback are
-`risk`; otherwise `typical`. Depart from the guide only with a reason in the
-most affected row's line.
+stays contained and reverts cleanly can still be `low`. As a guide, take the
+first that matches: `very_high` when two or more of Impact, Verification and
+Rollback are `risk`; `high` when Impact or Rollback is `risk`, or Verification
+is `risk` while Impact or Rollback is `watch`; `low` when Impact and Rollback
+are `ok` and no row is `risk`; otherwise `typical`. Depart from the guide only
+with a reason in the most affected row's line.
 
 ## Drift (diff mode)
 
