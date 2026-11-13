@@ -121,7 +121,9 @@ Touches and footer. An empty part gets no line.
    ```
 
    The bar has ten cells, one filled per started 100 lines of `add + del`
-   (at least one, at most ten). A meaningful area's name is bold inside its
+   (at least one, at most ten). An area with no changed lines (only binary
+   files, pure renames or empty files) has an empty bar, and its fold says
+   `<sub>No line changes in N files</sub>` in place of the count. A meaningful area's name is bold inside its
    pill and followed by its icon; a minor area has neither. The fold holds the
    line count, the area's `note`, and its file names (the last path segment,
    in code spans, at most five, then `+N more`). An area without `add` and
