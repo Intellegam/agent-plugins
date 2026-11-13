@@ -71,8 +71,9 @@ Touches and footer. An empty part gets no line.
      `before` in red and an `after` edge through the rest of `after` in green,
      with step `afterKey` bold. The shared part stops before the shorter
      path's last step, so each branch keeps at least one step; paths that do
-     not differ get no flow. Without a shared step, draw the two paths as
-     separate rows. Classes: plain `fill:#f6f8fa,stroke:#d1d9e0,color:#1f2328`,
+     not differ get no flow. Both paths hold at least one step: a process
+     that is new or removed gets a single `"None"` step on its empty side.
+     Without a shared step, draw the two paths as separate rows. Classes: plain `fill:#f6f8fa,stroke:#d1d9e0,color:#1f2328`,
      red `fill:#ffebe9,stroke:#cf222e,color:#82071e`, green
      `fill:#dafbe1,stroke:#1a7f37,color:#116329`. Quote every label.
    - `numbers`: a `| | Before | After |` table with each After value bold.
