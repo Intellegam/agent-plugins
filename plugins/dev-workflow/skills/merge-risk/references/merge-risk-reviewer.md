@@ -34,8 +34,9 @@ well-scoped changes are low or typical risk.
 
 ## Rows
 
-Give each row one verdict, `ok`, `watch` or `risk`, and one line
-that says why. Name a file or test when it is the reason.
+Give each row one verdict, `ok`, `watch` or `risk`, one line that says why,
+and a `short` of about eight words that a maintainer can read in the card's
+table without the line. Name a file or test when it is the reason.
 
 - **Alignment**: does the change do what the task source asked, and only that?
   Unrequested behavior changes and drive-by edits count against it unless they
@@ -71,8 +72,14 @@ recognise. Mark each one:
   access, exposes a privileged operation, or logs sensitive data.
 
 Write one plain sentence per area saying what changed there, e.g. "share
-links now also grant read access to project files". Order areas
-riskiest first.
+links now also grant read access to project files". Order areas riskiest
+first.
+
+## To Lower It
+
+Name the cheapest steps that would lower the risk, at most three, each marked
+`before_merge` or `after_merge`. Return an empty list when nothing cheap
+would.
 
 ## Overall Level
 
