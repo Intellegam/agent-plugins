@@ -69,7 +69,9 @@ Touches and footer. An empty part gets no line.
      `after` share are drawn once, plain, with the last one as a `{{...}}`
      decision node; from it, a `before` edge runs through the rest of
      `before` in red and an `after` edge through the rest of `after` in green,
-     with step `afterKey` bold. Without a shared step, draw the two paths as
+     with step `afterKey` bold. The shared part stops before the shorter
+     path's last step, so each branch keeps at least one step; paths that do
+     not differ get no flow. Without a shared step, draw the two paths as
      separate rows. Classes: plain `fill:#f6f8fa,stroke:#d1d9e0,color:#1f2328`,
      red `fill:#ffebe9,stroke:#cf222e,color:#82071e`, green
      `fill:#dafbe1,stroke:#1a7f37,color:#116329`. Quote every label.
