@@ -245,9 +245,10 @@ line after the data block:
 - `sha`: the full 40-character `risk.head`.
 - `level`: `low` 1, `typical` 2, `high` 3, `very_high` 4.
 - `areas`: one per check in the order of `rows`, named as in the card's Merge
-  risk table, with `level` 1 for `ok`, 2 for `watch`, 3 for `risk`, and its
-  `short` (a `v: 1` card's `line`) as `explanation`, cut at a word to 100
-  characters. No `explanations`: the sidebar stays short enough to read
+  risk table, with `level` 1 for `ok`, 2 for `watch`, 3 for `risk`, never above
+  the overall `level` (Linear's badge shows the highest area level, whatever
+  the overall says), and its `short` (a `v: 1` card's `line`) as
+  `explanation`, cut at a word to 100 characters. No `explanations`: the sidebar stays short enough to read
   without scrolling. Linear drops the whole score when an area or the entry
   carries a field it does not know.
 - `onBehalfOf`: only when an agent wrote the change. `agent` is `claude` or
