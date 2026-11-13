@@ -45,7 +45,11 @@ table without the line. Name a file or test when it is the reason.
   Sensitive areas weigh more when behavior changes there: authentication,
   permissions, tenant isolation, payments, personal data, secrets, data
   migrations and stored formats, public APIs and cross-repository contracts,
-  dependency bumps, infrastructure and deployment configuration.
+  dependency bumps, infrastructure and deployment configuration. They carry
+  outsized risk regardless of diff size, above all when a change widens access
+  or weakens validation. For a test or CI change, Impact is the protection it
+  removes from the code it guards. An `ok` line says why a mistake stays
+  contained.
 - **Verification**: is the changed behavior proven at the level the change
   needs? User-visible changes need evidence that a person or an end-to-end test
   saw them work; performance-sensitive changes need a measurement. Untested
@@ -84,11 +88,15 @@ would.
 ## Overall Level
 
 Use Linear's four review levels, so the card and Linear's risk badge agree:
-`low`, `typical`, `high`, `very_high`. Impact, Verification and Rollback weigh
-most. As a guide: `low` when every row is `ok`, or only Alignment or Error
-detection is `watch`; `high` when one of those three is `risk`; `very_high`
-when two or more of them are `risk`; otherwise `typical`. Depart from the guide
-only with a reason in the most affected row's line.
+`low`, `typical`, `high`, `very_high`. Impact and Rollback set the stakes;
+Verification and Error detection say how sure we are and how soon we would
+know. Weigh an evidence gap by the stakes: an unproven change whose mistake
+stays contained and reverts cleanly can still be `low`. As a guide: `low` when
+Impact and Rollback are `ok` and no row is `risk`; `high` when Impact or
+Rollback is `risk`, or Verification is `risk` while Impact or Rollback is
+`watch`; `very_high` when two or more of Impact, Verification and Rollback are
+`risk`; otherwise `typical`. Depart from the guide only with a reason in the
+most affected row's line.
 
 ## Drift (diff mode)
 
