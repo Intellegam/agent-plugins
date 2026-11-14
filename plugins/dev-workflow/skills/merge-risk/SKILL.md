@@ -49,8 +49,8 @@ keep it and write a one-line reason in its `kept` field. A better design can
 justify more risk.
 
 The card names commits. When the change is committed, record that commit as
-`head` and the merge base as `base` if the committed diff equals the rated one;
-otherwise rate again.
+`head` and the merge base as `base` if the committed diff equals the rated one
+or differs only as Freshness below allows; otherwise rate again.
 
 If the reviewer cannot run or returns invalid output, write the card without
 the data and Linear blocks and say in its Merge risk section that no rating was
