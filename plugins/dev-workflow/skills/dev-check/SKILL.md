@@ -25,7 +25,7 @@ Fix failures caused by the change and rerun affected checks. Reassess after repe
 
 ## The Contract
 
-Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, invoke `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
+Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, offer `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
 
 ## Scale to the Change
 

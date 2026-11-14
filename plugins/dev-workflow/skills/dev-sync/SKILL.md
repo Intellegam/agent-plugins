@@ -42,8 +42,9 @@ If review or sync changes any file after the last `dev-check`, rerun all Require
 ## Commit/Push/PR Decision
 
 Honor existing explicit authorization for commits, feature-branch pushes, and
-PR creation. An explicit request for a PR includes preparing its title/body and
-creating it after validation; do not ask for the same approval again. If scope
+PR creation. An explicit request for a PR includes preparing its title and its
+body, opened by the PR card (`merge-risk` skill), and creating it after
+validation; do not ask for the same approval again. If scope
 is unclear, prepare the reviewable local result and ask only for the missing
 decision (commit, push, or PR).
 

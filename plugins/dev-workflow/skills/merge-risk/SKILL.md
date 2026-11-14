@@ -38,8 +38,7 @@ consultation; skip it when a parent agent owns the PR. Weigh any safer approach
 it names where that costs little, and include its profile in any plan
 consultation. The profile you implement against is the baseline; keep it in
 task context, across compaction and handoff, until the PR card records it.
-Revising the plan later replaces the baseline only with the user's or plan
-reviewer's agreement.
+Revising the plan later replaces the baseline only with the user's agreement.
 
 ## 2. Diff Mode
 
@@ -50,8 +49,8 @@ keep it and write a one-line reason in its `kept` field. A better design can
 justify more risk.
 
 The card names commits. When the change is committed, record that commit as
-`head` and the merge base as `base` if nothing that changes behavior happened
-since the rating; otherwise rate again.
+`head` and the merge base as `base` if the committed diff equals the rated one;
+otherwise rate again.
 
 If the reviewer cannot run or returns invalid output, write the card without
 the data and Linear blocks and say in its Merge risk section that no rating was

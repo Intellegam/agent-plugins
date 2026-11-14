@@ -21,6 +21,9 @@ Choose one target and pass the identical complete target to every reviewer:
 - **Base branch**: the merge-base diff against the resolved upstream/base branch
 - **Commit**: one named commit
 
+For work that will become a PR, use the complete prospective PR diff: the base
+branch diff plus any uncommitted and untracked files.
+
 Inventory untracked files explicitly. Do not mutate the index merely to expose them. Paste their content into Claude reviewer prompts when practical; for Codex reviewers, name the paths and require direct inspection.
 
 Prepare only:
@@ -38,7 +41,7 @@ Reuse the tier chosen by `dev-check`; otherwise choose it now.
 
 | Tier | Initial reviewers | Composition |
 | --- | ---: | --- |
-| **tiny** | 1 | One fresh broad correctness review (+ quality when tests or material contracts change) |
+| **tiny** | 1 | One fresh broad correctness review (+ quality when tests or material contracts change); a prose-only change skips the panel, since `dev-sync` reviews prose |
 | **normal** | 2–3 | One broad correctness review plus 1–2 relevant specialists |
 | **high-risk** | 5 | One broad correctness review plus four independent risk-focused specialists |
 
@@ -62,16 +65,17 @@ polish.
 Work that `dev-check` rated high-risk for auth, data migrations or public APIs
 keeps the high-risk panel whatever its level. On low and typical work, report
 P3 and style notes instead of fixing them. When the diff rating comes in above
-the plan's level, the remaining rounds follow the new budget; reviewers that
-already ran are not repeated.
+the plan's level, the remaining rounds follow the new budget (see Merge Risk);
+reviewers that already ran are not repeated.
 
 ## Merge Risk
 
 When the change will be published as a PR, run the `merge-risk` skill's diff
-mode on the same target beside the panel; it does not count
-toward the tier. It is the one reviewer that receives the plan's baseline
-profile. Handle its drift list as that skill describes, inside this review
-loop.
+mode on the same target once the initial panel's fixes are in, before the final
+gate; it does not count toward the panel. It is the one reviewer that receives
+the plan's baseline profile. Handle its drift list as that skill describes,
+inside this review loop. When it rates above the plan, run the panel slots the
+new level adds before the final gate.
 
 ## Internal Reviewer Contracts
 
