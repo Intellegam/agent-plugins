@@ -38,18 +38,19 @@ consultation; skip it when a parent agent owns the PR. Weigh any safer approach
 it names where that costs little, and include its profile in any plan
 consultation. The profile you implement against is the baseline; keep it in
 task context, across compaction and handoff, until the PR card records it.
-Revising the plan later replaces the baseline only with the user's or plan
-reviewer's agreement.
+Revising the plan later replaces the baseline only with the user's agreement.
 
 ## 2. Diff Mode
 
-Rate a commit: make a local commit of the change first (within the existing
-commit authorization), give the reviewer that commit's diff against the merge
-base and the baseline, and record both SHAs for the card. Act only on its drift
-list, within the review loop's existing budget: lower a drifted item, or keep
-it and write a one-line reason in its `kept` field. A better design can justify
-more risk. Without commit authorization, do not commit to get a rating: finish
-the local work and rate once the commit is authorized.
+Give the reviewer the same complete target the review panel gets, diffed
+against the merge base, with the baseline; nothing needs to be committed yet.
+Act only on its drift list, within the review budget: lower a drifted item, or
+keep it and write a one-line reason in its `kept` field. A better design can
+justify more risk.
+
+The card names commits. When the change is committed, record that commit as
+`head` and the merge base as `base` if the committed diff equals the rated one
+or differs only as Freshness below allows; otherwise rate again.
 
 If the reviewer cannot run or returns invalid output, write the card without
 the data and Linear blocks and say in its Merge risk section that no rating was
@@ -59,7 +60,9 @@ Only the reviewer sets verdicts; never edit its rows to look better.
 
 ## 3. PR Card
 
-Follow `references/pr-card.md`. Write the card when opening the PR.
+The main agent writes the PR title and body, card included, from the spec at
+`../../references/pr-card.md`; the reviewer supplies only the `risk` data.
+Write the card when opening the PR.
 
 Freshness: before writing or refreshing the card, compare the assessed `head`
 and `base` with the PR's head and merge base. A new merge base from retargeting

@@ -34,8 +34,9 @@ well-scoped changes are low or typical risk.
 
 ## Rows
 
-Give each row one verdict, `ok`, `watch` or `risk`, and one line
-that says why. Name a file or test when it is the reason.
+Give each row one verdict, `ok`, `watch` or `risk`, one line that says why,
+and a `short` of about eight words that a maintainer can read in the card's
+table without the line. Name a file or test when it is the reason.
 
 - **Alignment**: does the change do what the task source asked, and only that?
   Unrequested behavior changes and drive-by edits count against it unless they
@@ -44,7 +45,11 @@ that says why. Name a file or test when it is the reason.
   Sensitive areas weigh more when behavior changes there: authentication,
   permissions, tenant isolation, payments, personal data, secrets, data
   migrations and stored formats, public APIs and cross-repository contracts,
-  dependency bumps, infrastructure and deployment configuration.
+  dependency bumps, infrastructure and deployment configuration. They carry
+  outsized risk regardless of diff size, above all when a change widens access
+  or weakens validation. For a test or CI change, Impact is the protection it
+  removes from the code it guards. An `ok` line says why a mistake stays
+  contained.
 - **Verification**: is the changed behavior proven at the level the change
   needs? User-visible changes need evidence that a person or an end-to-end test
   saw them work; performance-sensitive changes need a measurement. Untested
@@ -71,17 +76,27 @@ recognise. Mark each one:
   access, exposes a privileged operation, or logs sensitive data.
 
 Write one plain sentence per area saying what changed there, e.g. "share
-links now also grant read access to project files". Order areas
-riskiest first.
+links now also grant read access to project files". Order areas riskiest
+first.
+
+## To Lower It
+
+Name the cheapest steps that would lower the risk, at most three, each marked
+`before_merge` or `after_merge`. Return an empty list when nothing cheap
+would.
 
 ## Overall Level
 
 Use Linear's four review levels, so the card and Linear's risk badge agree:
-`low`, `typical`, `high`, `very_high`. Impact, Verification and Rollback weigh
-most. As a guide: `low` when every row is `ok`, or only Alignment or Error
-detection is `watch`; `high` when one of those three is `risk`; `very_high`
-when two or more of them are `risk`; otherwise `typical`. Depart from the guide
-only with a reason in the most affected row's line.
+`low`, `typical`, `high`, `very_high`. Impact and Rollback set the stakes;
+Verification and Error detection say how sure we are and how soon we would
+know. Weigh an evidence gap by the stakes: an unproven change whose mistake
+stays contained and reverts cleanly can still be `low`. As a guide, take the
+first that matches: `very_high` when two or more of Impact, Verification and
+Rollback are `risk`; `high` when Impact or Rollback is `risk`, or Verification
+is `risk` while Impact or Rollback is `watch`; `low` when Impact and Rollback
+are `ok` and no row is `risk`; otherwise `typical`. Depart from the guide only
+with a reason in the most affected row's line.
 
 ## Drift (diff mode)
 
@@ -97,5 +112,5 @@ list.
 ## Output
 
 Return one fenced `json` block holding the `risk` object defined in
-`pr-card.md` next to this file, without the fields that file assigns to the
-card writer.
+`../../../references/pr-card.md` (relative to this file), without the fields
+that file assigns to the card writer.

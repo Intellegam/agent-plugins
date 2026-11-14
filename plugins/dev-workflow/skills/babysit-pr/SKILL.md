@@ -120,7 +120,9 @@ skill's Refresh step describes.
 | `judgment-call` | Subjective product or style tradeoff | Ask the user; keep thread open; stop until decided |
 
 Batch obvious fixes into one commit and one push per pass so reviewers rerun
-once against the combined change. Immediately replace the waiter after pushing
+once against the combined change. Before that push, run `dev-check` on the
+fixes; a fix that changes behavior also gets one fresh read-only correctness
+review of the fix. Immediately replace the waiter after pushing
 and before fetching the new head's state.
 
 Immediately before every commit and push, refetch the PR head/base names and

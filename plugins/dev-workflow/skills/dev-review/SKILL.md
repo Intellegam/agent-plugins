@@ -21,6 +21,9 @@ Choose one target and pass the identical complete target to every reviewer:
 - **Base branch**: the merge-base diff against the resolved upstream/base branch
 - **Commit**: one named commit
 
+For work that will become a PR, use the complete prospective PR diff: the base
+branch diff plus any uncommitted and untracked files.
+
 Inventory untracked files explicitly. Do not mutate the index merely to expose them. Paste their content into Claude reviewer prompts when practical; for Codex reviewers, name the paths and require direct inspection.
 
 Prepare only:
@@ -38,21 +41,41 @@ Reuse the tier chosen by `dev-check`; otherwise choose it now.
 
 | Tier | Initial reviewers | Composition |
 | --- | ---: | --- |
-| **tiny** | 1 | One fresh broad correctness review (+ quality when tests or material contracts change) |
+| **tiny** | 1 | One fresh broad correctness review (+ quality when tests or material contracts change); a prose-only change that alters no material contract skips the panel, since `dev-sync` reviews prose |
 | **normal** | 2–3 | One broad correctness review plus 1–2 relevant specialists |
 | **high-risk** | 5 | One broad correctness review plus four independent risk-focused specialists |
 
-The main agent chooses specialist focus from structural simplicity plus lean cleanup, quality/tests, applicable repository-specific reviewers, existing-pattern reuse, external API verification, observability, security, or other change-specific risks. Always include a broad/unscoped review. Focus directs attention; it never partitions files. Every reviewer examines the complete target.
+The main agent chooses specialist focus from structural simplicity plus lean cleanup, quality/tests, applicable repository-specific reviewers, existing-pattern reuse, external API verification, observability, security, or other change-specific risks. Always include a broad/unscoped review, except for that prose-only tiny case. Focus directs attention; it never partitions files. Every reviewer examines the complete target.
 
 Prioritize an applicable repository-specific reviewer when its declared trigger matches. For high-risk work, include both structural-and-lean and quality unless a stronger repository-specific risk displaces one; fill remaining slots with independent focused reviews. Whenever the target adds, changes, or removes tests, or changes a material contract without touching tests, include the quality reviewer at every tier for its test-value verdicts; it cannot be displaced then.
+
+### Let the merge-risk level set the budget
+
+When the work has a merge-risk level (the plan baseline, or the diff rating
+once it exists), it sets the review budget in place of the tier; the tier still
+sets `dev-check`'s scope. More rounds buy safety where a mistake is costly, not
+polish.
+
+| Level | Panel | Fresh final gates |
+| --- | --- | --- |
+| **low** | tiny | at most one, only when a fix changed behavior |
+| **typical** | normal, at its low end | at most one, only when review produced fixes |
+| **high**, **very_high** | high-risk | at least one, at most two |
+
+Work that `dev-check` rated high-risk for auth, data migrations or public APIs
+keeps the high-risk panel whatever its level. On low and typical work, report
+P3 and style notes instead of fixing them. When the diff rating's budget is
+bigger than the one that ran, the remaining rounds follow it (see Merge Risk);
+reviewers that already ran are not repeated.
 
 ## Merge Risk
 
 When the change will be published as a PR, run the `merge-risk` skill's diff
-mode, which rates a local commit, beside the tier's panel; it does not count
-toward the tier. It is the one reviewer that receives the plan's baseline
-profile. Handle its drift list as that skill describes, inside this review
-loop.
+mode on the same target once the initial panel's fixes are in, before the final
+gate; it does not count toward the panel. It is the one reviewer that receives
+the plan's baseline profile. Handle its drift list as that skill describes,
+inside this review loop. When its level calls for a bigger panel than the one
+that ran, with or without a plan, run the added slots before the final gate.
 
 ## Internal Reviewer Contracts
 
@@ -107,10 +130,10 @@ Before fixing and before further review, inspect findings as a set. If several c
 Do not rerun the full panel after every fix.
 
 1. Send a bounded follow-up to the reviewer that found a fixed issue and ask it to verify only the affected changed files plus its prior finding. In Codex, use `followup_task` when available.
-2. After all fixes, run one **fresh broad correctness review** of the complete updated target. Always do this for high-risk work; for tiny/normal work, do it when review produced fixes.
+2. After all fixes, run a **fresh broad correctness review** of the complete updated target when the budget above calls for one. Without a merge-risk level: always for high-risk work; for tiny/normal work, when review produced fixes.
 3. On Claude Code, use a fresh `codex-review` session for the final gate, falling back explicitly to `dev-correctness-reviewer` when Codex MCP is unavailable.
 4. On Codex, use a fresh sub-agent with `$review-agent`.
-5. Allow at most **two fresh broad final-gate cycles** after the initial panel; targeted follow-ups do not count toward this ceiling. Stop earlier when a final review has no actionable findings. A result containing only P3/style suggestions ends the loop and is reported as optional. If the second fresh gate still has actionable findings or its fixes would require a third gate, stop and present the residual findings and root-cause concern to the user.
+5. Allow at most the budget's fresh final gates after the initial panel, or **two** without a merge-risk level; targeted follow-ups do not count toward this ceiling. Stop earlier when a final review has no actionable findings. A result containing only P3/style suggestions ends the loop and is reported as optional. If the last allowed gate still has actionable findings, or its fixes would need another gate, stop and present the residual findings and root-cause concern to the user.
 
 ## Report and Continue
 

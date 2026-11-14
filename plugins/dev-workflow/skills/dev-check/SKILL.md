@@ -25,7 +25,7 @@ Fix failures caused by the change and rerun affected checks. Reassess after repe
 
 ## The Contract
 
-Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, invoke `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
+Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, offer `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
 
 ## Scale to the Change
 
@@ -37,7 +37,8 @@ Pick a tier before running anything, and state which one you picked:
 | **normal**    | Default for code changes                                    | All Required Checks at their declared scope + matching Situational Checks |
 | **high-risk** | Auth, data migrations, public APIs, large multi-file change | Same as normal, but lean toward running Situational Checks when in doubt |
 
-When in doubt, go one tier up.
+When in doubt, go one tier up. A merge-risk level changes the review budget in
+`dev-review`, not this check scope.
 
 ## Required Checks
 

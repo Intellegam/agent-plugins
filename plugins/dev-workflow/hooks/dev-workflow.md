@@ -13,6 +13,10 @@ Choose exploration, planning, and delegation to fit the work. Reuse existing
 code, platform features, and dependencies before adding an abstraction. A small
 supporting refactor is appropriate when it simplifies the requested outcome.
 
+When the work goes beyond a tiny change and will become a PR, rate the plan
+with the `merge-risk` skill before implementing; its profile goes into any plan
+consultation.
+
 For material design choices, trust-boundary changes, or uncertain approaches,
 get an independent perspective before implementation: Claude Code uses the
 `collaborating-with-codex` skill and Codex MCP; Codex uses
@@ -20,9 +24,6 @@ get an independent perspective before implementation: Claude Code uses the
 If the other host is unavailable, disclose the fallback and use a fresh
 read-only reviewer. Routine implementation choices do not need a separate
 plan-review round; the validation review below still applies.
-
-Separately, rate the plan with the `merge-risk` skill before implementing
-when the work goes beyond a tiny change and will become a PR.
 
 ### 2. Implement
 
@@ -83,8 +84,8 @@ is missing, finish the reviewable local work before asking. Ask before a force
 push. Never infer permission for external communication, deployments, or
 destructive operations from an implementation request.
 
-Open each PR body, except branch promotions, with the PR card from the
-`merge-risk` skill.
+You write the PR title and body. Open each body, except branch promotions,
+with the PR card as the `merge-risk` skill describes.
 
 Merging or landing requires separate approval for the exact PR. For branch
 promotions, the `promote` skill’s authorization contract applies, including any
@@ -92,6 +93,8 @@ user or repository requirement for a separate per-PR checkpoint that has not
 been explicitly waived.
 
 ### 5. Code Tour
+
+Phases 5 and 6 skip branch promotions: the `promote` skill carries them to the end, including any code tour.
 
 After opening a PR and before babysitting it, handle the reviewer walkthrough as a separate workflow phase:
 

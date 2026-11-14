@@ -13,9 +13,9 @@ specific.
 
 **Mode**: Read-only. Analyze and report; do not modify files or delegate.
 
-**Scope**: Every prose line the target adds or changes, the prose in files it
-touches, and documentation whose claims the change makes false. Ignore
-unrelated stale prose elsewhere.
+**Scope**: Every prose line the target adds or changes, and any prose
+(documentation, comments, docstrings) whose claims the change makes false. Report other stale prose in touched files
+as optional; ignore unrelated stale prose elsewhere.
 
 ## The keep test
 
