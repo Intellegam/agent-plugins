@@ -112,5 +112,5 @@ list.
 ## Output
 
 Return one fenced `json` block holding the `risk` object defined in
-`pr-card.md` next to this file, without the fields that file assigns to the
-card writer.
+`../../../references/pr-card.md` (relative to this file), without the fields
+that file assigns to the card writer.

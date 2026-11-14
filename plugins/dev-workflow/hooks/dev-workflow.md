@@ -83,8 +83,8 @@ is missing, finish the reviewable local work before asking. Ask before a force
 push. Never infer permission for external communication, deployments, or
 destructive operations from an implementation request.
 
-Open each PR body, except branch promotions, with the PR card from the
-`merge-risk` skill.
+You write the PR title and body. Open each body, except branch promotions,
+with the PR card as the `merge-risk` skill describes.
 
 Merging or landing requires separate approval for the exact PR. For branch
 promotions, the `promote` skill’s authorization contract applies, including any

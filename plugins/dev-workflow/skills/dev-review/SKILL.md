@@ -49,27 +49,26 @@ Prioritize an applicable repository-specific reviewer when its declared trigger 
 ### Let the merge-risk level set the budget
 
 When the work has a merge-risk level (the plan baseline, or the diff rating
-once it exists), let it set how much review the change gets, over a tier picked
-from size alone. More rounds buy safety where a mistake is costly, not polish.
-As a guide:
+once it exists), it sets the review budget in place of the tier; the tier still
+sets `dev-check`'s scope. More rounds buy safety where a mistake is costly, not
+polish.
 
 | Level | Panel | Fresh final gates |
 | --- | --- | --- |
-| **low** | tiny | none unless a fix changed behavior; at most one |
-| **typical** | normal, at its low end | one only when review produced fixes |
-| **high** | high-risk | always one; at most two |
-| **very_high** | high-risk | always; at most two, then the user |
+| **low** | tiny | at most one, only when a fix changed behavior |
+| **typical** | normal, at its low end | at most one, only when review produced fixes |
+| **high**, **very_high** | high-risk | at least one, at most two |
 
-The level never shrinks a tier that `dev-check` set high-risk for auth, data
-migrations or public APIs; those keep the high-risk panel. Stop as soon as a
-pass has no actionable findings. On low and typical work,
-report P3 and style notes instead of fixing them in another round. A diff
-rating above the plan's level raises the budget to the new level.
+Work that `dev-check` rated high-risk for auth, data migrations or public APIs
+keeps the high-risk panel whatever its level. On low and typical work, report
+P3 and style notes instead of fixing them. When the diff rating comes in above
+the plan's level, the remaining rounds follow the new budget; reviewers that
+already ran are not repeated.
 
 ## Merge Risk
 
 When the change will be published as a PR, run the `merge-risk` skill's diff
-mode, which rates a local commit, beside the tier's panel; it does not count
+mode on the same target beside the panel; it does not count
 toward the tier. It is the one reviewer that receives the plan's baseline
 profile. Handle its drift list as that skill describes, inside this review
 loop.
@@ -127,10 +126,10 @@ Before fixing and before further review, inspect findings as a set. If several c
 Do not rerun the full panel after every fix.
 
 1. Send a bounded follow-up to the reviewer that found a fixed issue and ask it to verify only the affected changed files plus its prior finding. In Codex, use `followup_task` when available.
-2. After all fixes, run one **fresh broad correctness review** of the complete updated target when the budget above calls for one. Without a merge-risk level: always for high-risk work; for tiny/normal work, when review produced fixes.
+2. After all fixes, run a **fresh broad correctness review** of the complete updated target when the budget above calls for one. Without a merge-risk level: always for high-risk work; for tiny/normal work, when review produced fixes.
 3. On Claude Code, use a fresh `codex-review` session for the final gate, falling back explicitly to `dev-correctness-reviewer` when Codex MCP is unavailable.
 4. On Codex, use a fresh sub-agent with `$review-agent`.
-5. Allow at most **two fresh broad final-gate cycles** after the initial panel; targeted follow-ups do not count toward this ceiling. Stop earlier when a final review has no actionable findings. A result containing only P3/style suggestions ends the loop and is reported as optional. If the second fresh gate still has actionable findings or its fixes would require a third gate, stop and present the residual findings and root-cause concern to the user.
+5. Allow at most the budget's fresh final gates after the initial panel, or **two** without a merge-risk level; targeted follow-ups do not count toward this ceiling. Stop earlier when a final review has no actionable findings. A result containing only P3/style suggestions ends the loop and is reported as optional. If the last allowed gate still has actionable findings, or its fixes would need another gate, stop and present the residual findings and root-cause concern to the user.
 
 ## Report and Continue
 
