@@ -46,6 +46,24 @@ The main agent chooses specialist focus from structural simplicity plus lean cle
 
 Prioritize an applicable repository-specific reviewer when its declared trigger matches. For high-risk work, include both structural-and-lean and quality unless a stronger repository-specific risk displaces one; fill remaining slots with independent focused reviews. Whenever the target adds, changes, or removes tests, or changes a material contract without touching tests, include the quality reviewer at every tier for its test-value verdicts; it cannot be displaced then.
 
+### Let the merge-risk level set the budget
+
+When the work has a merge-risk level (the plan baseline, or the diff rating
+once it exists), let it set how much review the change gets, over a tier picked
+from size alone. More rounds buy safety where a mistake is costly, not polish.
+As a guide:
+
+| Level | Panel | Fresh final gates |
+| --- | --- | --- |
+| **low** | tiny | none unless a fix changed behavior; at most one |
+| **typical** | normal, at its low end | one only when review produced fixes |
+| **high** | high-risk | always one; at most two |
+| **very_high** | high-risk | always; at most two, then the user |
+
+Stop as soon as a pass has no actionable findings. On low and typical work,
+report P3 and style notes instead of fixing them in another round. A diff
+rating above the plan's level raises the budget to the new level.
+
 ## Merge Risk
 
 When the change will be published as a PR, run the `merge-risk` skill's diff
@@ -107,7 +125,7 @@ Before fixing and before further review, inspect findings as a set. If several c
 Do not rerun the full panel after every fix.
 
 1. Send a bounded follow-up to the reviewer that found a fixed issue and ask it to verify only the affected changed files plus its prior finding. In Codex, use `followup_task` when available.
-2. After all fixes, run one **fresh broad correctness review** of the complete updated target. Always do this for high-risk work; for tiny/normal work, do it when review produced fixes.
+2. After all fixes, run one **fresh broad correctness review** of the complete updated target when the budget above calls for one. Without a merge-risk level: always for high-risk work; for tiny/normal work, when review produced fixes.
 3. On Claude Code, use a fresh `codex-review` session for the final gate, falling back explicitly to `dev-correctness-reviewer` when Codex MCP is unavailable.
 4. On Codex, use a fresh sub-agent with `$review-agent`.
 5. Allow at most **two fresh broad final-gate cycles** after the initial panel; targeted follow-ups do not count toward this ceiling. Stop earlier when a final review has no actionable findings. A result containing only P3/style suggestions ends the loop and is reported as optional. If the second fresh gate still has actionable findings or its fixes would require a third gate, stop and present the residual findings and root-cause concern to the user.
