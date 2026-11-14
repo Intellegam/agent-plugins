@@ -235,23 +235,22 @@ no card.
 ## Linear Block
 
 Linear's review view reads a `linear:extension` comment from the PR and shows
-the level as its risk badge, the five checks as a tree under it in the PR
-sidebar, and the agent as the PR's author on someone's behalf. Write it as one
-line after the data block:
+the level as its risk badge with the five checks as lines under it, and the
+agent as the PR's author on someone's behalf. Write it as one line after the
+data block:
 
 ```markdown
-<!-- linear:extension {"version":1,"plugins":[{"plugin":"riskScore","sha":"<risk.head>","level":2,"areas":[{"name":"Impact","level":2,"explanation":"<short>"}]},{"plugin":"onBehalfOf","agent":"claude"}]} -->
+<!-- linear:extension {"version":1,"plugins":[{"plugin":"riskScore","sha":"<risk.head>","level":2,"explanations":["Impact · watch: <short>"]},{"plugin":"onBehalfOf","agent":"claude"}]} -->
 ```
 
 - `sha`: the full 40-character `risk.head`.
 - `level`: `low` 1, `typical` 2, `high` 3, `very_high` 4.
-- `areas`: one per check in the order of `rows`, named as in the card's Merge
-  risk table, with `level` 1 for `ok`, 2 for `watch`, 3 for `risk`, never above
-  the overall `level` (Linear's badge shows the highest area level, whatever
-  the overall says), and its `short` (a `v: 1` card's `line`) as
-  `explanation`, cut at a word to 100 characters. No `explanations`: the sidebar stays short enough to read
-  without scrolling. Linear drops the whole score when an area or the entry
-  carries a field it does not know.
+- `explanations`: one per check in the order of `rows`, as
+  `<Check> · <verdict>: <short>` with the check named as in the card's Merge
+  risk table and a `v: 1` card's `line` in place of `short`, cut at a word to
+  200 characters. No `areas`: Linear's badge shows the highest area level in
+  place of `level`, so per-check levels would contradict the card. Linear
+  drops the whole score when the entry carries a field it does not know.
 - `onBehalfOf`: only when an agent wrote the change. `agent` is `claude` or
   `codex`, the host that wrote it, which is not always the host refreshing the
   card: on a refresh, keep the existing block's `agent`, and leave the plugin
