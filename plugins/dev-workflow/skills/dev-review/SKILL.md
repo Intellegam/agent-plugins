@@ -64,8 +64,8 @@ polish.
 
 Work that `dev-check` rated high-risk for auth, data migrations or public APIs
 keeps the high-risk panel whatever its level. On low and typical work, report
-P3 and style notes instead of fixing them. When the diff rating comes in above
-the plan's level, the remaining rounds follow the new budget (see Merge Risk);
+P3 and style notes instead of fixing them. When the diff rating's budget is
+bigger than the one that ran, the remaining rounds follow it (see Merge Risk);
 reviewers that already ran are not repeated.
 
 ## Merge Risk
@@ -74,8 +74,8 @@ When the change will be published as a PR, run the `merge-risk` skill's diff
 mode on the same target once the initial panel's fixes are in, before the final
 gate; it does not count toward the panel. It is the one reviewer that receives
 the plan's baseline profile. Handle its drift list as that skill describes,
-inside this review loop. When it rates above the plan, run the panel slots the
-new level adds before the final gate.
+inside this review loop. When its level calls for a bigger panel than the one
+that ran, with or without a plan, run the added slots before the final gate.
 
 ## Internal Reviewer Contracts
 

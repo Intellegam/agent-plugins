@@ -159,8 +159,8 @@ no card.
   "v": 2,
   "type": "fix",
   "priority": "P2",
-  "why": "One or two sentences.",
-  "what": "One or two sentences.",
+  "why": "One short sentence.",
+  "what": "One short sentence.",
   "how": "One or two sentences.",
   "visual": [
     { "type": "flow", "title": "How it works", "before": ["Step", "Fails"], "after": ["Step", "Works"], "afterKey": 1 },

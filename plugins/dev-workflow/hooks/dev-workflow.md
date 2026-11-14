@@ -94,7 +94,7 @@ been explicitly waived.
 
 ### 5. Code Tour
 
-Phases 5 and 6 skip branch promotions, which the `promote` skill carries to the end.
+Phases 5 and 6 skip branch promotions: the `promote` skill carries them to the end, including any code tour.
 
 After opening a PR and before babysitting it, handle the reviewer walkthrough as a separate workflow phase:
 
