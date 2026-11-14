@@ -60,7 +60,9 @@ As a guide:
 | **high** | high-risk | always one; at most two |
 | **very_high** | high-risk | always; at most two, then the user |
 
-Stop as soon as a pass has no actionable findings. On low and typical work,
+The level never shrinks a tier that `dev-check` set high-risk for auth, data
+migrations or public APIs; those keep the high-risk panel. Stop as soon as a
+pass has no actionable findings. On low and typical work,
 report P3 and style notes instead of fixing them in another round. A diff
 rating above the plan's level raises the budget to the new level.
 
