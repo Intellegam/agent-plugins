@@ -55,7 +55,8 @@ or differs only as Freshness below allows; otherwise rate again.
 
 If the reviewer cannot run or returns invalid output, write the card unrated as
 the spec describes and say in its Merge risk section that no rating was
-produced; never fill in verdicts yourself.
+produced; on a refresh, leave a rated card as it is and report the failure
+instead. Never fill in verdicts yourself.
 
 Only the reviewer sets verdicts; never edit its rows to look better.
 
@@ -82,9 +83,9 @@ replacement on the new body.
 ## 4. Refresh
 
 While babysitting, check the card's freshness against the PR head on every
-pass, whoever pushed, and rewrite the card when it is stale or CI failed on
-its head as Freshness describes. Rate the PR's head
-commit (fetch it when it is not local) without changing the checkout, with the
-baseline from task context. Without that baseline (a new session, or work that
-skipped plan mode), rate without one. Drift found here is reported on the
+pass, whoever pushed, and rewrite the card when it is stale, unrated, or CI
+failed on its head as Freshness describes. Rate the PR's head commit (fetch it
+when it is not local) without changing the checkout, with the baseline from
+task context. Without that baseline (a new session, or work that skipped plan
+mode), rate without one. Drift found here is reported on the
 card, not fixed in a new loop, unless the user asks.
