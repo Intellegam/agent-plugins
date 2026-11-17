@@ -135,11 +135,9 @@ it:
 
 - `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `typical`, `high` or
   `very_high`; `when` is `before_merge` or `after_merge`. `rows` holds each of
-  the five rows exactly once. A minor area has no `verdict`. `lower` and
-  `drift` may be empty.
+  the five rows exactly once. A minor area has no `verdict`.
 - A drift `item` is a row key, `level`, or `area:<name>`. `planned` and `now`
   are verdicts for rows and areas and levels for `level`; for an area,
   `planned` is `"minor"` when the baseline listed it as minor and null when it
   did not list it.
-- In plan mode, return the predicted profile in the same shape with an empty
-  `drift`.
+- In plan mode, return the predicted profile in the same shape.

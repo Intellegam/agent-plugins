@@ -17,15 +17,18 @@ The card sits between two markers at the very top of the body:
 <!-- pr-card:end -->
 ```
 
-`head` and `base` are the full SHAs of the rated commit and its merge base;
-leave both out when there is no rating. A card is stale when its `head` is not
-the PR's head or its `base` is not the PR's merge base; readers say so rather
-than show it as current.
+`head` and `base` are the full SHAs of the assessed commit (or the commit
+Freshness moved it to) and its merge base; leave both out when there is no
+rating. A card is stale when its `head` is not the PR's head or its `base` is
+not the PR's merge base.
 
 Everything after the end marker belongs to the repository's PR template or the
 detailed description and is never rewritten by card updates. The region is
 agent-managed: rewrite it whole on every update, and put human notes below
-it. A body with more than one region is invalid.
+it. On a refresh, carry over from the old card the ticked steps with the same
+text, each drift item's Kept because reason, and the Linear block's `agent`;
+everything else comes from the new rating. A body with more than one region is
+invalid.
 
 When opening a PR, put two `---` lines after the end marker and fold the detailed
 description (template sections included) into
@@ -107,8 +110,7 @@ Touches and footer. An empty part gets no line.
    first.
 6. **To lower it** (when the rating's `lower` is not empty): a bold label,
    then a task list, `- [ ] **Before merge:** ...` or
-   `- [ ] **After merge:** ...` per step. On a refresh, keep a step ticked when
-   the old card has a ticked step with the same text.
+   `- [ ] **After merge:** ...` per step.
 7. **Riskier than planned**: when the rating has drift, a
    `| Riskier than planned | Planned | Now | Kept because |` table whose first
    cell is the item (the check's name, `Overall level`, or the area's name),
@@ -147,7 +149,7 @@ Touches and footer. An empty part gets no line.
    and its file names (the last path segment, in code spans, at most five,
    then `+N more`).
 9. **Footer**: `<sub>Overview as of <code>` + the first 7 characters of the
-   rated head + `</code> · updated after every push</sub>`; leave it out
+   start marker's `head` + `</code> · updated after every push</sub>`; leave it out
    without a rating.
 10. The Linear block, only when the reviewer returned a valid rating.
 
@@ -163,10 +165,10 @@ agent as the PR's author on someone's behalf. Write it as one line after the
 card:
 
 ```markdown
-<!-- linear:extension {"version":1,"plugins":[{"plugin":"riskScore","sha":"<head SHA>","level":2,"explanations":["Impact · watch: <short>"]},{"plugin":"onBehalfOf","agent":"claude"}]} -->
+<!-- linear:extension {"version":1,"plugins":[{"plugin":"riskScore","sha":"<head>","level":2,"explanations":["Impact · watch: <short>"]},{"plugin":"onBehalfOf","agent":"claude"}]} -->
 ```
 
-- `sha`: the full 40-character rated head.
+- `sha`: the start marker's full `head`.
 - `level`: `low` 1, `typical` 2, `high` 3, `very_high` 4.
 - `explanations`: one per check in the rating's order, as
   `<Check> · <verdict>: <short>` with the check named as in the card's Merge
@@ -175,8 +177,7 @@ card:
   drops the whole score when the entry carries a field it does not know.
 - `onBehalfOf`: only when an agent wrote the change. `agent` is `claude` or
   `codex`, the host that wrote it, which is not always the host refreshing the
-  card: on a refresh, keep the existing block's `agent`, and leave the plugin
-  out when the author is unknown. Leave out `model`.
+  card; leave the plugin out when the author is unknown. Leave out `model`.
 - Escape every `>` inside the JSON as `\u003e`, so no string can end the
   comment early. Linear's format:
   <https://linear.app/docs/diffs#risk-score>.
@@ -203,10 +204,11 @@ CI ✅ · 0 open threads · draft
 - Then one line per check that is not `ok`, riskiest first, with its icon,
   name and `short`; none when every check is `ok`.
 
-Several PRs in one reply get one table instead, riskiest first:
+Several PRs in one reply get one table instead, riskiest first, with `draft`
+and a stale card under State:
 
 ```markdown
-| PR | Change | Risk | Lines | CI | Threads |
-| :--- | :--- | :--- | ---: | :---: | ---: |
-| [#1442](<PR URL>) feat(files): raise the pdf upload limit | The upload check allows PDFs up to 1 GB. | 🟨🟨⬜⬜ Typical | +5 −5 | ✅ | 0 |
+| PR | Change | Risk | Lines | CI | Threads | State |
+| :--- | :--- | :--- | ---: | :---: | ---: | :--- |
+| [#1442](<PR URL>) feat(files): raise the pdf upload limit | The upload check allows PDFs up to 1 GB. | 🟨🟨⬜⬜ Typical | +5 −5 | ✅ | 0 | draft |
 ```

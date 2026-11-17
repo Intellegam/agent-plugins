@@ -55,9 +55,9 @@ gh api user --jq .login
 - Stop on an author mismatch unless the user explicitly authorized this PR.
 - Cross-repository PRs are unsupported because the scripts resolve the current
   repository. Stop if `isCrossRepository` is true.
-- On a draft PR, keep the card fresh and fix CI, but leave review feedback
-  for later; review bots generally skip drafts. The first pass after the PR is
-  marked ready triages all feedback held until then.
+- On a draft PR, run only the card refresh and CI diagnosis and fixes; skip
+  feedback classification, fixes and replies until the PR is marked ready.
+  Review bots generally skip drafts.
 - Never push to the base branch. Fixes go only to the PR head branch.
 
 **Arm first, fetch second.** Start the retained one-shot waiter exactly as the
@@ -109,8 +109,7 @@ Every event except `pr-closed` re-enters this step: re-arm first, then fetch and
 triage. On `pr-closed`, stop the waiter and report the final state.
 
 When the PR body has a PR card, refresh it on each pass as the `merge-risk`
-skill's Refresh step describes, and show its chat card whenever you rewrite the
-card.
+skill's Refresh step describes.
 
 ### 2. Verify and classify findings
 

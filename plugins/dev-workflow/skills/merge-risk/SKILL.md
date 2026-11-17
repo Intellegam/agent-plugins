@@ -8,7 +8,7 @@ description: Rate how risky a plan or change is to merge with an independent rev
 An independent reviewer rates merge risk twice: once on the plan, before code
 exists, and once on the diff. The first rating becomes the baseline; the second
 shows whether the work got riskier than agreed. The result opens the PR body as
-the PR card, and a compact version goes into the agent's chat replies.
+the PR card.
 
 Use it for every PR except branch promotions, which carry already-reviewed
 work. Tiny changes skip plan mode but still get a diff rating and a card.
@@ -74,7 +74,7 @@ the assessed head changes behavior (review fixes included), rerun diff mode
 first. Only when the commits since change no behavior (docs, comments, a clean
 rebase) may the writer move `head` and `base` forward without a new rating.
 When CI fails on the assessed head, rate it again once, with the failure among
-the check results; pending checks that later pass keep the rating.
+the check results, and note in task context that this head was re-rated.
 
 To update a body: fetch the latest body, replace only the managed region, and
 write once. Reread the body just before writing; if it changed, redo the
@@ -83,9 +83,9 @@ replacement on the new body.
 ## 4. Refresh
 
 While babysitting, check the card's freshness against the PR head on every
-pass, whoever pushed, and rewrite the card when it is stale. Rate the PR's head
+pass, whoever pushed, and rewrite the card when it is stale or CI failed on
+its head as Freshness describes. Rate the PR's head
 commit (fetch it when it is not local) without changing the checkout, with the
 baseline from task context. When that baseline is gone (a new session, or a PR
-that was never rated), rate without one; the card then says it has no plan
-baseline. Drift found here is reported on the card as `open`, not fixed in a
-new loop, unless the user asks.
+that was never rated), rate without one. Drift found here is reported on the
+card, not fixed in a new loop, unless the user asks.

@@ -86,7 +86,7 @@ destructive operations from an implementation request.
 
 You write the PR title and body. Open each body, except branch promotions,
 with the PR card as the `merge-risk` skill describes, and show its chat card in
-your reply; a session with several PRs shows them as one table. When the work
+your reply. When the work
 comes from a Linear issue, put the issue key in the branch name so Linear links
 the PR; when the branch name is set for you, put it in the PR body instead.
 
