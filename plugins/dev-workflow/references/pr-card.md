@@ -17,10 +17,10 @@ The card sits between two markers at the very top of the body:
 <!-- pr-card:end -->
 ```
 
-`head` and `base` are the full SHAs of the assessed commit (or the commit
-Freshness moved it to) and its merge base; leave both out when there is no
-rating. A card is stale when its `head` is not the PR's head or its `base` is
-not the PR's merge base.
+`head` and `base` are the full SHAs of the commit the card describes (the
+assessed commit, or the commit the `merge-risk` skill's Freshness rule moved it
+to) and its merge base. A card is stale when its `head` is not the PR's head or
+its `base` is not the PR's merge base.
 
 Everything after the end marker belongs to the repository's PR template or the
 detailed description and is never rewritten by card updates. The region is
@@ -50,8 +50,7 @@ Touches and footer. An empty part gets no line.
 
 1. **Header**: the level as a four-step meter in a pill, then the priority in
    a pill when the PR's linked Linear issue has one, named as Linear names it
-   (`Urgent`, `High`, `Medium`, `Low`). Without a linked issue, or when it has
-   no priority, there is no priority pill:
+   (`Urgent`, `High`, `Medium`, `Low`):
 
    ```markdown
    <kbd>🟨🟨⬜⬜ Typical risk</kbd> <kbd>High</kbd>
@@ -117,8 +116,8 @@ Touches and footer. An empty part gets no line.
    a colon and its `what`, with icons for verdicts, level names for the
    level, `minor` or `–` for an area the baseline listed as minor or did not
    list. The last cell holds the implementer's one-line reason for keeping
-   it, or `open` while the drift is neither lowered nor explained; drift that
-   was lowered is gone from the next rating. Without drift, one line:
+   it, or `open` while the drift is neither lowered nor explained. Without
+   drift, one line:
    `<sub>Matches the planned risk profile.</sub>`, or
    `<sub>No plan baseline for this rating.</sub>` when it was rated without
    one.
@@ -200,12 +199,12 @@ CI ✅ · 0 open threads · draft
   (`Not rated` without a rating), and the PR's total added and deleted lines.
 - Line 2: the card's second sentence (Fix, Feature or Change).
 - Line 3: CI as ✅, ❌ or ⏳, the number of unresolved review threads, and
-  `draft` or a stale card when either applies.
+  `draft` and `stale card` when they apply.
 - Then one line per check that is not `ok`, riskiest first, with its icon,
   name and `short`; none when every check is `ok`.
 
 Several PRs in one reply get one table instead, riskiest first, with `draft`
-and a stale card under State:
+and `stale card` under State:
 
 ```markdown
 | PR | Change | Risk | Lines | CI | Threads | State |

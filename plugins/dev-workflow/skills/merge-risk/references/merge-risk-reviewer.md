@@ -111,8 +111,7 @@ drift list.
 
 ## Output
 
-Return one fenced `json` block and nothing the main agent must parse besides
-it:
+Return the rating as one fenced `json` block:
 
 ```json
 {
@@ -133,9 +132,8 @@ it:
 }
 ```
 
-- `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `typical`, `high` or
-  `very_high`; `when` is `before_merge` or `after_merge`. `rows` holds each of
-  the five rows exactly once. A minor area has no `verdict`.
+- `rows` holds each of the five rows exactly once. A minor area has no
+  `verdict`.
 - A drift `item` is a row key, `level`, or `area:<name>`. `planned` and `now`
   are verdicts for rows and areas and levels for `level`; for an area,
   `planned` is `"minor"` when the baseline listed it as minor and null when it

@@ -88,7 +88,7 @@ You write the PR title and body. Open each body, except branch promotions,
 with the PR card as the `merge-risk` skill describes, and show its chat card in
 your reply. When the work comes from a Linear issue, put its key in the branch
 name or the PR title so Linear links the PR; when neither can carry it, add a
-`Refs <key>` line to the body.
+`Refs <key>` line below the card.
 
 Merging or landing requires separate approval for the exact PR. For branch
 promotions, the `promote` skill’s authorization contract applies, including any

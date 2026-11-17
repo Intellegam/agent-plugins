@@ -53,8 +53,8 @@ The card names commits. When the change is committed, record that commit as
 `head` and the merge base as `base` if the committed diff equals the rated one
 or differs only as Freshness below allows; otherwise rate again.
 
-If the reviewer cannot run or returns invalid output, write the card without
-the Linear block and say in its Merge risk section that no rating was
+If the reviewer cannot run or returns invalid output, write the card unrated as
+the spec describes and say in its Merge risk section that no rating was
 produced; never fill in verdicts yourself.
 
 Only the reviewer sets verdicts; never edit its rows to look better.
@@ -63,8 +63,7 @@ Only the reviewer sets verdicts; never edit its rows to look better.
 
 The main agent writes the PR title and body, card included, from the spec at
 `../../references/pr-card.md`; the reviewer supplies only the rating. Write the
-card when opening the PR, and show the spec's chat card in your reply each time
-you write or rewrite one.
+card when opening the PR.
 
 Freshness: before writing or refreshing the card, compare the assessed `head`
 and `base` (recorded in the card's start marker) with the PR's head and merge
@@ -86,6 +85,6 @@ While babysitting, check the card's freshness against the PR head on every
 pass, whoever pushed, and rewrite the card when it is stale or CI failed on
 its head as Freshness describes. Rate the PR's head
 commit (fetch it when it is not local) without changing the checkout, with the
-baseline from task context. When that baseline is gone (a new session, or a PR
-that was never rated), rate without one. Drift found here is reported on the
+baseline from task context. Without that baseline (a new session, or work that
+skipped plan mode), rate without one. Drift found here is reported on the
 card, not fixed in a new loop, unless the user asks.
