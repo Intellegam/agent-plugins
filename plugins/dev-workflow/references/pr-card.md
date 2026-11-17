@@ -49,16 +49,16 @@ four parts: header and
 Why / What / How; visual and evidence; merge risk through the plan line;
 Touches and footer. An empty part gets no line.
 
-1. **Header**: the level as a four-step meter in a pill, then the priority in
+1. **Header**: the level as a four-dot meter in a pill, then the priority in
    a pill when the PR's linked Linear issue has one, named as Linear names it
    (`Urgent`, `High`, `Medium`, `Low`):
 
    ```markdown
-   <kbd>🟨🟨⬜⬜ Typical risk</kbd> <kbd>High</kbd>
+   <kbd>●●○○ Typical risk</kbd> <kbd>High</kbd>
    ```
 
-   Meters: `low` 🟩⬜⬜⬜ Low risk, `typical` 🟨🟨⬜⬜ Typical risk, `high`
-   🟧🟧🟧⬜ High risk, `very_high` 🟥🟥🟥🟥 Very high risk. Without a rating
+   Meters: `low` ●○○○ Low risk, `typical` ●●○○ Typical risk, `high` ●●●○
+   High risk, `very_high` ●●●● Very high risk. Without a rating
    the first pill reads `Not rated`.
 2. **Why / What / How**: one paragraph each, led by a pill label and a blank
    line between them. Labels follow the PR's conventional-commit type: `fix` →
@@ -190,7 +190,7 @@ card, and when reporting a PR's state; build it from the PR card and live PR
 state:
 
 ```markdown
-**[#1442 feat(files): raise the pdf upload limit to 1 gb](<PR URL>)** · 🟨🟨⬜⬜ Typical · `+5 −5`
+**[#1442 feat(files): raise the pdf upload limit to 1 gb](<PR URL>)** · ●●○○ Typical · `+5 −5`
 The upload check allows PDFs up to 1 GB.
 CI ✅ · 0 open threads · draft
 ⚠️ Impact: must not merge before the Python 1 GB cap is live
@@ -210,5 +210,5 @@ and `stale card` under State:
 ```markdown
 | PR | Change | Risk | Lines | CI | Threads | State |
 | :--- | :--- | :--- | ---: | :---: | ---: | :--- |
-| [#1442](<PR URL>) feat(files): raise the pdf upload limit | The upload check allows PDFs up to 1 GB. | 🟨🟨⬜⬜ Typical | +5 −5 | ✅ | 0 | draft |
+| [#1442](<PR URL>) feat(files): raise the pdf upload limit | The upload check allows PDFs up to 1 GB. | ●●○○ Typical | +5 −5 | ✅ | 0 | draft |
 ```
