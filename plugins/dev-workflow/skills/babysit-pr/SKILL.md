@@ -55,7 +55,9 @@ gh api user --jq .login
 - Stop on an author mismatch unless the user explicitly authorized this PR.
 - Cross-repository PRs are unsupported because the scripts resolve the current
   repository. Stop if `isCrossRepository` is true.
-- Skip draft PRs; review bots generally do not review them.
+- On a draft PR, keep the card fresh and fix CI, but leave review feedback
+  for later; review bots generally skip drafts. The first pass after the PR is
+  marked ready triages all feedback held until then.
 - Never push to the base branch. Fixes go only to the PR head branch.
 
 **Arm first, fetch second.** Start the retained one-shot waiter exactly as the
@@ -107,7 +109,8 @@ Every event except `pr-closed` re-enters this step: re-arm first, then fetch and
 triage. On `pr-closed`, stop the waiter and report the final state.
 
 When the PR body has a PR card, refresh it on each pass as the `merge-risk`
-skill's Refresh step describes.
+skill's Refresh step describes, and show its chat card whenever you rewrite the
+card.
 
 ### 2. Verify and classify findings
 
@@ -236,7 +239,8 @@ Return to the top-level Code Tour phase for the refresh so generation,
 publication, and PR-comment authorization remain owned by the code-tour skill.
 
 Being clean and mergeable is progress, not permission to merge and not a stop
-condition while the PR remains open. Report the milestone and re-arm.
+condition while the PR remains open. Report the milestone with the PR's chat
+card and re-arm.
 
 If the repository has no CI checks, the empty check set satisfies the CI gate,
 but report `no checks configured` rather than claiming a successful check run.
@@ -251,7 +255,8 @@ Keep the skill active using the host adapter. Stop only when:
 - the user explicitly asks to stop.
 
 When stopping, terminate the retained waiter as specified by the host adapter.
-Report findings by class, commits pushed, replies made, unresolved threads and
+Open the report with the PR's chat card (`../../references/pr-card.md`), then
+report findings by class, commits pushed, replies made, unresolved threads and
 why, CI, mergeability/review decision, and reviewer status for the current SHA.
 
 ## Related skills

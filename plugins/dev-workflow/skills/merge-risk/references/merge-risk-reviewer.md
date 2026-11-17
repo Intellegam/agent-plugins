@@ -106,11 +106,40 @@ meaningful area the baseline did not expect. For each, say what changed and
 the cheapest way to bring it back, if one exists. Equal or lower risk is not
 drift. Read a baseline from before the four levels by the current guide:
 `medium` as `typical`, and `high` as `very_high` when two or more of Impact,
-Verification and Rollback are `risk`. The implementer fills `kept`. Without a baseline, return an empty drift
-list.
+Verification and Rollback are `risk`. Without a baseline, return an empty
+drift list.
 
 ## Output
 
-Return one fenced `json` block holding the `risk` object defined in
-`../../../references/pr-card.md` (relative to this file), without the fields
-that file assigns to the card writer.
+Return one fenced `json` block and nothing the main agent must parse besides
+it:
+
+```json
+{
+  "level": "typical",
+  "rows": [
+    { "row": "alignment", "verdict": "ok", "short": "About eight words.", "line": "One line." },
+    { "row": "impact", "verdict": "watch", "short": "...", "line": "..." },
+    { "row": "verification", "verdict": "ok", "short": "...", "line": "..." },
+    { "row": "rollback", "verdict": "ok", "short": "...", "line": "..." },
+    { "row": "error_detection", "verdict": "watch", "short": "...", "line": "..." }
+  ],
+  "areas": [
+    { "name": "access", "meaningful": true, "verdict": "watch", "note": "One sentence." },
+    { "name": "core", "meaningful": false, "note": "One sentence." }
+  ],
+  "lower": [{ "when": "before_merge", "text": "One step." }],
+  "drift": [{ "item": "impact", "planned": "ok", "now": "watch", "what": "What changed and the cheapest way back." }]
+}
+```
+
+- `verdict` is `ok`, `watch` or `risk`; `level` is `low`, `typical`, `high` or
+  `very_high`; `when` is `before_merge` or `after_merge`. `rows` holds each of
+  the five rows exactly once. A minor area has no `verdict`. `lower` and
+  `drift` may be empty.
+- A drift `item` is a row key, `level`, or `area:<name>`. `planned` and `now`
+  are verdicts for rows and areas and levels for `level`; for an area,
+  `planned` is `"minor"` when the baseline listed it as minor and null when it
+  did not list it.
+- In plan mode, return the predicted profile in the same shape with an empty
+  `drift`.
