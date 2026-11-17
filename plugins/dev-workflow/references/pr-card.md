@@ -20,7 +20,8 @@ The card sits between two markers at the very top of the body:
 `head` and `base` are the full SHAs of the commit the card describes (the
 assessed commit, or the commit the `merge-risk` skill's Freshness rule moved it
 to) and its merge base. A card is stale when its `head` is not the PR's head or
-its `base` is not the PR's merge base.
+its `base` is not the PR's merge base, or when its marker has neither (a card
+written before dev-workflow 0.17.0).
 
 Everything after the end marker belongs to the repository's PR template or the
 detailed description and is never rewritten by card updates. The region is
