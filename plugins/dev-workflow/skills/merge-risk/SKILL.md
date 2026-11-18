@@ -56,7 +56,8 @@ or differs only as Freshness below allows; otherwise rate again.
 If the reviewer cannot run or returns invalid output, write the card unrated as
 the spec describes and say in its Merge risk section that no rating was
 produced; on a refresh, leave a rated card as it is and report the failure
-instead. Never fill in verdicts yourself.
+instead. When that refresh was for a CI result, add a line under Merge risk
+that the rating predates it. Never fill in verdicts yourself.
 
 Only the reviewer sets verdicts; never edit its rows to look better.
 
