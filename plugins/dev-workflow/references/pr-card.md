@@ -243,32 +243,49 @@ anything, so its values are a snapshot of the moment it is written.
 
 ### Markdown Card
 
-Write it one paragraph per line so no renderer joins them:
+A slimmed PR card in a quote: what the review page shows before any hover,
+with nothing that needs HTML, since chat renderers drop it. Put `> ` before
+every line, an empty `>` line between paragraphs, and a `---` line between the
+four parts. Leave out a part you do not have.
+
+````markdown
+> `●●○○ Typical risk` · `+359 −193` · [GitHub](<PR URL>) · [Linear](<Linear review URL>) · **plugins#44** · `Open threads`
+>
+> ---
+>
+> `feat(dev-workflow)` **Add chat review cards**
+>
+> <the card's second sentence>
+>
+> ---
+>
+> *Touches* **`references`** **`skills/babysit-pr`** `README`
+>
+> ---
+>
+> *Review flow*
+>
+> ```mermaid
+> <the PR card's flow, unchanged>
+> ```
+````
+
+- Header: the meter and level name (`Not rated` without a rating), the PR's
+  added and deleted lines, the GitHub link, the Linear review link when known,
+  the linked issue's key and priority when there is one, the bold `ref`, and
+  the `state` label from the review page's data.
+- Title: the conventional-commit prefix in a code span, then the rest bold;
+  below it, the card's second sentence (Fix, Feature or Change).
+- Touches: the card's areas in its order, bold when the area's verdict is not
+  `ok` or minor.
+- Visuals: each of the card's visuals as the PR card writes it, Mermaid
+  included, under its heading in italics; Evidence as one line with its link.
+  No checks, To lower it steps, folds or footer.
+
+Several PRs get one table, riskiest first, and no visuals:
 
 ```markdown
-**[#1442 feat(files): raise the pdf upload limit to 1 gb](<PR URL>)** · `●●○○ Typical risk` · `+5 −5`
-
-The upload check allows PDFs up to 1 GB.
-
-CI ✅ · 0 open threads · draft
-
-⚠️ Impact: must not merge before the Python 1 GB cap is live
-```
-
-- Line 1: the PR number and title linked to the PR, the meter and level name
-  as a code-span pill (`Not rated` without a rating), and the PR's total added
-  and deleted lines.
-- Line 2: the card's second sentence (Fix, Feature or Change). A PR without a
-  card shows `Not rated` on line 1 and skips line 2 and the check lines.
-- Line 3: CI as ✅, ❌, ⏳ or `no checks`, the number of unresolved review threads, and
-  `draft` and `stale card` when they apply.
-- Then one line per check that is not `ok`, riskiest first, with its icon,
-  name and `short`; none when every check is `ok`.
-
-Several PRs get one table instead, with `draft` and `stale card` under State:
-
-```markdown
-| PR | Change | Risk | Lines | CI | Threads | State |
-| :--- | :--- | :--- | ---: | :---: | ---: | :--- |
-| [#1442](<PR URL>) feat(files): raise the pdf upload limit | The upload check allows PDFs up to 1 GB. | `●●○○ Typical` | +5 −5 | ✅ | 0 | draft |
+| Risk | PR | Lines | State |
+| :--- | :--- | ---: | :--- |
+| `●●○○ Typical` | [plugins#44](<PR URL>) `feat(dev-workflow)` Add chat review cards | +359 −193 | Open threads |
 ```
