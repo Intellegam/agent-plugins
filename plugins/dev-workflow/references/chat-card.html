@@ -98,6 +98,6 @@ function draw(focus){
 }
 function fit(ev){var hv=ev.target.closest&&ev.target.closest('.cc-hv');if(!hv)return;var t=hv.querySelector('.tip');if(!t)return;t.style.left='';t.style.right='';var r=t.getBoundingClientRect(),W=document.documentElement.clientWidth;if(!r.width)return;var dx=r.right>W-8?r.right-(W-8):r.left<8?r.left-8:0;if(dx){t.style.right='auto';t.style.left=(t.offsetLeft-dx)+'px'}}
 root.addEventListener('mouseover',fit);root.addEventListener('focusin',fit);
-draw();
+try{draw()}catch(err){root.textContent='The card could not be drawn: '+err.message}
 })();
 </script>
