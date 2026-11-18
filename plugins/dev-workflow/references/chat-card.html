@@ -36,8 +36,9 @@
 .cc-dots{letter-spacing:2px;white-space:nowrap}.cc-dots b{font-weight:400}.cc-dots i{font-style:normal;color:var(--mut)}
 .lv1 b{color:var(--ok)}.lv2 b{color:var(--watch)}.lv3 b,.lv4 b{color:var(--risk)}
 .cc-loc{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13px}.cc-add{color:var(--ok)}.cc-del{color:var(--risk)}
-.cc-ttl{font-size:18px;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
-.cc-ttl .cc-ty{display:inline-block;margin-right:10px;font-size:12.5px;line-height:20px;padding:0 7px;vertical-align:3px}
+.cc-ttl{display:flex;align-items:baseline;gap:10px;font-size:18px;font-weight:650;line-height:1.3}
+.cc-ttl .cc-ty{font-size:12.5px;line-height:20px;padding:0 7px;transform:translateY(-2px)}
+.cc-ttl .tx{flex:1;min-width:0;overflow-wrap:anywhere}
 .cc-sum{font-size:15px;margin:0}
 .cc-tch{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .cc-tch .lbl{font-size:12.5px;color:var(--mut);margin-right:4px}
@@ -85,7 +86,7 @@ function card(p){
   +(ln?'<a class="cc-ic" href="'+ln+'" target="_blank" rel="noopener" title="Open in Linear" aria-label="Open in Linear">'+LI+'</a>':'')
   +'</span><span class="cc-ref">'+e(p.ref)+'</span>'+(is?'<a href="'+is+'" target="_blank" rel="noopener">'+e(p.issue.key)+'</a>':'')
   +(s.label?'<span style="margin-left:auto"><span class="cc-hv right cc-pill '+v(s.tone)+'" tabindex="0">'+e(s.label)+stateTip(p)+'</span></span>':'')+'</div>';
- return '<div class="cc-card"><div class="cc-hd">'+l1+'<div class="cc-ttl">'+(p.type?'<span class="cc-ty">'+e(p.type)+'</span>':'')+'<span>'+e(p.title)+'</span></div>'+(p.summary?'<p class="cc-sum">'+e(p.summary)+'</p>':'')+touches(p)+'</div>'+how(p.how)+'</div>';
+ return '<div class="cc-card"><div class="cc-hd">'+l1+'<div class="cc-ttl">'+(p.type?'<span class="cc-ty">'+e(p.type)+'</span>':'')+'<span class="tx">'+e(p.title)+'</span></div>'+(p.summary?'<p class="cc-sum">'+e(p.summary)+'</p>':'')+touches(p)+'</div>'+how(p.how)+'</div>';
 }
 function table(){return '<div class="cc-tbl">'+P.map(function(p,ix){return '<div class="cc-tr'+(ix===i?' cur':'')+'" data-ix="'+ix+'"><span class="cc-tt" role="button" tabindex="0" aria-current="'+(ix===i)+'">'+(p.type?'<span class="cc-ty">'+e(p.type)+'</span>':'')+'<span class="t">'+e(p.title)+'</span></span><span>'+(dots(LV[p.level]||0)||'<span class="cc-ref">Not rated</span>')+'</span><span class="cc-loc">'+lines(p.added,p.deleted)+'</span></div>'}).join('')+'</div>'}
 function draw(focus){
