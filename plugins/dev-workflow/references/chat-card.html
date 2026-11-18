@@ -21,7 +21,7 @@
 .cc-hd>.cc-tch{padding:16px 26px 18px;border-top:1px solid var(--line)}
 .cc-l1{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;min-height:28px;font-size:13px;color:var(--fg2)}
 .cc-sep{flex:none;width:1px;height:16px;background:var(--line)}@media (max-width:520px){.cc-sep{display:none}}
-.cc-lk{display:inline-flex;align-items:center;gap:8px}
+.cc-lk{display:inline-flex;align-items:center;gap:12px}
 .cc-ics{display:inline-flex;gap:2px;margin:0 -2px}
 .cc-ic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;color:var(--fg2)}.cc-ic:hover{background:var(--line);color:var(--fg)}
 .cc-ic svg{width:15px;height:15px;fill:currentColor}
@@ -98,7 +98,7 @@ function card(p){
   +(lines(p.added,p.deleted)?'<span class="cc-sep"></span><span class="cc-hv cc-loc" tabindex="0">'+lines(p.added,p.deleted)+locTip(p)+'</span>':'')+'<span class="cc-sep"></span><span class="cc-lk"><span class="cc-ics">'
   +(gh?'<a class="cc-ic" href="'+gh+'" target="_blank" rel="noopener" title="Open on GitHub" aria-label="Open on GitHub">'+GH+'</a>':'')
   +(ln?'<a class="cc-ic" href="'+ln+'" target="_blank" rel="noopener" title="Open in Linear" aria-label="Open in Linear">'+LI+'</a>':'')
-  +'</span><span class="cc-ref">'+e(p.ref)+'</span>'+(is?'<a href="'+is+'" target="_blank" rel="noopener">'+e(p.issue.key)+'</a>':'')+'</span>'
+  +'</span><span class="cc-sep"></span><span class="cc-ref">'+e(p.ref)+'</span>'+(is?'<a href="'+is+'" target="_blank" rel="noopener">'+e(p.issue.key)+'</a>':'')+'</span>'
   +(s.label?'<span style="margin-left:auto"><span class="cc-hv right cc-pill '+v(s.tone)+'" tabindex="0">'+e(s.label)+stateTip(p)+'</span></span>':'')+'</div>';
  return '<div class="cc-card"><div class="cc-hd">'+l1+'<div class="cc-bd"><div class="cc-ttl">'+(p.type?'<span class="cc-ty">'+e(p.type)+'</span>':'')+'<span class="tx">'+e(p.title)+'</span></div>'+(p.summary?'<p class="cc-sum">'+e(p.summary)+'</p>':'')+'</div>'+touches(p)+'</div>'+visuals(p)+'</div>';
 }
