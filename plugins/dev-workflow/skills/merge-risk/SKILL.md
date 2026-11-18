@@ -74,9 +74,10 @@ or a base merge that changes the diff needs a new rating. If any commit since
 the assessed head changes behavior (review fixes included), rerun diff mode
 first. Only when the commits since change no behavior (docs, comments, a clean
 rebase) may the writer move `head` and `base` forward without a new rating.
-When CI fails on the assessed head, rate it again once, with the failure among
-the check results, and note in task context that this head was re-rated. When
-CI later passes on that head, rate it once more.
+When CI fails on the assessed head and the card has no `ci=failed`, rate it
+again with the failure among the check results and add `ci=failed` to the
+start marker. When CI later passes on a head whose card has `ci=failed`, rate
+it once more and drop the flag.
 
 To update a body: fetch the latest body, replace only the managed region, and
 write once. Reread the body just before writing; if it changed, redo the
