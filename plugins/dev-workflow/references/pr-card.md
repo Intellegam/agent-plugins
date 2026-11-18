@@ -27,7 +27,7 @@ Everything after the end marker belongs to the repository's PR template or the
 detailed description and is never rewritten by card updates. The region is
 agent-managed: rewrite it whole on every update, and put human notes below
 it. On a refresh, carry over from the old card the ticked steps with the same
-text, each drift item's Kept because reason, and the Linear block's `agent`;
+timing and text, each drift item's Kept because reason, and the Linear block's `agent`;
 everything else comes from the new rating. A body with more than one region is
 invalid.
 
@@ -230,12 +230,16 @@ moment it is posted.
 
 ### Markdown Card
 
-Everywhere else, write markdown:
+Everywhere else, write markdown, one paragraph per line so no renderer joins
+them:
 
 ```markdown
 **[#1442 feat(files): raise the pdf upload limit to 1 gb](<PR URL>)** · `●●○○ Typical risk` · `+5 −5`
+
 The upload check allows PDFs up to 1 GB.
+
 CI ✅ · 0 open threads · draft
+
 ⚠️ Impact: must not merge before the Python 1 GB cap is live
 ```
 

@@ -93,8 +93,8 @@ function draw(focus){
  var many=P.length>1;
  root.innerHTML=(many?table()+'<div class="cc-nav"><span class="pos">'+(i+1)+' of '+P.length+'</span><span class="cc-trk"><span style="width:'+((i+1)/P.length*100)+'%"></span></span><button class="cc-nb" data-go="-1"'+(i?'':' disabled')+'>← Prev</button><button class="cc-nb" data-go="1"'+(i<P.length-1?'':' disabled')+'>Next →</button></div>':'')+card(P[i]);
  root.querySelectorAll('.cc-tr').forEach(function(r){function go(){i=+r.dataset.ix;draw('.cc-tr[data-ix="'+i+'"] .cc-tt')}r.onclick=go;r.querySelector('.cc-tt').onkeydown=function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();go()}}});
- root.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){var d=b.dataset.go;i=Math.max(0,Math.min(P.length-1,i+ +d));draw('[data-go="'+d+'"]:not([disabled]),[data-go]:not([disabled])')}});
- if(focus){var f=root.querySelector(focus);if(f)f.focus()}
+ root.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){var d=b.dataset.go;i=Math.max(0,Math.min(P.length-1,i+ +d));draw(['[data-go="'+d+'"]:not([disabled])','[data-go]:not([disabled])'])}});
+ [].concat(focus||[]).some(function(s){var f=root.querySelector(s);if(f)f.focus();return !!f})
 }
 draw();
 })();

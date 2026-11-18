@@ -74,7 +74,8 @@ the assessed head changes behavior (review fixes included), rerun diff mode
 first. Only when the commits since change no behavior (docs, comments, a clean
 rebase) may the writer move `head` and `base` forward without a new rating.
 When CI fails on the assessed head, rate it again once, with the failure among
-the check results, and note in task context that this head was re-rated.
+the check results, and note in task context that this head was re-rated. When
+CI later passes on that head, rate it once more.
 
 To update a body: fetch the latest body, replace only the managed region, and
 write once. Reread the body just before writing; if it changed, redo the
