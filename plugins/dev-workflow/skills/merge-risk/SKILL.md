@@ -83,9 +83,10 @@ replacement on the new body.
 ## 4. Refresh
 
 While babysitting, check the card's freshness against the PR head on every
-pass, whoever pushed, and rewrite the card when it is stale, unrated (one
-attempt per head, noted in task context), or CI failed on its head as
-Freshness describes. Rate the PR's head commit (fetch it
+pass, whoever pushed, and rewrite the card when it is stale, unrated, or CI
+failed on its head as Freshness describes. Whatever the trigger, make at most
+one rating attempt per PR head (plus the one CI re-rating), noted in task
+context. Rate the PR's head commit (fetch it
 when it is not local) without changing the checkout, with the baseline from
 task context. Without that baseline (a new session, or work that skipped plan
 mode), rate without one. Drift found here is reported on the

@@ -217,7 +217,8 @@ it. Put `> ` before every line, an empty `>` line between paragraphs, and a
 > ```
 ````
 
-- Header: the meter and level name (`Not rated` without a rating), the PR's
+- Header: the meter and level name (`Not rated` without a rating, and
+  `· stale` after it when the PR card is stale), the PR's
   added and deleted lines, the GitHub link, the Linear review link when known,
   the linked issue's key and priority when there is one, and the bold
   `ref`.
