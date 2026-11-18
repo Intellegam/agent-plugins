@@ -26,6 +26,7 @@ def state(**changes: object) -> dict[str, object]:
         "mergeable": "MERGEABLE",
         "merge_state": "CLEAN",
         "review_decision": "APPROVED",
+        "draft": False,
         "checks": [],
         "failing": [],
         "concluded": False,
@@ -59,6 +60,7 @@ class EventTests(unittest.TestCase):
             {"mergeable": "CONFLICTING"},
             {"merge_state": "BLOCKED"},
             {"review_decision": "CHANGES_REQUESTED"},
+            {"draft": True},
         )
         for change in changes:
             with self.subTest(change=change):
@@ -73,6 +75,15 @@ class EventTests(unittest.TestCase):
                 state(failing=["test"]),
                 state(failing=["test"]),
             )
+        )
+
+    def test_recovery_between_polls_wakes_waiter(self) -> None:
+        self.assertEqual(
+            "ci-concluded",
+            await_pr_event._event(
+                state(concluded=True, checks=["test"], failing=["test"]),
+                state(concluded=True, checks=["test"], failing=[]),
+            ),
         )
 
     def test_fast_check_registration_and_completion_wakes_waiter(self) -> None:

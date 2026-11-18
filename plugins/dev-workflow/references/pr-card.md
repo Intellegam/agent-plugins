@@ -59,7 +59,8 @@ Touches and footer. An empty part gets no line.
 
    Meters: `low` ●○○○ Low risk, `typical` ●●○○ Typical risk, `high` ●●●○
    High risk, `very_high` ●●●● Very high risk. Without a rating
-   the first pill reads `Not rated`.
+   the first pill reads `Not rated`, Merge risk holds only the line that no
+   rating was produced, and parts 6 to 10 are left out.
 2. **Why / What / How**: one paragraph each, led by a pill label and a blank
    line between them. Labels follow the PR's conventional-commit type: `fix` →
    Problem / Fix / How; `feat` → Need / Feature / How; any other type → Why /

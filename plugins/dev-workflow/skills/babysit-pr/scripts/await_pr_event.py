@@ -155,7 +155,9 @@ def _event(base: dict, now: dict) -> str | None:
     if set(now["failing"]) - set(base["failing"]):
         return "ci-failure"
     if now["concluded"] and (
-        not base["concluded"] or now["checks"] != base["checks"]
+        not base["concluded"]
+        or now["checks"] != base["checks"]
+        or (base["failing"] and not now["failing"])
     ):
         return "ci-concluded"
     merge_keys = ("mergeable", "merge_state", "review_decision", "draft")
