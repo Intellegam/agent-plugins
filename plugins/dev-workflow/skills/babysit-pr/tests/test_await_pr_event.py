@@ -115,7 +115,9 @@ class SnapshotTests(unittest.TestCase):
         ]
         threads = [{"thread_id": "PRRT_1", "comments": [{"body": "reply"}]}]
         with (
-            patch.object(await_pr_event, "_gh_json", side_effect=[view, checks]),
+            patch.object(
+                await_pr_event, "_gh_json", side_effect=[view, checks]
+            ) as gh_json,
             patch.object(await_pr_event, "_open_threads_json", return_value=threads),
         ):
             snapshot = await_pr_event._snapshot("12")
@@ -126,7 +128,8 @@ class SnapshotTests(unittest.TestCase):
         self.assertEqual("MERGEABLE", snapshot["mergeable"])
         self.assertEqual("CLEAN", snapshot["merge_state"])
         self.assertEqual("APPROVED", snapshot["review_decision"])
-        self.assertTrue(snapshot["draft"])
+        self.assertIn("isDraft", gh_json.call_args_list[0].args[0][-1])
+        self.assertIs(True, snapshot["draft"])
         self.assertEqual(["lint", "test"], snapshot["checks"])
         self.assertFalse(snapshot["concluded"])
 

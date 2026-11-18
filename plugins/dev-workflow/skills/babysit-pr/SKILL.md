@@ -140,8 +140,8 @@ destination during a long-lived task.
 
 ### 3. Diagnose CI before retrying
 
-Review feedback first. If a fix commit is needed, push it instead of wasting a
-rerun on the old SHA.
+On a PR ready for review, handle feedback first. If a fix commit is needed,
+push it instead of wasting a rerun on the old SHA.
 
 For each failing GitHub Actions job, inspect job-level logs even while sibling
 jobs still run:
