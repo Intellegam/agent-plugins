@@ -73,7 +73,8 @@ base. A new merge base from retargeting
 or a base merge that changes the diff needs a new rating. If any commit since
 the assessed head changes behavior (review fixes included), rerun diff mode
 first. Only when the commits since change no behavior (docs, comments, a clean
-rebase) may the writer move `head` and `base` forward without a new rating.
+rebase) may the writer move `head` and `base` forward without a new rating,
+dropping any `ci=failed`.
 When CI fails on the assessed head and the card has no `ci=failed`, rate it
 again with the failure among the check results and add `ci=failed` to the
 start marker. When CI later passes on a head whose card has `ci=failed`, rate
@@ -86,9 +87,9 @@ replacement on the new body.
 ## 4. Refresh
 
 While babysitting, check the card's freshness against the PR head on every
-pass, whoever pushed, and rewrite the card when it is stale, unrated (one
-attempt per head, noted in task context), or CI failed on its head (or
-passed again after that re-rating) as Freshness describes. Rate the PR's head commit (fetch it
+pass, whoever pushed, and rewrite the card when it is stale, unrated, or CI failed on its head (or
+passed again after that re-rating) as Freshness describes. Try each of these
+once per head and CI result, noted in task context. Rate the PR's head commit (fetch it
 when it is not local) without changing the checkout, with the baseline from
 task context. Without that baseline (a new session, or work that skipped plan
 mode), rate without one. Drift found here is reported on the
