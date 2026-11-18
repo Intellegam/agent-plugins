@@ -107,6 +107,7 @@ class SnapshotTests(unittest.TestCase):
             "mergeable": "MERGEABLE",
             "mergeStateStatus": "CLEAN",
             "reviewDecision": "APPROVED",
+            "isDraft": True,
         }
         checks = [
             {"name": "lint", "state": "SUCCESS", "bucket": "pass"},
@@ -125,6 +126,7 @@ class SnapshotTests(unittest.TestCase):
         self.assertEqual("MERGEABLE", snapshot["mergeable"])
         self.assertEqual("CLEAN", snapshot["merge_state"])
         self.assertEqual("APPROVED", snapshot["review_decision"])
+        self.assertTrue(snapshot["draft"])
         self.assertEqual(["lint", "test"], snapshot["checks"])
         self.assertFalse(snapshot["concluded"])
 
