@@ -230,7 +230,8 @@ it. Put `> ` before every line, an empty `>` line between paragraphs, and a
   included, under its heading in italics; Evidence as one line with its link.
   No checks, To lower it steps, folds or footer.
 
-Several PRs get one table, riskiest first, and no visuals:
+Several PRs get one table, riskiest first, and no visuals; Risk follows the
+header's rule:
 
 ```markdown
 | PR | Title | Lines | Linear | Risk |
