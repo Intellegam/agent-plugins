@@ -284,7 +284,7 @@ four parts. Leave out a part you do not have.
 Several PRs get one table, riskiest first, and no visuals:
 
 ```markdown
-| Risk | PR | Title | Lines |
-| :--- | :--- | :--- | ---: |
-| `●●○○ Typical` | [plugins#44](<PR URL>) | `feat(dev-workflow)` Add chat review cards | +359 −193 |
+| Risk | PR | Title | Lines | Links |
+| :--- | :--- | :--- | ---: | :--- |
+| `●●○○ Typical` | [plugins#44](<PR URL>) | `feat(dev-workflow)` Add chat review cards | +359 −193 | [Linear](<Linear review URL>) · [Review](<page URL>) |
 ```
