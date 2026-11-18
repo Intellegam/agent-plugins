@@ -96,7 +96,7 @@ function draw(focus){
  root.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){var d=b.dataset.go;i=Math.max(0,Math.min(P.length-1,i+ +d));draw(['[data-go="'+d+'"]:not([disabled])','[data-go]:not([disabled])'])}});
  [].concat(focus||[]).some(function(s){var f=root.querySelector(s);if(f)f.focus();return !!f})
 }
-function fit(ev){var hv=ev.target.closest&&ev.target.closest('.cc-hv');if(!hv)return;var t=hv.querySelector('.tip');if(!t)return;t.style.left='';t.style.right='';var r=t.getBoundingClientRect(),W=document.documentElement.clientWidth;if(!r.width)return;var dx=r.right>W-8?r.right-(W-8):r.left<8?r.left-8:0;if(dx){t.style.right='auto';t.style.left=(t.offsetLeft-dx)+'px'}}
+function fit(ev){var hv=ev.target.closest&&ev.target.closest('.cc-hv');if(!hv)return;var t=hv.querySelector('.tip');if(!t)return;t.style.left=t.style.right=t.style.top=t.style.bottom='';var r=t.getBoundingClientRect(),W=document.documentElement.clientWidth,H=window.innerHeight;if(!r.width)return;var dx=r.right>W-8?r.right-(W-8):r.left<8?r.left-8:0;if(dx){t.style.right='auto';t.style.left=(t.offsetLeft-dx)+'px'}var up=hv.getBoundingClientRect().top;if(r.bottom>H-4&&up>H-r.top){t.style.top='auto';t.style.bottom='calc(100% + 6px)'}}
 root.addEventListener('mouseover',fit);root.addEventListener('focusin',fit);
 try{draw()}catch(err){root.textContent='The card could not be drawn: '+err.message}
 })();
