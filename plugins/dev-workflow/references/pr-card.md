@@ -189,15 +189,20 @@ card:
 A compact review card the agent shows in its own chat reply, so the user can
 judge a PR without opening it. Show it after opening a PR, after rewriting its
 card, and when reporting a PR's state; build it from the PR card and live PR
-state. Several PRs in one reply share one card, riskiest first.
+state. Several PRs in one reply share one card, riskiest first. The reply
+holds the markdown card; when you can write files, link a review page too.
 
-### HTML Card
+### Review Page
 
-Where the host renders inline HTML in chat and runs its scripts (a widget
-tool such as `show_widget`), post `chat-card.html` whole and change only the JSON in its
-`cc-data` script, with every `<` written as `\u003c`. Leave out a field you do
-not have. The card cannot fetch anything, so its values are a snapshot of the
-moment it is posted.
+Write the JSON below to a file and run
+`python3 <plugin root>/scripts/chat_card.py <data.json> <page.html>`. It checks
+and escapes the data and writes a standalone page from `chat-card.html`; never
+read, paste or post that HTML, since it would fill your context. Where a tool
+can publish a local file as a page the user opens beside the chat (Claude
+Code's Artifact tool), publish it, and reuse the same page path for a PR within
+a session so its link stays; otherwise link the file. Put the link under the
+markdown card. Leave out a field you do not have. The page cannot fetch
+anything, so its values are a snapshot of the moment it is written.
 
 ```json
 {"checkedAt": "06:45", "prs": [{
@@ -238,8 +243,7 @@ moment it is posted.
 
 ### Markdown Card
 
-Everywhere else, write markdown, one paragraph per line so no renderer joins
-them:
+Write it one paragraph per line so no renderer joins them:
 
 ```markdown
 **[#1442 feat(files): raise the pdf upload limit to 1 gb](<PR URL>)** · `●●○○ Typical risk` · `+5 −5`
