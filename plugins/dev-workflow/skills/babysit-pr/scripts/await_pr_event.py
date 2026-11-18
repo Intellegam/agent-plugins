@@ -22,7 +22,8 @@ exactly one terminal event:
 - ``new-head`` — a commit was pushed; CI and reviewers restart
 - ``ci-failure`` — a check entered a failing bucket (fail or cancel)
 - ``ci-concluded`` — no checks pending anymore (green or red); assess
-- ``merge-state`` — mergeability, merge state, or review decision changed
+- ``merge-state`` — mergeability, merge state, review decision, or draft
+  status changed
 - ``pr-closed`` — the PR was merged or closed; stop babysitting
 - ``quiet`` — nothing happened for --quiet-after seconds (default 1800);
   the PR looks settled, assess for merge
@@ -102,7 +103,7 @@ def _snapshot(pr: str) -> dict | None:
             "--json",
             (
                 "reviews,comments,reactionGroups,headRefOid,state,mergeable,"
-                "mergeStateStatus,reviewDecision"
+                "mergeStateStatus,reviewDecision,isDraft"
             ),
         ]
     )
@@ -129,6 +130,7 @@ def _snapshot(pr: str) -> dict | None:
         "mergeable": view.get("mergeable"),
         "merge_state": view.get("mergeStateStatus"),
         "review_decision": view.get("reviewDecision"),
+        "draft": view.get("isDraft"),
         "checks": sorted(c["name"] for c in checks),
         "failing": sorted(
             c["name"] for c in checks if c.get("bucket") in _FAIL_BUCKETS
@@ -156,7 +158,7 @@ def _event(base: dict, now: dict) -> str | None:
         not base["concluded"] or now["checks"] != base["checks"]
     ):
         return "ci-concluded"
-    merge_keys = ("mergeable", "merge_state", "review_decision")
+    merge_keys = ("mergeable", "merge_state", "review_decision", "draft")
     if any(now[key] != base[key] for key in merge_keys):
         return "merge-state"
     return None

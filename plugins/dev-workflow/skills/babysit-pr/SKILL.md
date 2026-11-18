@@ -102,7 +102,7 @@ The waiter first emits `armed`, then emits one terminal event and exits:
 - `new-head` — a commit was pushed
 - `ci-failure` — a check entered a failing bucket
 - `ci-concluded` — all checks concluded
-- `merge-state` — mergeability or review-decision state changed
+- `merge-state` — mergeability, review-decision or draft state changed
 - `pr-closed` — merged or closed
 - `quiet` — no event for 30 minutes; reassess, but do not treat silence as approval
 
