@@ -15,7 +15,10 @@
 .cc-trk{flex:1;height:3px;border-radius:2px;background:var(--line);overflow:hidden}.cc-trk span{display:block;height:100%;background:var(--acc);transition:width .2s}
 .cc-nb{font:inherit;font-size:13px;color:var(--fg2);background:none;border:1px solid var(--line);border-radius:7px;padding:3px 9px;cursor:pointer}.cc-nb:disabled{opacity:.4;cursor:default}
 .cc-card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
-.cc-hd{padding:22px 26px 22px;display:flex;flex-direction:column;gap:16px}
+.cc-hd{display:flex;flex-direction:column}.cc-hd>*{padding:0 26px}
+.cc-hd>.cc-l1{padding:14px 26px;border-bottom:1px solid var(--line)}
+.cc-bd{padding:20px 26px 18px;display:flex;flex-direction:column;gap:12px}
+.cc-hd>.cc-tch{padding:16px 26px 18px;border-top:1px solid var(--line)}
 .cc-l1{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;min-height:28px;font-size:13px;color:var(--fg2)}
 .cc-sep{flex:none;width:1px;height:16px;background:var(--line)}@media (max-width:520px){.cc-sep{display:none}}
 .cc-lk{display:inline-flex;align-items:center;gap:8px}
@@ -37,11 +40,11 @@
 .cc-dots{letter-spacing:2px;white-space:nowrap}.cc-dots b{font-weight:400}.cc-dots i{font-style:normal;color:var(--mut)}
 .lv1 b{color:var(--ok)}.lv2 b{color:var(--watch)}.lv3 b,.lv4 b{color:var(--risk)}
 .cc-loc{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13px}.cc-add{color:var(--ok)}.cc-del{color:var(--risk)}
-.cc-ttl{display:flex;align-items:baseline;gap:10px;font-size:18px;font-weight:650;line-height:1.35;margin-top:2px}
+.cc-ttl{display:flex;align-items:baseline;gap:10px;font-size:18px;font-weight:650;line-height:1.35}
 .cc-ttl .cc-ty{font-size:12.5px;line-height:20px;padding:0 7px;transform:translateY(-2px)}
 .cc-ttl .tx{flex:1;min-width:0;overflow-wrap:anywhere}
 .cc-sum{font-size:15px;line-height:1.6;margin:0;color:var(--fg2)}
-.cc-tch{display:flex;align-items:flex-start;gap:12px;margin-top:2px}
+.cc-tch{display:flex;align-items:flex-start;gap:12px}
 .cc-tch .lbl,.cc-lb{flex:none;width:var(--lw);font-size:12.5px;line-height:28px;color:var(--mut)}
 .cc-tch .cs{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:8px}
 .cc-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;line-height:18px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
@@ -92,12 +95,12 @@ function visuals(p){var K={flow:flow,numbers:numbers,message:message},out=(Array
 function card(p){
  var n=LV[p.level]||0,s=p.state||{},gh=url(p.url),ln=url(p.linear),is=p.issue&&url(p.issue.url);
  var l1='<div class="cc-l1"><span class="cc-hv cc-pill" tabindex="0">'+dots(n)+'<span>'+LN[n]+'</span>'+riskTip(p,n)+'</span>'
-  +(lines(p.added,p.deleted)?'<span class="cc-hv cc-loc" tabindex="0">'+lines(p.added,p.deleted)+locTip(p)+'</span>':'')+'<span class="cc-sep"></span><span class="cc-lk"><span class="cc-ics">'
+  +(lines(p.added,p.deleted)?'<span class="cc-sep"></span><span class="cc-hv cc-loc" tabindex="0">'+lines(p.added,p.deleted)+locTip(p)+'</span>':'')+'<span class="cc-sep"></span><span class="cc-lk"><span class="cc-ics">'
   +(gh?'<a class="cc-ic" href="'+gh+'" target="_blank" rel="noopener" title="Open on GitHub" aria-label="Open on GitHub">'+GH+'</a>':'')
   +(ln?'<a class="cc-ic" href="'+ln+'" target="_blank" rel="noopener" title="Open in Linear" aria-label="Open in Linear">'+LI+'</a>':'')
   +'</span><span class="cc-ref">'+e(p.ref)+'</span>'+(is?'<a href="'+is+'" target="_blank" rel="noopener">'+e(p.issue.key)+'</a>':'')+'</span>'
   +(s.label?'<span style="margin-left:auto"><span class="cc-hv right cc-pill '+v(s.tone)+'" tabindex="0">'+e(s.label)+stateTip(p)+'</span></span>':'')+'</div>';
- return '<div class="cc-card"><div class="cc-hd">'+l1+'<div class="cc-ttl">'+(p.type?'<span class="cc-ty">'+e(p.type)+'</span>':'')+'<span class="tx">'+e(p.title)+'</span></div>'+(p.summary?'<p class="cc-sum">'+e(p.summary)+'</p>':'')+touches(p)+'</div>'+visuals(p)+'</div>';
+ return '<div class="cc-card"><div class="cc-hd">'+l1+'<div class="cc-bd"><div class="cc-ttl">'+(p.type?'<span class="cc-ty">'+e(p.type)+'</span>':'')+'<span class="tx">'+e(p.title)+'</span></div>'+(p.summary?'<p class="cc-sum">'+e(p.summary)+'</p>':'')+'</div>'+touches(p)+'</div>'+visuals(p)+'</div>';
 }
 function table(){return '<div class="cc-tbl">'+P.map(function(p,ix){return '<div class="cc-tr'+(ix===i?' cur':'')+'" data-ix="'+ix+'"><span class="cc-tt" role="button" tabindex="0" aria-current="'+(ix===i)+'">'+(p.type?'<span class="cc-ty">'+e(p.type)+'</span>':'')+'<span class="t">'+e(p.title)+'</span></span><span>'+(dots(LV[p.level]||0)||'<span class="cc-ref">Not rated</span>')+'</span><span class="cc-loc">'+lines(p.added,p.deleted)+'</span></div>'}).join('')+'</div>'}
 function draw(focus){
