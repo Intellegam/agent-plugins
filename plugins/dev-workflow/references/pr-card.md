@@ -209,7 +209,12 @@ moment it is posted.
   "checks": [{"verdict": "watch", "name": "Impact", "short": "<short>"}],
   "lower": ["<unticked step>"],
   "areas": [{"name": "references", "added": 112, "deleted": 156, "verdict": "watch", "note": "<note>"}],
-  "how": {"before": ["<step>"], "beforeEnd": "<old outcome>", "after": ["<step>"], "afterEnd": "<new outcome>"}
+  "visuals": [
+    {"kind": "flow", "title": "<heading>", "before": ["<step>"], "beforeEnd": "<old outcome>", "after": ["<step>"], "afterEnd": "<new outcome>"},
+    {"kind": "numbers", "title": "<heading>", "rows": [{"label": "<row>", "before": "<old>", "after": "<new>"}]},
+    {"kind": "message", "title": "<where it appears>", "before": "<old text>", "after": "<new text>"}
+  ],
+  "evidence": {"text": "<sentence>", "url": "<link>", "link": "<link text>", "series": {"title": "<what it counts>", "labels": ["<label>"], "values": [3]}}
 }]}
 ```
 
@@ -227,8 +232,9 @@ moment it is posted.
 - `checks`, `lower`, `areas`: the rating's checks in order, the unticked To
   lower it steps, and the Touches areas with their line counts; an area's
   `verdict` is its icon's verdict, `null` for a minor area.
-- `how`: only when the card has a Flow visual; its old and new paths, each
-  with its last step as the outcome.
+- `visuals`: the card's visuals in its order, each with its `####` heading as
+  `title`; a flow gives its old and new paths with each last step as the
+  outcome. `evidence`: the card's Evidence line and its count series.
 
 ### Markdown Card
 
