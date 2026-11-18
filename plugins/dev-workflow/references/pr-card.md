@@ -187,17 +187,61 @@ card:
 A compact review card the agent shows in its own chat reply, so the user can
 judge a PR without opening it. Show it after opening a PR, after rewriting its
 card, and when reporting a PR's state; build it from the PR card and live PR
-state:
+state. Several PRs in one reply share one card, riskiest first.
+
+### HTML Card
+
+Where the host renders inline HTML in chat (a widget tool such as
+`show_widget`), post `chat-card.html` whole and change only the JSON in its
+`cc-data` script, with every `<` written as `\u003c`. Leave out a field you do
+not have. The card cannot fetch anything, so its values are a snapshot of the
+moment it is posted.
+
+```json
+{"checkedAt": "06:45", "prs": [{
+  "ref": "plugins#44", "type": "feat(dev-workflow)", "title": "Add chat review cards",
+  "url": "<PR URL>", "linear": "<Linear review URL>", "issue": {"key": "DEV-228", "url": "<issue URL>"},
+  "level": "typical", "added": 180, "deleted": 186,
+  "state": {"label": "Ready to merge", "tone": "ok", "checks": [{"verdict": "ok", "name": "CI", "text": "All checks green"}]},
+  "summary": "<the card's second sentence>",
+  "checks": [{"verdict": "watch", "name": "Impact", "short": "<short>"}],
+  "lower": ["<unticked step>"],
+  "areas": [{"name": "references", "added": 112, "deleted": 156, "verdict": "watch", "note": "<note>"}],
+  "how": {"before": ["<step>"], "beforeEnd": "<old outcome>", "after": ["<step>"], "afterEnd": "<new outcome>"}
+}]}
+```
+
+- `checkedAt`: the user's local time when the PR state was read.
+- `ref`, `type`, `title`: `repo#number`, the PR title's conventional-commit
+  prefix, and the rest of the title.
+- `linear`: Linear's review page for the PR, when known; `issue`: the linked
+  Linear issue.
+- `level`: the rating's level, or `null` without a rating; `added` and
+  `deleted`: the PR's totals.
+- `state`: one label for what decides the next step (`Ready to merge`,
+  `Draft`, `CI failing`, `CI running`, `Open threads`, `Card is stale`,
+  `Blocked`), its tone, and the facts behind it (CI, unresolved threads,
+  card freshness, draft), each with a verdict.
+- `checks`, `lower`, `areas`: the rating's checks in order, the unticked To
+  lower it steps, and the Touches areas with their line counts; an area's
+  `verdict` is its icon's verdict, `null` for a minor area.
+- `how`: only when the card has a Flow visual; its old and new paths, each
+  with its last step as the outcome.
+
+### Markdown Card
+
+Everywhere else, write markdown:
 
 ```markdown
-**[#1442 feat(files): raise the pdf upload limit to 1 gb](<PR URL>)** · ●●○○ Typical · `+5 −5`
+**[#1442 feat(files): raise the pdf upload limit to 1 gb](<PR URL>)** · `●●○○ Typical risk` · `+5 −5`
 The upload check allows PDFs up to 1 GB.
 CI ✅ · 0 open threads · draft
 ⚠️ Impact: must not merge before the Python 1 GB cap is live
 ```
 
 - Line 1: the PR number and title linked to the PR, the meter and level name
-  (`Not rated` without a rating), and the PR's total added and deleted lines.
+  as a code-span pill (`Not rated` without a rating), and the PR's total added
+  and deleted lines.
 - Line 2: the card's second sentence (Fix, Feature or Change). A PR without a
   card shows `Not rated` on line 1 and skips line 2 and the check lines.
 - Line 3: CI as ✅, ❌ or ⏳, the number of unresolved review threads, and
@@ -205,11 +249,10 @@ CI ✅ · 0 open threads · draft
 - Then one line per check that is not `ok`, riskiest first, with its icon,
   name and `short`; none when every check is `ok`.
 
-Several PRs in one reply get one table instead, riskiest first, with `draft`
-and `stale card` under State:
+Several PRs get one table instead, with `draft` and `stale card` under State:
 
 ```markdown
 | PR | Change | Risk | Lines | CI | Threads | State |
 | :--- | :--- | :--- | ---: | :---: | ---: | :--- |
-| [#1442](<PR URL>) feat(files): raise the pdf upload limit | The upload check allows PDFs up to 1 GB. | ●●○○ Typical | +5 −5 | ✅ | 0 | draft |
+| [#1442](<PR URL>) feat(files): raise the pdf upload limit | The upload check allows PDFs up to 1 GB. | `●●○○ Typical` | +5 −5 | ✅ | 0 | draft |
 ```
