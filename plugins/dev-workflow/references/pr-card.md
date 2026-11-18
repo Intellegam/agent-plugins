@@ -200,8 +200,7 @@ and escapes the data and writes a standalone page from `chat-card.html`; never
 read, paste or post that HTML, since it would fill your context. Where a tool
 can publish a local file as a page the user opens beside the chat (Claude
 Code's Artifact tool), publish it, and reuse the same page path for a PR within
-a session so its link stays; otherwise link the file. Put the link under the
-markdown card. Leave out a field you do not have. The page cannot fetch
+a session so its link stays; otherwise link the file. Leave out a field you do not have. The page cannot fetch
 anything, so its values are a snapshot of the moment it is written.
 
 ```json
@@ -249,7 +248,7 @@ every line, an empty `>` line between paragraphs, and a `---` line between the
 four parts. Leave out a part you do not have.
 
 ````markdown
-> `●●○○ Typical risk` · `+359 −193` · [GitHub](<PR URL>) · [Linear](<Linear review URL>) · **plugins#44** · `Open threads`
+> `●●○○ Typical risk` · `+359 −193` · [GitHub](<PR URL>) · [Linear](<Linear review URL>) · [Review page](<page URL>) · **plugins#44**
 >
 > ---
 >
@@ -272,8 +271,8 @@ four parts. Leave out a part you do not have.
 
 - Header: the meter and level name (`Not rated` without a rating), the PR's
   added and deleted lines, the GitHub link, the Linear review link when known,
-  the linked issue's key and priority when there is one, the bold `ref`, and
-  the `state` label from the review page's data.
+  the review page link when there is one, the linked issue's key and
+  priority when there is one, and the bold `ref`.
 - Title: the conventional-commit prefix in a code span, then the rest bold;
   below it, the card's second sentence (Fix, Feature or Change).
 - Touches: the card's areas in its order, bold when the area's verdict is not
