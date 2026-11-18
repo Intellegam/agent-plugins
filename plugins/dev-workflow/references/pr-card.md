@@ -191,8 +191,8 @@ state. Several PRs in one reply share one card, riskiest first.
 
 ### HTML Card
 
-Where the host renders inline HTML in chat (a widget tool such as
-`show_widget`), post `chat-card.html` whole and change only the JSON in its
+Where the host renders inline HTML in chat and runs its scripts (a widget
+tool such as `show_widget`), post `chat-card.html` whole and change only the JSON in its
 `cc-data` script, with every `<` written as `\u003c`. Leave out a field you do
 not have. The card cannot fetch anything, so its values are a snapshot of the
 moment it is posted.
