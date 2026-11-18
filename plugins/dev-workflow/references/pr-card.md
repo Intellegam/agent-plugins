@@ -29,7 +29,9 @@ agent-managed: rewrite it whole on every update, and put human notes below
 it. On a refresh, carry over from the old card the ticked steps with the same
 timing and text, each drift item's Kept because reason while its Planned and
 Now are unchanged, and the Linear block's `agent`; everything else comes from
-the new rating. A body with more than one region is
+the new rating. When Freshness moves the card forward without one, keep the
+rating and recount Touches, the footer and the Linear `sha` for the new head.
+A body with more than one region is
 invalid.
 
 When opening a PR, put two `---` lines after the end marker and fold the detailed
