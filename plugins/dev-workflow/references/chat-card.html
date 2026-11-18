@@ -30,7 +30,7 @@
 .cc-hv:hover .tip,.cc-hv:focus .tip{display:block}
 .tip .rows{display:grid;grid-template-columns:16px auto 1fr;gap:5px 8px;align-items:baseline}
 .tip .nm{font-weight:600}.tip .dim{color:var(--mut)}.tip .sub{color:var(--fg2)}
-.tip .v-ok{color:var(--mut)}.tip .v-watch{color:var(--watch)}.tip .v-risk{color:var(--risk)}.tip .v-pass{color:var(--ok)}
+.tip .v-ok,.tip .v-unknown{color:var(--mut)}.tip .v-watch{color:var(--watch)}.tip .v-risk{color:var(--risk)}.tip .v-pass{color:var(--ok)}
 .tip .lo{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;color:var(--fg2)}.tip .lo b{color:var(--fg)}
 .tip .ar{display:grid;grid-template-columns:auto auto;gap:4px 16px;align-items:baseline}.tip .ar .n{text-align:right}
 .cc-dots{letter-spacing:2px;white-space:nowrap}.cc-dots b{font-weight:400}.cc-dots i{font-style:normal;color:var(--mut)}
@@ -44,7 +44,7 @@
 .cc-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;line-height:18px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
 .cc-chip.main{color:var(--fg);font-weight:600}
 .cc-chip .dt{width:6px;height:6px;border-radius:50%;background:var(--ok)}
-.cc-chip.watch .dt{background:var(--watch)}.cc-chip.risk .dt{background:var(--risk)}
+.cc-chip.watch .dt{background:var(--watch)}.cc-chip.unknown .dt{background:var(--mut)}.cc-chip.risk .dt{background:var(--risk)}
 .cc-how{padding:14px 20px 16px;border-top:1px solid var(--line);display:grid;grid-template-columns:52px 1fr;gap:8px 12px;align-items:center;font-size:13px}
 .cc-how .lb{color:var(--mut)}
 .cc-ch{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
@@ -63,10 +63,10 @@ try{D=JSON.parse(dataEl.textContent)}catch(err){root.textContent='The card data 
 var P=Array.isArray(D.prs)?D.prs:[];
 var GH='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
 var LI='<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M1.2 61.5c-.2-.9.9-1.5 1.6-.9l36.5 36.5c.7.7.1 1.8-.9 1.6C20.1 94.5 5.5 79.9 1.2 61.5zM0 46.9c0 .3.1.6.3.8l52.1 52c.2.2.5.3.8.3 2.4-.1 4.7-.5 7-.9.8-.2 1-1.1.5-1.6L2.6 39.4c-.6-.5-1.5-.3-1.6.5-.5 2.3-.8 4.6-1 7zM4.2 29.7c-.2.4-.1.8.2 1.1l64.8 64.8c.3.3.7.4 1.1.2 1.8-.8 3.5-1.7 5.2-2.7.6-.3.6-1.1.2-1.5L8.4 24.3c-.5-.5-1.2-.4-1.5.2-1 1.7-1.9 3.4-2.7 5.2zM12.7 18.1c-.4-.4-.4-1-.1-1.4C21.8 6.5 35.1 0 50 0c27.6 0 50 22.4 50 50 0 14.8-6.5 28.2-16.7 37.3-.4.4-1 .3-1.4 0L12.7 18.1z"/></svg>';
-var LV={low:1,typical:2,high:3,very_high:4},LN=['Not rated','Low risk','Typical risk','High risk','Very high risk'],IC={ok:'✓',watch:'◉',risk:'⚠'};
+var LV={low:1,typical:2,high:3,very_high:4},LN=['Not rated','Low risk','Typical risk','High risk','Very high risk'],IC={ok:'✓',watch:'◉',risk:'⚠',unknown:'–'};
 function e(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function url(u){return /^https:\/\//.test(u||'')?e(u):''}
-function v(x){return IC[x]?x:'ok'}
+function v(x){return IC[x]?x:'unknown'}
 function num(x){return typeof x==='number'&&isFinite(x)}
 function lines(a,d){return num(a)&&num(d)?'<span class="cc-add">+'+a+'</span> <span class="cc-del">−'+d+'</span>':''}
 function plain(a,d){return num(a)&&num(d)?'+'+a+' −'+d:''}

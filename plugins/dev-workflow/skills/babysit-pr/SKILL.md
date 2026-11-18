@@ -85,8 +85,9 @@ gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestRe
 ```
 
 Apply the draft rule above to the `isDraft` of this pass, not the first lookup:
-a draft pass refreshes the card, runs step 3, and returns to the waiter,
-skipping steps 2, 4 and 5.
+a draft pass refreshes the card and runs step 3, committing and pushing its
+fixes under step 2's commit and push rules, then returns to the waiter without
+classifying or answering feedback or assessing readiness.
 
 If a code tour is known to exist, retain its source head SHA plus the set of
 heads for which a refresh was already offered in task context and preserve both
