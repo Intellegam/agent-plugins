@@ -244,7 +244,7 @@ CI ✅ · 0 open threads · draft
   and deleted lines.
 - Line 2: the card's second sentence (Fix, Feature or Change). A PR without a
   card shows `Not rated` on line 1 and skips line 2 and the check lines.
-- Line 3: CI as ✅, ❌ or ⏳, the number of unresolved review threads, and
+- Line 3: CI as ✅, ❌, ⏳ or `no checks`, the number of unresolved review threads, and
   `draft` and `stale card` when they apply.
 - Then one line per check that is not `ok`, riskiest first, with its icon,
   name and `short`; none when every check is `ok`.

@@ -81,8 +81,10 @@ After arming, fetch all current state:
 ```bash
 python3 "<skill-base>/scripts/fetch_open_threads.py" "$pr"
 gh pr checks "$pr"
-gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestReviews,comments,reactionGroups,headRefOid
+gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestReviews,comments,reactionGroups,headRefOid,isDraft
 ```
+
+Apply the draft rule above to the `isDraft` of this pass, not the first lookup.
 
 If a code tour is known to exist, retain its source head SHA plus the set of
 heads for which a refresh was already offered in task context and preserve both
