@@ -21,15 +21,15 @@ The card sits between two markers at the very top of the body:
 assessed commit, or the commit the `merge-risk` skill's Freshness rule moved it
 to) and its merge base. A card is stale when its `head` is not the PR's head or
 its `base` is not the PR's merge base, or when its marker has neither (a card
-written before dev-workflow 0.17.0). A marker that also carries `ci=failed`
-(after `base`) holds a rating that included a CI failure on its head.
+written before dev-workflow 0.17.0).
 
 Everything after the end marker belongs to the repository's PR template or the
 detailed description and is never rewritten by card updates. The region is
 agent-managed: rewrite it whole on every update, and put human notes below
 it. On a refresh, carry over from the old card the ticked steps with the same
-timing and text, each drift item's Kept because reason while its Planned and Now are unchanged, and the Linear block's `agent`;
-everything else comes from the new rating. A body with more than one region is
+timing and text, each drift item's Kept because reason while its Planned and
+Now are unchanged, and the Linear block's `agent`; everything else comes from
+the new rating. A body with more than one region is
 invalid.
 
 When opening a PR, put two `---` lines after the end marker and fold the detailed
