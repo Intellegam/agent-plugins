@@ -15,8 +15,8 @@
 .cc-trk{flex:1;height:3px;border-radius:2px;background:var(--line);overflow:hidden}.cc-trk span{display:block;height:100%;background:var(--acc);transition:width .2s}
 .cc-nb{font:inherit;font-size:13px;color:var(--fg2);background:none;border:1px solid var(--line);border-radius:7px;padding:3px 9px;cursor:pointer}.cc-nb:disabled{opacity:.4;cursor:default}
 .cc-card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
-.cc-hd{padding:16px 20px 14px;display:flex;flex-direction:column;gap:10px}
-.cc-l1{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px;color:var(--fg2)}
+.cc-hd{padding:22px 26px 22px;display:flex;flex-direction:column;gap:16px}
+.cc-l1{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;color:var(--fg2)}
 .cc-sep{color:var(--mut)}
 .cc-ics{display:inline-flex;gap:2px;margin-right:-4px}
 .cc-ic{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:var(--fg2)}.cc-ic:hover{background:var(--line);color:var(--fg)}
@@ -36,17 +36,17 @@
 .cc-dots{letter-spacing:2px;white-space:nowrap}.cc-dots b{font-weight:400}.cc-dots i{font-style:normal;color:var(--mut)}
 .lv1 b{color:var(--ok)}.lv2 b{color:var(--watch)}.lv3 b,.lv4 b{color:var(--risk)}
 .cc-loc{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13px}.cc-add{color:var(--ok)}.cc-del{color:var(--risk)}
-.cc-ttl{display:flex;align-items:baseline;gap:10px;font-size:18px;font-weight:650;line-height:1.3}
+.cc-ttl{display:flex;align-items:baseline;gap:10px;font-size:18px;font-weight:650;line-height:1.35;margin-top:2px}
 .cc-ttl .cc-ty{font-size:12.5px;line-height:20px;padding:0 7px;transform:translateY(-2px)}
 .cc-ttl .tx{flex:1;min-width:0;overflow-wrap:anywhere}
-.cc-sum{font-size:15px;margin:0}
-.cc-tch{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.cc-sum{font-size:15px;line-height:1.6;margin:0;color:var(--fg2)}
+.cc-tch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:2px}
 .cc-tch .lbl{font-size:12.5px;color:var(--mut);margin-right:4px}
-.cc-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;line-height:18px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+.cc-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;line-height:18px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
 .cc-chip.main{color:var(--fg);font-weight:600}
 .cc-chip .dt{width:6px;height:6px;border-radius:50%;background:var(--ok)}
 .cc-chip.watch .dt{background:var(--watch)}.cc-chip.unknown .dt{background:var(--mut)}.cc-chip.risk .dt{background:var(--risk)}
-.cc-how{padding:14px 20px 16px;border-top:1px solid var(--line);display:grid;grid-template-columns:52px 1fr;gap:8px 12px;align-items:center;font-size:13px}
+.cc-how{padding:18px 26px 20px;border-top:1px solid var(--line);display:grid;grid-template-columns:52px 1fr;gap:8px 12px;align-items:center;font-size:13px}
 .cc-how .lb{color:var(--mut)}
 .cc-ch{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .cc-bx{border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--fg2)}
@@ -97,8 +97,10 @@ function draw(focus){
  root.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){var d=b.dataset.go;i=Math.max(0,Math.min(P.length-1,i+ +d));draw(['[data-go="'+d+'"]:not([disabled])','[data-go]:not([disabled])'])}});
  [].concat(focus||[]).some(function(s){var f=root.querySelector(s);if(f)f.focus();return !!f})
 }
-function fit(ev){var hv=ev.target.closest&&ev.target.closest('.cc-hv');if(!hv)return;var t=hv.querySelector('.tip');if(!t)return;t.style.left=t.style.right=t.style.top=t.style.bottom='';var r=t.getBoundingClientRect(),W=document.documentElement.clientWidth,H=window.innerHeight;if(!r.width)return;var dx=r.right>W-8?r.right-(W-8):r.left<8?r.left-8:0;if(dx){t.style.right='auto';t.style.left=(t.offsetLeft-dx)+'px'}var above=hv.getBoundingClientRect().top-10,below=H-4-r.top;if(r.height>below&&r.height<=above){t.style.top='auto';t.style.bottom='calc(100% + 6px)'}}
-root.addEventListener('mouseover',fit);root.addEventListener('focusin',fit);
+var cur=null;
+function fit(ev){var hv=ev.target.closest&&ev.target.closest('.cc-hv');if(!hv||hv===cur)return;var t=hv.querySelector('.tip');if(!t)return;cur=hv;root.style.paddingBottom='';t.style.left=t.style.right=t.style.top=t.style.bottom='';var r=t.getBoundingClientRect(),W=document.documentElement.clientWidth,H=window.innerHeight;if(!r.width)return;var dx=r.right>W-8?r.right-(W-8):r.left<8?r.left-8:0;if(dx){t.style.right='auto';t.style.left=(t.offsetLeft-dx)+'px'}var above=hv.getBoundingClientRect().top-10,below=H-4-r.top;if(r.height<=below)return;if(r.height<=above){t.style.top='auto';t.style.bottom='calc(100% + 6px)'}else root.style.paddingBottom=Math.ceil(r.bottom-(H-12))+'px'}
+function unfit(ev){if(cur&&!cur.contains(ev.relatedTarget)){cur=null;root.style.paddingBottom=''}}
+root.addEventListener('mouseover',fit);root.addEventListener('focusin',fit);root.addEventListener('mouseout',unfit);root.addEventListener('focusout',unfit);
 try{draw()}catch(err){root.textContent='The card could not be drawn: '+err.message}
 })();
 </script>
