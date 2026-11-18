@@ -189,66 +189,14 @@ card:
 A compact review card the agent shows in its own chat reply, so the user can
 judge a PR without opening it. Show it after opening a PR, after rewriting its
 card, and when reporting a PR's state; build it from the PR card and live PR
-state. Several PRs in one reply share one card, riskiest first. The reply
-holds the markdown card; when you can write files, link a review page too.
+state.
 
-### Review Page
-
-Write the JSON below to a file and run
-`python3 <plugin root>/scripts/chat_card.py <data.json> <page.html>`. It checks
-and escapes the data and writes a standalone page from `chat-card.html`; never
-read, paste or post that HTML, since it would fill your context. Where a tool
-can publish a local file as a page the user opens beside the chat (Claude
-Code's Artifact tool), publish it, and reuse the same page path for a PR within
-a session so its link stays; otherwise link the file. Leave out a field you do not have. The page cannot fetch
-anything, so its values are a snapshot of the moment it is written.
-
-```json
-{"checkedAt": "06:45", "prs": [{
-  "ref": "plugins#44", "type": "feat(dev-workflow)", "title": "Add chat review cards",
-  "url": "<PR URL>", "linear": "<Linear review URL>", "issue": {"key": "DEV-228", "url": "<issue URL>"},
-  "level": "typical", "added": 180, "deleted": 186,
-  "state": {"label": "Ready to merge", "tone": "ok", "checks": [{"verdict": "ok", "name": "CI", "text": "All checks green"}]},
-  "summary": "<the card's second sentence>",
-  "checks": [{"verdict": "watch", "name": "Impact", "short": "<short>"}],
-  "lower": ["<unticked step>"],
-  "areas": [{"name": "references", "added": 112, "deleted": 156, "verdict": "watch", "note": "<note>"}],
-  "visuals": [
-    {"kind": "flow", "title": "<heading>", "before": ["<step>"], "beforeEnd": "<old outcome>", "after": ["<step>"], "afterEnd": "<new outcome>"},
-    {"kind": "numbers", "title": "<heading>", "rows": [{"label": "<row>", "before": "<old>", "after": "<new>"}]},
-    {"kind": "message", "title": "<where it appears>", "before": "<old text>", "after": "<new text>"}
-  ],
-  "evidence": {"text": "<sentence>", "url": "<link>", "link": "<link text>", "series": {"title": "<what it counts>", "labels": ["<label>"], "values": [3]}}
-}]}
-```
-
-- `checkedAt`: the user's local time when the PR state was read.
-- `ref`, `type`, `title`: `repo#number`, the PR title's conventional-commit
-  prefix, and the rest of the title.
-- `linear`: Linear's review page for the PR, when known; `issue`: the linked
-  Linear issue.
-- `level`: the rating's level, or `null` without a rating; `added` and
-  `deleted`: the PR's totals.
-- `state`: one label for what decides the next step (`Ready to merge`,
-  `Draft`, `CI failing`, `CI running`, `Open threads`, `Card is stale`,
-  `Blocked`), its tone, and the facts behind it (CI, unresolved threads,
-  card freshness, draft), each with a verdict.
-- `checks`, `lower`, `areas`: the rating's checks in order, the unticked To
-  lower it steps, and the Touches areas with their line counts; an area's
-  `verdict` is its icon's verdict, `null` for a minor area.
-- `visuals`: the card's visuals in its order, each with its `####` heading as
-  `title`; a flow gives its old and new paths with each last step as the
-  outcome. `evidence`: the card's Evidence line and its count series.
-
-### Markdown Card
-
-A slimmed PR card in a quote: what the review page shows before any hover,
-with nothing that needs HTML, since chat renderers drop it. Put `> ` before
-every line, an empty `>` line between paragraphs, and a `---` line between the
-four parts. Leave out a part you do not have.
+It is a slimmed PR card in a quote, with no HTML, since chat renderers drop
+it. Put `> ` before every line, an empty `>` line between paragraphs, and a
+`---` line between the four parts. Leave out a part you do not have.
 
 ````markdown
-> `●●○○ Typical risk` · `+359 −193` · [GitHub](<PR URL>) · [Linear](<Linear review URL>) · [Review page](<page URL>) · **plugins#44**
+> `●●○○ Typical risk` · `+359 −193` · [GitHub](<PR URL>) · [Linear](<Linear review URL>) · **plugins#44**
 >
 > ---
 >
@@ -271,12 +219,12 @@ four parts. Leave out a part you do not have.
 
 - Header: the meter and level name (`Not rated` without a rating), the PR's
   added and deleted lines, the GitHub link, the Linear review link when known,
-  the review page link when there is one, the linked issue's key and
-  priority when there is one, and the bold `ref`.
+  the linked issue's key and priority when there is one, and the bold
+  `ref`.
 - Title: the conventional-commit prefix in a code span, then the rest bold;
   below it, the card's second sentence (Fix, Feature or Change).
-- Touches: the card's areas in its order, bold when the area's verdict is not
-  `ok` or minor.
+- Touches: the card's areas in its order, bold when the PR card shows them
+  bold.
 - Visuals: each of the card's visuals as the PR card writes it, Mermaid
   included, under its heading in italics; Evidence as one line with its link.
   No checks, To lower it steps, folds or footer.
@@ -284,7 +232,7 @@ four parts. Leave out a part you do not have.
 Several PRs get one table, riskiest first, and no visuals:
 
 ```markdown
-| PR | Title | Lines | Links | Risk |
+| PR | Title | Lines | Linear | Risk |
 | :--- | :--- | ---: | :--- | :--- |
-| [plugins#44](<PR URL>) | `feat(dev-workflow)` Add chat review cards | +359 −193 | [Linear](<Linear review URL>) · [Review](<page URL>) | `●●○○ Typical` |
+| [plugins#44](<PR URL>) | `feat(dev-workflow)` Add chat review cards | +359 −193 | [Linear](<Linear review URL>) | `●●○○ Typical` |
 ```
