@@ -33,7 +33,7 @@ Flag an issue only when all are true:
 7. The affected code path or scenario is provable.
 8. It is not clearly an intentional behavior change.
 
-Ignore documentation, style-only observations, pre-existing bugs, and speculative concerns. Return every qualifying finding rather than stopping after the first. If nothing qualifies, report no findings.
+Ignore documentation (agent instructions such as skills, hooks and prompts define behavior and are not documentation), style-only observations, pre-existing bugs, and speculative concerns. Return every qualifying finding rather than stopping after the first. If nothing qualifies, report no findings.
 
 ## Priorities
 

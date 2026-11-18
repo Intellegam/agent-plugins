@@ -96,7 +96,7 @@ Read and apply the shared sub-agent model policy at
 
 - Launch the plugin's thin `dev-structural-lean-reviewer` and `dev-quality-reviewer` agents when those focuses are selected; their wrappers load the canonical references through `${CLAUDE_PLUGIN_ROOT}`.
 - Launch applicable project custom reviewers declared by repository guidance.
-- Use independent `codex-review` MCP sessions for broad correctness or additional Codex-focused perspectives. In the pinned MCP contract, typed `uncommitted`/`base`/`commit` modes cannot carry review instructions, so use `mode: "custom"` and put the exact target-inspection instructions, goal, constraints, Review Inputs, untracked paths, and focus in `prompt`. Do not attach a prompt to a typed mode: it is ignored. If Codex MCP is unavailable, state the fallback and use `dev-correctness-reviewer` for the required broad review.
+- Use independent `codex-review` MCP sessions for broad correctness or additional Codex-focused perspectives. In the pinned MCP contract, typed `uncommitted`/`base`/`commit` modes cannot carry review instructions, so use `mode: "custom"` and put the exact target-inspection instructions, goal, constraints, Review Inputs, untracked paths, and focus in `prompt`. Do not attach a prompt to a typed mode: it is ignored. If Codex MCP is unavailable, state the fallback and give the required broad review and each focused slot without a plugin agent (such as security or observability) its own fresh `dev-correctness-reviewer`, with the focus in its prompt.
 - Paste the actual diff into Claude reviewer prompts because the read-only agents may not have shell access. For very large targets, include the complete file list/stat plus risky hunks and require direct reads of every remaining changed file.
 
 ### Codex

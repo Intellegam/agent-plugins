@@ -26,6 +26,7 @@ def state(**changes: object) -> dict[str, object]:
         "mergeable": "MERGEABLE",
         "merge_state": "CLEAN",
         "review_decision": "APPROVED",
+        "draft": False,
         "checks": [],
         "failing": [],
         "concluded": False,
@@ -59,6 +60,7 @@ class EventTests(unittest.TestCase):
             {"mergeable": "CONFLICTING"},
             {"merge_state": "BLOCKED"},
             {"review_decision": "CHANGES_REQUESTED"},
+            {"draft": True},
         )
         for change in changes:
             with self.subTest(change=change):
@@ -73,6 +75,15 @@ class EventTests(unittest.TestCase):
                 state(failing=["test"]),
                 state(failing=["test"]),
             )
+        )
+
+    def test_recovery_between_polls_wakes_waiter(self) -> None:
+        self.assertEqual(
+            "ci-concluded",
+            await_pr_event._event(
+                state(concluded=True, checks=["test"], failing=["test"]),
+                state(concluded=True, checks=["test"], failing=[]),
+            ),
         )
 
     def test_fast_check_registration_and_completion_wakes_waiter(self) -> None:
@@ -96,6 +107,7 @@ class SnapshotTests(unittest.TestCase):
             "mergeable": "MERGEABLE",
             "mergeStateStatus": "CLEAN",
             "reviewDecision": "APPROVED",
+            "isDraft": True,
         }
         checks = [
             {"name": "lint", "state": "SUCCESS", "bucket": "pass"},
@@ -103,7 +115,9 @@ class SnapshotTests(unittest.TestCase):
         ]
         threads = [{"thread_id": "PRRT_1", "comments": [{"body": "reply"}]}]
         with (
-            patch.object(await_pr_event, "_gh_json", side_effect=[view, checks]),
+            patch.object(
+                await_pr_event, "_gh_json", side_effect=[view, checks]
+            ) as gh_json,
             patch.object(await_pr_event, "_open_threads_json", return_value=threads),
         ):
             snapshot = await_pr_event._snapshot("12")
@@ -114,6 +128,8 @@ class SnapshotTests(unittest.TestCase):
         self.assertEqual("MERGEABLE", snapshot["mergeable"])
         self.assertEqual("CLEAN", snapshot["merge_state"])
         self.assertEqual("APPROVED", snapshot["review_decision"])
+        self.assertIn("isDraft", gh_json.call_args_list[0].args[0][-1])
+        self.assertIs(True, snapshot["draft"])
         self.assertEqual(["lint", "test"], snapshot["checks"])
         self.assertFalse(snapshot["concluded"])
 

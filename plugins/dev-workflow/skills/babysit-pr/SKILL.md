@@ -55,7 +55,8 @@ gh api user --jq .login
 - Stop on an author mismatch unless the user explicitly authorized this PR.
 - Cross-repository PRs are unsupported because the scripts resolve the current
   repository. Stop if `isCrossRepository` is true.
-- Skip draft PRs; review bots generally do not review them.
+- On a draft PR, refresh the card and diagnose and fix CI only; leave review
+  feedback unclassified and unanswered until the PR is marked ready.
 - Never push to the base branch. Fixes go only to the PR head branch.
 
 **Arm first, fetch second.** Start the retained one-shot waiter exactly as the
@@ -80,8 +81,13 @@ After arming, fetch all current state:
 ```bash
 python3 "<skill-base>/scripts/fetch_open_threads.py" "$pr"
 gh pr checks "$pr"
-gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestReviews,comments,reactionGroups,headRefOid
+gh pr view "$pr" --json state,mergeable,mergeStateStatus,reviewDecision,latestReviews,comments,reactionGroups,headRefOid,isDraft
 ```
+
+Apply the draft rule above to the `isDraft` of this pass, not the first lookup:
+a draft pass refreshes the card and runs step 3, committing and pushing its
+fixes under step 2's commit and push rules, then returns to the waiter without
+classifying or answering feedback or assessing readiness.
 
 If a code tour is known to exist, retain its source head SHA plus the set of
 heads for which a refresh was already offered in task context and preserve both
@@ -99,7 +105,7 @@ The waiter first emits `armed`, then emits one terminal event and exits:
 - `new-head` — a commit was pushed
 - `ci-failure` — a check entered a failing bucket
 - `ci-concluded` — all checks concluded
-- `merge-state` — mergeability or review-decision state changed
+- `merge-state` — mergeability, review-decision or draft state changed
 - `pr-closed` — merged or closed
 - `quiet` — no event for 30 minutes; reassess, but do not treat silence as approval
 
@@ -134,8 +140,8 @@ destination during a long-lived task.
 
 ### 3. Diagnose CI before retrying
 
-Review feedback first. If a fix commit is needed, push it instead of wasting a
-rerun on the old SHA.
+On a PR ready for review, handle feedback first. If a fix commit is needed,
+push it instead of wasting a rerun on the old SHA.
 
 For each failing GitHub Actions job, inspect job-level logs even while sibling
 jobs still run:
@@ -236,7 +242,8 @@ Return to the top-level Code Tour phase for the refresh so generation,
 publication, and PR-comment authorization remain owned by the code-tour skill.
 
 Being clean and mergeable is progress, not permission to merge and not a stop
-condition while the PR remains open. Report the milestone and re-arm.
+condition while the PR remains open. Report the milestone with the PR's chat
+card and re-arm.
 
 If the repository has no CI checks, the empty check set satisfies the CI gate,
 but report `no checks configured` rather than claiming a successful check run.
@@ -251,7 +258,8 @@ Keep the skill active using the host adapter. Stop only when:
 - the user explicitly asks to stop.
 
 When stopping, terminate the retained waiter as specified by the host adapter.
-Report findings by class, commits pushed, replies made, unresolved threads and
+Open the report with the PR's chat card (`../../references/pr-card.md`), then
+report findings by class, commits pushed, replies made, unresolved threads and
 why, CI, mergeability/review decision, and reviewer status for the current SHA.
 
 ## Related skills
