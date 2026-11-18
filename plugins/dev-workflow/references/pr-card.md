@@ -27,7 +27,7 @@ Everything after the end marker belongs to the repository's PR template or the
 detailed description and is never rewritten by card updates. The region is
 agent-managed: rewrite it whole on every update, and put human notes below
 it. On a refresh, carry over from the old card the ticked steps with the same
-timing and text, each drift item's Kept because reason, and the Linear block's `agent`;
+timing and text, each drift item's Kept because reason while its Planned and Now are unchanged, and the Linear block's `agent`;
 everything else comes from the new rating. A body with more than one region is
 invalid.
 
