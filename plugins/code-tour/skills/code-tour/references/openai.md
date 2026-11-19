@@ -16,7 +16,7 @@ In Codex, use `spawn_agent` with `fork_turns="none"`, an explicit economical mod
 
 Use a browser or computer-use capability only when it is explicitly exposed in the current session. Open the built file directly when that surface permits local files. If it rejects `file://`, run `bun run preview` in the workspace, open the printed loopback URL, inspect the page, and stop the server afterward. The preview command serves only `tour.html` byte-for-byte; do not substitute a transforming development server.
 
-Check a wide and narrow layout, Mermaid diagrams rather than source fallbacks, annotation placement, diff expand/collapse interaction, and the absence of `[data-tour-runtime-error]`. If no browser or vision capability is exposed, do not probe speculative tools or claim the page was inspected. Deliver it with: “Visual QA was not performed because this session has no browser surface; please open the local file to inspect it.”
+Check a wide and narrow layout, Mermaid diagrams rather than source fallbacks, annotation placement, diff expand/collapse interaction, and the absence of `[data-tour-runtime-error]`. If no browser or vision capability is exposed, do not probe speculative tools or claim the page was inspected. Deliver it with: “Visual QA was not performed because this session has no browser surface.”
 
 ## Deliver
 

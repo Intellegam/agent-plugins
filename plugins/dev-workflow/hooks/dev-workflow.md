@@ -29,8 +29,8 @@ plan-review round; the validation review below still applies.
 
 Complete the requested outcome through relevant verification and repair of
 failures caused by the change. Resolve reversible implementation details within
-scope; ask when the answer materially changes requirements, compatibility,
-security, cost, or authority. Preserve unrelated user work.
+scope; ask when the answer materially changes requirements, cost, or
+authority. Preserve unrelated user work.
 
 Keep changes within the requested outcome. Fix adjacent issues only when that
 outcome depends on them; report independent improvements separately.
@@ -77,12 +77,11 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 
 ### 4. Commit and Push
 
-Follow repository commit conventions and the user’s existing authorization for
-commits, feature-branch pushes, and PR creation. An explicit request for the
-action is sufficient; do not request the same approval again. If authorization
-is missing, finish the reviewable local work before asking. Ask before a force
-push. Never infer permission for external communication, deployments, or
-destructive operations from an implementation request.
+Follow repository commit conventions. Push only to feature branches, never to
+the default or protected branches; force-push only with `--force-with-lease`. Never infer
+permission for external communication, production deployments (any deploy or
+merge that reaches a production environment), or destructive operations from an
+implementation request.
 
 You write the PR title and body. Open each body, except branch promotions,
 with the PR card as the `merge-risk` skill describes, and show its chat card in
@@ -90,10 +89,10 @@ your reply. When the work comes from a Linear issue, put its key in the branch
 name or the PR title so Linear links the PR; when neither can carry it, add a
 `Refs <key>` line below the card.
 
-Merging or landing requires separate approval for the exact PR. For branch
-promotions, the `promote` skill’s authorization contract applies, including any
-user or repository requirement for a separate per-PR checkpoint that has not
-been explicitly waived.
+Merge only as the user's own instructions allow. For branch promotions, the `promote`
+skill’s authorization contract applies, including any user or repository
+requirement for a separate per-PR checkpoint that has not been explicitly
+waived.
 
 ### 5. Code Tour
 
@@ -102,15 +101,11 @@ Phases 5 and 6 skip branch promotions: the `promote` skill carries them to the e
 After opening a PR and before babysitting it, handle the reviewer walkthrough as a separate workflow phase:
 
 - If repository guidance requires a code tour or the user requested one, run `/code-tour:code-tour` in Claude Code or `$code-tour:code-tour` in Codex. If the skill is unavailable, report that instead of silently skipping the requirement.
-- Otherwise, when the code-tour skill is available, offer it for normal and high-risk changes; skip the offer for tiny changes.
 - Creating the local tour does not authorize publishing it or posting to the PR. Follow the code-tour skill's separate authorization boundary for external actions.
-- A tour describes one exact PR head. When one is created, retain that head SHA in task context and preserve it across compaction or handoff. During babysitting, compare it with the current PR head regardless of who pushed; do not rebuild after every push, and offer one refresh when the updated PR first reaches a clean milestone.
 
 Do not install code-tour automatically. It remains an optional companion plugin that owns tour generation and delivery.
 
 ### 6. Babysit
 
 After opening a PR, run `/dev-workflow:babysit-pr` in Claude Code or `$dev-workflow:babysit-pr` in Codex to triage feedback and CI until the PR closes or needs a user decision.
-
-If repository guidance has no commands/checks contract, offer `dev-workflow:setup`.
 </dev-workflow>

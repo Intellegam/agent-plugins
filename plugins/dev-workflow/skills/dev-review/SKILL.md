@@ -5,7 +5,7 @@ description: Independently review a completed change before pushing or opening a
 
 # Code Review
 
-Run risk-scaled, multi-perspective review. During validation of an authorized implementation, fix verified obvious issues directly and ask only for non-obvious trade-offs. For review-only requests, report findings without editing; the fix actions below apply only within an authorized implementation.
+Run risk-scaled, multi-perspective review. During validation of an authorized implementation, fix verified issues directly. For review-only requests, report findings without editing; the fix actions below apply only within an authorized implementation.
 
 This skill is the middle of `dev-check` → `dev-review` → `dev-sync`. Invoke workflow skills through the host's skill selector: `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
@@ -117,13 +117,12 @@ Reviewer findings are hypotheses. Before fixing a behavioral claim, prove or dis
 | --- | --- | --- |
 | **already-addressed** | Existing code/test already covers it | Note and skip |
 | **false-alarm** | Claim does not match verified behavior | Skip |
-| **real-fix-obvious** | Small, unambiguous defect | Fix directly |
-| **real-fix-nonobvious** | Real but ambiguous or far-reaching | Present options to the user |
-| **judgment-call** | Subjective trade-off | Present options to the user |
+| **real-fix** | Defect | Fix directly |
+| **optional** | Subjective trade-off, no defect | Leave the code; report it as optional |
 
 ## Root-Cause Reflection
 
-Before fixing and before further review, inspect findings as a set. If several cluster around the same abstraction, data flow, or repeatedly patched area, stop patch stacking. Name the root cause, evaluate a structural fix, and prefer deletion/refactoring when tests already pass. Present far-reaching structural decisions to the user.
+Before fixing and before further review, inspect findings as a set. If several cluster around the same abstraction, data flow, or repeatedly patched area, stop patch stacking. Name the root cause, evaluate a structural fix, and prefer deletion/refactoring when tests already pass.
 
 ## Bounded Re-Review
 
@@ -138,5 +137,3 @@ Do not rerun the full panel after every fix.
 ## Report and Continue
 
 Report what was fixed, decisions still needed, root-cause concerns, reviewer participation/fallbacks, and whether the final gate passed. Continue to `dev-sync` unless the user requested review only.
-
-If user feedback exposes a missed recurring issue, offer to add it to the repository standards named under Review Inputs.

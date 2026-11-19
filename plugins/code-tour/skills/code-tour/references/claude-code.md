@@ -16,7 +16,7 @@ Launch the packaged `code-tour:code-tour-author` agent for steps 1–4. Pass onl
 
 Use an explicitly available browser or computer-use surface to inspect the built file. If local-file navigation is unavailable, run `bun run preview` in the workspace, open the printed loopback URL, and stop the server afterward. The preview command serves only `tour.html` byte-for-byte; do not substitute a transforming development server. Check wide and narrow layouts, Mermaid rendering, annotation placement, diff expand/collapse interaction, and the absence of `[data-tour-runtime-error]`.
 
-If no browser or vision surface is available, do not treat launching an OS opener as inspection. State that visual QA was not performed and ask the user to open the local file.
+If no browser or vision surface is available, do not treat launching an OS opener as inspection. State that visual QA was not performed.
 
 ## Deliver
 

@@ -7,7 +7,7 @@ description: Rate how risky a plan or change is to merge with an independent rev
 
 An independent reviewer rates merge risk twice: once on the plan, before code
 exists, and once on the diff. The first rating becomes the baseline; the second
-shows whether the work got riskier than agreed. The result opens the PR body as
+shows whether the work got riskier than planned. The result opens the PR body as
 the PR card.
 
 Use it for every PR except branch promotions, which carry already-reviewed
@@ -39,7 +39,6 @@ consultation; skip it when a parent agent owns the PR. Weigh any safer approach
 it names where that costs little, and include its profile in any plan
 consultation. The profile you implement against is the baseline; keep it in
 task context, across compaction and handoff, until the PR closes.
-Revising the plan later replaces the baseline only with the user's agreement.
 
 ## 2. Diff Mode
 
