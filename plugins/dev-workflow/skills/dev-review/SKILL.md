@@ -118,6 +118,7 @@ Reviewer findings are hypotheses. Before fixing a behavioral claim, prove or dis
 | **already-addressed** | Existing code/test already covers it | Note and skip |
 | **false-alarm** | Claim does not match verified behavior | Skip |
 | **real-fix** | Defect | Fix directly |
+| **optional** | Subjective trade-off, no defect | Leave the code; report it as optional |
 
 ## Root-Cause Reflection
 

@@ -33,7 +33,7 @@ Check symlinks in **both** directions between `CLAUDE.md` and `AGENTS.md`. Alway
 
 Present findings in three groups:
 
-- **Required** — the repo can't run the workflow without these: the commands/checks sections themselves, and any check command that couldn't be detected
+- **Required** — the repo can't run the workflow without these: the commands/checks sections themselves, and any check command that couldn't be detected (list it as an open item; never record a guess)
 - **Recommended** — clear evidence supports these: e.g. "upstream remote + `custom/` dir → add a fork-maintenance reviewer agent", "CI runs an e2e suite → add it as a situational check", "docs/guides/code-standards.md exists → register as review input"
 - **Optional** — useful but judgment-call: extra skills, hook cleanups, or guidance-file improvements
 
