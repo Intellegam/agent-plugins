@@ -79,8 +79,9 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 
 Follow repository commit conventions. Force-push only feature branches, with
 `--force-with-lease`, never the default or protected branches. Never infer
-permission for external communication, production deployments, or destructive
-operations from an implementation request.
+permission for external communication, production deployments (any deploy or
+merge that reaches a production environment), or destructive operations from an
+implementation request.
 
 You write the PR title and body. Open each body, except branch promotions,
 with the PR card as the `merge-risk` skill describes, and show its chat card in

@@ -116,6 +116,7 @@ skill's Refresh step describes.
 | `already-addressed` | A prior commit fixed a stale claim | Reply with commit/test evidence; resolve bot threads only |
 | `false-alarm` | The claim does not match reality | Reply with empirical disproof; resolve bot threads only |
 | `real-fix` | Bug | Fix and verify (a test only under the material-contract bar); batch with other fixes; push once; reply with evidence |
+| `optional` | Style-only suggestion, no defect | Leave the code; reply that it is optional and why; resolve bot threads only |
 | `judgment-call` | Subjective product tradeoff | Ask the user; keep thread open; stop until decided |
 
 Batch fixes into one commit and one push per pass so reviewers rerun
@@ -123,6 +124,10 @@ once against the combined change. Before that push, run `dev-check` on the
 fixes; a fix that changes behavior also gets one fresh read-only correctness
 review of the fix. Immediately replace the waiter after pushing
 and before fetching the new head's state.
+
+When `mergeStateStatus` is `DIRTY`, merge the base branch into the PR branch,
+resolve the conflict, run `dev-check`, and push. Stop for the user only when
+the resolution is a product decision.
 
 Immediately before every commit and push, refetch the PR head/base names and
 verify that local `HEAD` is attached to the PR head branch, is not the base
