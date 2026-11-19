@@ -120,10 +120,10 @@ skill's Refresh step describes.
 | --- | --- | --- |
 | `already-addressed` | A prior commit fixed a stale claim | Reply with commit/test evidence; resolve bot threads only |
 | `false-alarm` | The claim does not match reality | Reply with empirical disproof; resolve bot threads only |
-| `real-fix-obvious` | Clear, small, self-contained bug | Fix and verify (a test only under the material-contract bar); batch with other obvious fixes; push once; reply with evidence |
+| `real-fix` | Bug | Fix and verify (a test only under the material-contract bar); batch with other fixes; push once; reply with evidence |
 | `judgment-call` | Subjective product tradeoff | Ask the user; keep thread open; stop until decided |
 
-Batch obvious fixes into one commit and one push per pass so reviewers rerun
+Batch fixes into one commit and one push per pass so reviewers rerun
 once against the combined change. Before that push, run `dev-check` on the
 fixes; a fix that changes behavior also gets one fresh read-only correctness
 review of the fix. Immediately replace the waiter after pushing

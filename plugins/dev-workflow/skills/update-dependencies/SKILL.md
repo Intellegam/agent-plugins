@@ -242,4 +242,4 @@ Report:
 - declaration, lockfile-policy/change, patch, and application migrations;
 - verification and environmental limitations;
 - skipped, policy-held, or deferred packages with reasons;
-- proposed commit series and whether anything was committed.
+- commit series and whether anything was committed.
