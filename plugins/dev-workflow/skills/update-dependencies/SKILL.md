@@ -15,8 +15,8 @@ Infer the mode from the request:
 - **Audit**: inventory, research, and recommend. Do not install, sync, relock,
   edit files, or otherwise mutate the project or its environment.
 - **Update**: dependency files and required migrations may be edited.
-  Commits, pushes, PRs, toolchain self-updates, and policy bypasses require
-  separate explicit authorization.
+  Toolchain self-updates and policy bypasses require separate explicit
+  authorization.
 
 Focus on named packages and any compatibility-coupled dependencies. Without
 named packages, provide an overview before selecting update groups.
@@ -63,8 +63,8 @@ explicit owning member.
 
 Record the full initial status as the user-owned baseline. Unrelated changes do
 not block the workflow and must remain untouched. If baseline changes overlap a
-domain's guarded files, keep that domain in audit mode and ask how to isolate
-them; never stash or discard them automatically.
+domain's guarded files, keep that domain in audit mode; never stash or discard
+them automatically.
 
 Guard declarations, existing lockfiles, resolution configuration, patch/vendor
 artifacts, migration targets, tests, and bounded hook/generator outputs. Before
@@ -211,9 +211,8 @@ After three failed fixes for one issue, reassess the target, constraint, or
 grouping assumption before trying again.
 
 Do not commit between groups. Retain checkpoints until every group and final
-validation pass. If commits are authorized, create the validated series
-afterward, preferably one commit per independently reversible group; otherwise
-only propose the series.
+validation pass. Create the validated series afterward, preferably one commit
+per independently reversible group.
 
 ## 6. Final validation and report
 
@@ -226,7 +225,7 @@ only for metadata-only lockfile changes where no resolved version moved. Use
 check-only repository-wide commands. Auto-fix only update-caused failures or
 required migration/formatting changes; report unrelated findings unless
 separately authorized. Before a permitted validation write outside a checkpoint,
-verify it is clean, extend the checkpoint, and obtain authorization.
+verify it is clean and extend the checkpoint.
 
 Continue through `dev-review`, then invoke the canonical `dev-sync` reviewer
 directly in read-only mode, including for tiny diffs. If review or validation

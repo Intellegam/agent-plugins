@@ -93,7 +93,6 @@ separate plan-review round:
 1. **Form your own analysis first** — draft independently to avoid anchoring bias
 2. **Get Codex's independent view** — share the problem context and constraints via `codex`, let Codex form its own approach
 3. **Compare the evidence** — use `codex-reply` for substantive disagreements; resolve them with evidence or report the remaining decision
-4. **Present to user** — the plan should reflect the joint conclusion
 
 ### Code Review
 

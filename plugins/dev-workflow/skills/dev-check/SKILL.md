@@ -25,7 +25,7 @@ Fix failures caused by the change and rerun affected checks. Reassess after repe
 
 ## The Contract
 
-Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, offer `dev-workflow:setup` or ask the user before proceeding; do not guess commands.
+Follow the applicable repository and touched-directory instructions; read any missing from context and avoid rereading aliases of the same file. The repository declares Required Checks and Situational Checks in one of those guidance files. If both exist, follow both and let the nearer-scoped file win on conflicts. If the sections are missing, do not guess commands.
 
 ## Scale to the Change
 
@@ -78,4 +78,4 @@ and skipped or blocked checks; report drift and unrelated failures explicitly.
 
 ## Next Step
 
-When all checks pass, continue to `dev-review` unless the user asked for checks only. State the transition and proceed. Ask only when an unfixable failure has multiple reasonable resolutions.
+When all checks pass, continue to `dev-review` unless the user asked for checks only. State the transition and proceed.

@@ -5,7 +5,7 @@ description: Keep the prose a change touches lean and accurate — documentation
 
 # Prose Hygiene and Sync
 
-Review every prose surface the change touches — documentation, folder guides, skills and agent definitions, docstrings, and code comments. Delete what fails the keep test in the canonical contract, condense or move what lives in the wrong place, and fix what the change made false. Prose should shrink or stay flat unless the change needs more; apply clear findings and ask only for non-obvious decisions.
+Review every prose surface the change touches — documentation, folder guides, skills and agent definitions, docstrings, and code comments. Delete what fails the keep test in the canonical contract, condense or move what lives in the wrong place, and fix what the change made false. Prose should shrink or stay flat unless the change needs more; apply clear findings.
 
 This skill follows `dev-check` → `dev-review` and precedes commit/push/PR. Invoke workflow skills through `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
@@ -39,15 +39,10 @@ If delegation is unavailable, perform the same contract directly and state the f
 
 If review or sync changes any file after the last `dev-check`, rerun all Required Checks plus newly matching Situational Checks. Do not commit post-check edits without validation.
 
-## Commit/Push/PR Decision
+## Commit/Push/PR
 
-Honor existing explicit authorization for commits, feature-branch pushes, and
-PR creation. An explicit request for a PR includes preparing its title and its
-body, opened by the PR card (`merge-risk` skill), and creating it after
-validation; do not ask for the same approval again. If scope
-is unclear, prepare the reviewable local result and ask only for the missing
-decision (commit, push, or PR).
-
-Ask before force-pushing. Never merge or land a PR without the user’s separate
-approval for that exact PR. After creation, handle the top-level Code Tour phase
-and continue to `babysit-pr`; tour publication has its own authorization boundary.
+Force-push only feature branches, with `--force-with-lease`, never the default
+or protected branches. Never merge or land a PR without the user’s separate
+approval for that exact PR unless the repository's instructions allow it. After
+creating a PR, handle the top-level Code Tour phase and continue to
+`babysit-pr`; tour publication has its own authorization boundary.

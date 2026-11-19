@@ -36,8 +36,7 @@ Reviewer findings, whether automated or human, are hypotheses. Before acting:
 
 1. Read the claim and cited code.
 2. Prove or disprove it with a targeted test, reproducer, code trace, or
-   counterexample. If evidence is unavailable, ask the user instead of fixing
-   on suspicion.
+   counterexample.
 3. Classify it and take only the corresponding action below.
 
 ## Process
@@ -89,12 +88,12 @@ a draft pass refreshes the card and runs step 3, committing and pushing its
 fixes under step 2's commit and push rules, then returns to the waiter without
 classifying or answering feedback or assessing readiness.
 
-If a code tour is known to exist, retain its source head SHA plus the set of
-heads for which a refresh was already offered in task context and preserve both
-across compaction or handoff. Compare the tour head with the fetched
-`headRefOid` on every pass; do not depend only on observing a `new-head` event,
-because the waiter may baseline after a push. If the tour exists but its source
-head cannot be recovered, treat freshness as unknown instead of current.
+If a code tour is known to exist, retain its source head SHA in task context
+and preserve it across compaction or handoff. Compare the tour head with the
+fetched `headRefOid` on every pass; do not depend only on observing a
+`new-head` event, because the waiter may baseline after a push. If the tour
+exists but its source head cannot be recovered, treat freshness as unknown
+instead of current.
 
 The waiter first emits `armed`, then emits one terminal event and exits:
 
@@ -122,8 +121,7 @@ skill's Refresh step describes.
 | `already-addressed` | A prior commit fixed a stale claim | Reply with commit/test evidence; resolve bot threads only |
 | `false-alarm` | The claim does not match reality | Reply with empirical disproof; resolve bot threads only |
 | `real-fix-obvious` | Clear, small, self-contained bug | Fix and verify (a test only under the material-contract bar); batch with other obvious fixes; push once; reply with evidence |
-| `real-fix-nonobvious` | Real issue with ambiguous or broad fix | Ask the user; keep thread open; stop until decided |
-| `judgment-call` | Subjective product or style tradeoff | Ask the user; keep thread open; stop until decided |
+| `judgment-call` | Subjective product tradeoff | Ask the user; keep thread open; stop until decided |
 
 Batch obvious fixes into one commit and one push per pass so reviewers rerun
 once against the combined change. Before that push, run `dev-check` on the
@@ -158,9 +156,8 @@ URL and report what is observable.
 
 Classify each failure:
 
-- `our-bug` — caused by this change: apply the same obvious versus non-obvious
-  boundary as review findings; fix and verify only an obvious issue and ask the user
-  before an architectural, migration, or product decision.
+- `our-bug` — caused by this change: fix and verify; ask the user before a
+  product decision.
 - `flaky` — intermittent test or unrelated transient infrastructure: rerun.
 - `external-dep` — transient dependency outside the PR: report and monitor.
 - `infra` — credentials, configuration, or runner problem: report to the user.
@@ -170,11 +167,11 @@ only when the head SHA changes. Preserve the count in task context and, after a
 handoff or uncertain continuity, inspect workflow attempts before rerunning so
 the budget cannot silently reset.
 
-Before rerunning, inspect the workflow and dependent jobs. Automatically rerun
-only side-effect-free checks. A job or dependency that deploys, publishes, or
-otherwise mutates an external system requires user approval. If the third retry
-still fails, stop as a user-help-required blocker and report all attempts and
-evidence; do not re-arm into an endless quiet loop.
+Before rerunning, inspect the workflow and dependent jobs. A job or dependency
+that deploys to production, publishes, or otherwise mutates a production system
+requires user approval. If the third retry still fails, stop as a
+user-help-required blocker and report all attempts and evidence; do not re-arm
+into an endless quiet loop.
 
 ### 4. Reply automatically; resolve deliberately
 
@@ -197,7 +194,7 @@ gh pr comment "$pr" --body "<attributed evidence-backed reply>"
 - Bot-authored thread with clear disposition: reply and resolve.
 - Human-authored thread with clear disposition: reply automatically using
   `--no-resolve`; leave resolution to the maintainer.
-- `real-fix-nonobvious` or `judgment-call`: do not post a substantive answer
+- `judgment-call`: do not post a substantive answer
   before the user decides. After the decision, reply automatically with the
   resulting disposition; keep a human thread unresolved.
 
@@ -232,18 +229,9 @@ A PR is a clean milestone only when:
 - `mergeable` is positively `MERGEABLE`, `mergeStateStatus` has no blocking
   state, and `reviewDecision` has no blocking review. `UNKNOWN` is not clean.
 
-If a known code tour's source head differs from the current `headRefOid`, or its
-freshness is unknown, offer one refresh at the current head's first clean
-milestone before reporting the milestone and re-arming. Record the current head
-in the offered set before asking so a resumed turn cannot duplicate the offer.
-If refreshed, update the retained tour head. If declined, do not offer again for
-that head; a later head gets one new offer. Do not rebuild after every push.
-Return to the top-level Code Tour phase for the refresh so generation,
-publication, and PR-comment authorization remain owned by the code-tour skill.
-
-Being clean and mergeable is progress, not permission to merge and not a stop
-condition while the PR remains open. Report the milestone with the PR's chat
-card and re-arm.
+Being clean and mergeable is progress, not a stop condition while the PR
+remains open, and not permission to merge unless the repository's instructions
+allow it. Report the milestone with the PR's chat card and re-arm.
 
 If the repository has no CI checks, the empty check set satisfies the CI gate,
 but report `no checks configured` rather than claiming a successful check run.
@@ -253,8 +241,8 @@ but report `no checks configured` rather than claiming a successful check run.
 Keep the skill active using the host adapter. Stop only when:
 
 - the PR is merged or closed;
-- a non-obvious fix, judgment call, infrastructure problem, merge conflict, or
-  other blocker requires user help;
+- a judgment call, infrastructure problem, or other blocker requires user
+  help;
 - the user explicitly asks to stop.
 
 When stopping, terminate the retained waiter as specified by the host adapter.

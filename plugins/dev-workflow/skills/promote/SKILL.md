@@ -37,7 +37,7 @@ Read guidance and policy from the exact remote source SHA being promoted, not wh
 
 Also inspect the live mechanisms that can confirm or contradict the contract: release workflows, version/release configuration, package manifests, and GitHub branch/PR state. Keep intentional policy in the normal documentation; do not copy it into agent guidance.
 
-For a read-only readiness assessment, an explicit policy supplied by the user in the current session may substitute for a missing pointer. Echo the temporary assumptions in the report. Creating/updating a PR or merging requires the committed pointer and its target to exist. If the contract is missing or insufficient, stop and offer `dev-workflow:setup`; do not discover and guess a release policy from scattered files. If the repository instead defines a direct tag, manual workflow, or other non-PR release path, name that path and stop; this skill must not execute it.
+For a read-only readiness assessment, an explicit policy supplied by the user in the current session may substitute for a missing pointer. Echo the temporary assumptions in the report. Creating/updating a PR or merging requires the committed pointer and its target to exist. If the contract is missing or insufficient, stop; do not discover and guess a release policy from scattered files. If the repository instead defines a direct tag, manual workflow, or other non-PR release path, name that path and stop; this skill must not execute it.
 
 ## 2. Establish Authorization
 
