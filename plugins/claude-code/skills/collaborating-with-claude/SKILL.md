@@ -28,7 +28,8 @@ configuration and memory.
 
 ### Model selection
 
-`claude` and `claude-reply` accept `model: "fable" | "opus" | "sonnet" | "haiku"`.
+`claude` and `claude-reply` accept family aliases (`fable`, `opus`, `sonnet`,
+`haiku`) and exact model/provider IDs.
 Use Fable for planning and discussion when a top-tier perspective is needed;
 prefer Opus for bounded implementation and reviews. Start a separate implementation
 session with the agreed plan, file scope, and validation requirements; set
@@ -42,10 +43,11 @@ claude({ prompt: "Implement the agreed change in src/parser.js...", cwd: "/repo"
 
 The CLI resolves the family using its runtime, provider, and configuration;
 aliases do not guarantee the newest release on an old runtime or override a
-configured family mapping. Exact model IDs are not accepted by these tools.
-Omitting `model` on a new session preserves the operator's default. Replies
-inherit the last selected family while the server remembers it; an explicit
-`model` switches it. After an MCP restart, pass `model` again to retain the
+configured family mapping. New sessions use an explicit `model`, then
+`CLAUDE_CODE_MCP_MODEL`, then the shipped `opus` default. On new sessions only,
+`inherit` omits the model override and uses operator settings. Replies inherit
+the last requested selection while the server remembers it; an explicit concrete
+model switches it. `inherit` is rejected on replies. After an MCP restart, pass `model` again to retain the
 selection, or the CLI uses its normal defaults. This does not grant write access.
 
 The result's `model` is the latest observed serving model, not the requested

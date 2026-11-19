@@ -15,6 +15,23 @@ Codex is an external AI agent that serves as a collaborative partner. Use it to 
 - `codex-result` — Get latest turn status/result on a session (`wait: true` blocks until done)
 - `codex-cancel` — Cancel the active turn on a session
 
+### Model selection
+
+New `codex` and `codex-review` sessions default to `gpt-6.2-sol`. An explicit
+`model` argument wins over `CODEX_MCP_MODEL`, which wins over the shipped default.
+Use `model: "inherit"` or set that environment variable to `inherit` to use local
+Codex configuration for new sessions. `inherit` is rejected on replies.
+
+`codex-reply` keeps the selected model unless a concrete model ID is supplied.
+After an MCP restart, retention depends on native resume metadata; explicitly
+reassert `model` when a particular selection matters. Model choice grants no
+write permissions.
+
+```text
+codex({ prompt: "Implement this fix", model: "gpt-6.2-sol", cwd: "/repo" })
+codex({ prompt: "Assess this architecture", model: "gpt-6.2-astra", cwd: "/repo" })
+```
+
 ### Async mode
 
 All three primary tools (`codex`, `codex-reply`, `codex-review`) accept `async: true` to return a `sessionId` immediately instead of blocking. Use async mode when you have other work to do in parallel — e.g., running tests, editing files, or consulting other tools while Codex thinks. If you would just poll `codex-result` in a loop with nothing else to do, use sync (the default) instead.
