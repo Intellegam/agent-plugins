@@ -2,7 +2,7 @@
   "mcpServers": {
     "claude-agent": {
       "command": "npx",
-      "args": ["-y", "github:Intellegam/claude-code-mcp#v0.3.0"]
+      "args": ["-y", "github:Intellegam/claude-code-mcp#v0.5.0"]
     }
   }
 }
