@@ -29,7 +29,7 @@ The reverse direction: lets OpenAI Codex consult Claude Code as a second-opinion
 
 ### dev-workflow
 
-Cross-host org development workflow for Claude Code and Codex: a setup consultant plus contract-driven validation and branch-promotion workflows (checks → review → docs sync → PR follow-through).
+Cross-host org development workflow for Claude Code and Codex: a setup consultant plus contract-driven validation and branch-promotion workflows (checks → review → docs sync → PR follow-through). It leaves merge permission to each user's own instructions.
 
 **Includes:**
 
