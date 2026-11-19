@@ -37,7 +37,9 @@ Reviewer findings, whether automated or human, are hypotheses. Before acting:
 1. Read the claim and cited code.
 2. Prove or disprove it with a targeted test, reproducer, code trace, or
    counterexample.
-3. Classify it and take only the corresponding action below.
+3. Classify it and take only the corresponding action below. If you can neither
+   prove nor disprove it, leave the code unchanged and report the claim as
+   unverified.
 
 ## Process
 
@@ -87,13 +89,6 @@ Apply the draft rule above to the `isDraft` of this pass, not the first lookup:
 a draft pass refreshes the card and runs step 3, committing and pushing its
 fixes under step 2's commit and push rules, then returns to the waiter without
 classifying or answering feedback or assessing readiness.
-
-If a code tour is known to exist, retain its source head SHA in task context
-and preserve it across compaction or handoff. Compare the tour head with the
-fetched `headRefOid` on every pass; do not depend only on observing a
-`new-head` event, because the waiter may baseline after a push. If the tour
-exists but its source head cannot be recovered, treat freshness as unknown
-instead of current.
 
 The waiter first emits `armed`, then emits one terminal event and exits:
 

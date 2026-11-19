@@ -101,7 +101,6 @@ After opening a PR and before babysitting it, handle the reviewer walkthrough as
 
 - If repository guidance requires a code tour or the user requested one, run `/code-tour:code-tour` in Claude Code or `$code-tour:code-tour` in Codex. If the skill is unavailable, report that instead of silently skipping the requirement.
 - Creating the local tour does not authorize publishing it or posting to the PR. Follow the code-tour skill's separate authorization boundary for external actions.
-- A tour describes one exact PR head. When one is created, retain that head SHA in task context and preserve it across compaction or handoff. During babysitting, compare it with the current PR head regardless of who pushed; do not rebuild after every push.
 
 Do not install code-tour automatically. It remains an optional companion plugin that owns tour generation and delivery.
 
