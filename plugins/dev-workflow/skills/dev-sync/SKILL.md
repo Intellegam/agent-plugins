@@ -42,7 +42,5 @@ If review or sync changes any file after the last `dev-check`, rerun all Require
 ## Commit/Push/PR
 
 Force-push only feature branches, with `--force-with-lease`, never the default
-or protected branches. Never merge or land a PR without the user’s separate
-approval for that exact PR unless the repository's instructions allow it. After
-creating a PR, handle the top-level Code Tour phase and continue to
+or protected branches. After creating a PR, handle the top-level Code Tour phase and continue to
 `babysit-pr`; tour publication has its own authorization boundary.

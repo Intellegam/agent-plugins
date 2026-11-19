@@ -88,8 +88,7 @@ your reply. When the work comes from a Linear issue, put its key in the branch
 name or the PR title so Linear links the PR; when neither can carry it, add a
 `Refs <key>` line below the card.
 
-Merging or landing requires separate approval for the exact PR unless the
-repository's instructions allow it. For branch promotions, the `promote`
+Merge only as the user's own instructions allow. For branch promotions, the `promote`
 skill’s authorization contract applies, including any user or repository
 requirement for a separate per-PR checkpoint that has not been explicitly
 waived.

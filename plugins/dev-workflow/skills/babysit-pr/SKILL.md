@@ -230,7 +230,7 @@ A PR is a clean milestone only when:
   state, and `reviewDecision` has no blocking review. `UNKNOWN` is not clean.
 
 Being clean and mergeable is progress, not a stop condition while the PR
-remains open, and not permission to merge unless the repository's instructions
+remains open, and not permission to merge unless the user's own instructions
 allow it. Report the milestone with the PR's chat card and re-arm.
 
 If the repository has no CI checks, the empty check set satisfies the CI gate,
