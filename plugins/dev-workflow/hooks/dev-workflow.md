@@ -77,8 +77,8 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 
 ### 4. Commit and Push
 
-Follow repository commit conventions. Force-push only feature branches, with
-`--force-with-lease`, never the default or protected branches. Never infer
+Follow repository commit conventions. Push only to feature branches, never to
+the default or protected branches; force-push only with `--force-with-lease`. Never infer
 permission for external communication, production deployments (any deploy or
 merge that reaches a production environment), or destructive operations from an
 implementation request.
