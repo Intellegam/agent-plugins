@@ -54,15 +54,15 @@ summary; visual and evidence; merge risk through the plan line;
 Touches and footer. An empty part gets no line.
 
 1. **Header**: the level as a four-dot meter in a pill, then, when the PR's
-   linked Linear issue has a priority, that priority in a pill with Linear's
-   bar symbol and the word `priority`, so it does not read as part of the risk:
+   linked Linear issue has a priority, that priority in a pill with a Linear-like
+   symbol and the word `priority`, so it does not read as part of the risk:
 
    ```markdown
    `●●○○ Typical risk` · `▮▮▮ High priority`
    ```
 
    Meters: `low` ●○○○ Low risk, `typical` ●●○○ Typical risk, `high` ●●●○
-   High risk, `very_high` ●●●● Very high risk. Priorities: `‼ Urgent`,
+   High risk, `very_high` ●●●● Very high risk. Priorities: `‼ Urgent priority`,
    `▮▮▮ High priority`, `▮▮▯ Medium priority`, `▮▯▯ Low priority`. Without a rating
    the first pill reads `Not rated`, Merge risk holds only the line that no
    rating was produced, and parts 6 to 10 are left out.
@@ -75,8 +75,8 @@ Touches and footer. An empty part gets no line.
    sentences) when the mechanism matters, and any other line that answers
    what a reviewer would ask next, such as `Unchanged` for a refactor, a move
    or an opt-in switch, `Who notices` for a visible change, `Why now`,
-   `Rollout` for a flag or a staged release, or `Not in this PR`. Labels are
-   one or two words.
+   `Rollout` for a flag or a staged release, or `Left out`. Labels are one or
+   two words.
 
    ```markdown
    `Problem` &nbsp;Recovery replaced healthy queued work during long ingestions.
