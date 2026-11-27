@@ -46,37 +46,45 @@ markers, such as CodeRabbit's summary, after the fold.
 The card uses only GitHub-flavoured markdown, a little HTML, and Mermaid, so it
 also reads in Linear and in email. It leaves out what GitHub already shows,
 such as the PR's total size and file count. Icons: ✅ `ok`, 👀 `watch`, ⚠️
-`risk`. Pills are `<kbd>` elements; GitHub's pill style overrides bold around
-one, so bold goes inside it. A `---` line, with a blank line before and after
+`risk`. Pills are code spans, since Linear does not render `<kbd>`; inside
+HTML, such as a fold's summary, they are `<code>` elements, with `<b>` inside
+when bold (`<code><b>…</b></code>`). A `---` line, with a blank line before and after
 it (without one GitHub turns the paragraph above into a heading), separates
 four parts: header and
-Why / What / How; visual and evidence; merge risk through the plan line;
+summary; visual and evidence; merge risk through the plan line;
 Size, Touches and footer. An empty part gets no line.
 
-1. **Header**: the level as a four-dot meter in a pill, then the priority in
-   a pill when the PR's linked Linear issue has one, named as Linear names it
-   (`Urgent`, `High`, `Medium`, `Low`):
+1. **Header**: the level as a four-dot meter in a pill, then, when the PR's
+   linked Linear issue has a priority, that priority in a pill with a Linear-like
+   symbol and the word `priority`, so it does not read as part of the risk:
 
    ```markdown
-   <kbd>●●○○ Typical risk</kbd> <kbd>High</kbd>
+   `●●○○ Typical risk` · `▮▮▮ High priority`
    ```
 
    Meters: `low` ●○○○ Low risk, `typical` ●●○○ Typical risk, `high` ●●●○
-   High risk, `very_high` ●●●● Very high risk. Without a rating
+   High risk, `very_high` ●●●● Very high risk. Priorities: `‼ Urgent priority`,
+   `▮▮▮ High priority`, `▮▮▯ Medium priority`, `▮▯▯ Low priority`. Without a rating
    the first pill reads `Not rated`, Merge risk holds only the line that no
    rating was produced, and parts 6, 7 and 9 to 11 are left out.
-2. **Why / What / How**: one paragraph each, led by a pill label and a blank
-   line between them. Labels follow the PR's conventional-commit type: `fix` →
-   Problem / Fix / How; `feat` → Need / Feature / How; any other type → Why /
-   Change / How. The first two are one short sentence each; How may take two
-   or three. Write for someone who has not read the code.
+2. **Summary**: two to four paragraphs, each led by a pill label, with a
+   blank line between them. Choose the lines a reviewer who has not read the
+   code needs to understand the PR. The first says why the PR exists and the
+   second what changes for the user or the system, one short sentence each;
+   by conventional-commit type, label them `fix` → Problem / Fix, `feat` →
+   Need / Feature, any other type → Why / Change. Add `How` (two or three
+   sentences) when the mechanism matters, and any other line that answers
+   what a reviewer would ask next, such as `Unchanged` for a refactor, a move
+   or an opt-in switch, `Who notices` for a visible change, `Why now`,
+   `Rollout` for a flag or a staged release, or `Left out`. Labels are one or
+   two words.
 
    ```markdown
-   <kbd>Problem</kbd> &nbsp;Recovery replaced healthy queued work during long ingestions.
+   `Problem` &nbsp;Recovery replaced healthy queued work during long ingestions.
 
-   <kbd>Fix</kbd> &nbsp;A request no worker has claimed is replaced only after the queue's timeout.
+   `Fix` &nbsp;A request no worker has claimed is replaced only after the queue's timeout.
 
-   <kbd>How</kbd> &nbsp;...
+   `Unchanged` &nbsp;Claimed work keeps its 10-minute recovery.
    ```
 
 3. **Visual** (optional, at most two), each under a short `####` heading;
@@ -145,7 +153,7 @@ Size, Touches and footer. An empty part gets no line.
    area, in the reviewer's order.
 
    ```markdown
-   <details><summary><code>▰▰▰▰▱▱▱▱▱▱</code> &nbsp;<kbd><b>apps/processing</b></kbd> &nbsp;👀</summary>
+   <details><summary><code>▰▰▰▰▱▱▱▱▱▱</code> &nbsp;<code><b>apps/processing</b></code> &nbsp;👀</summary>
 
    <sub><code>+289 −65</code> lines in 7 files</sub>
 
@@ -219,7 +227,7 @@ it. Put `> ` before every line, an empty `>` line between paragraphs, and a
 >
 > `feat(dev-workflow)` **Add chat review cards**
 >
-> <the card's second sentence>
+> <the card's second summary line>
 >
 > ---
 >
@@ -237,18 +245,19 @@ it. Put `> ` before every line, an empty `>` line between paragraphs, and a
 - Header: the meter and level name (`Not rated` without a rating, and
   `· stale` after it when the PR card is stale), the PR's
   added and deleted lines, the GitHub link, the Linear review link when known,
-  the linked issue's key and priority when there is one, and the bold
-  `ref`.
+  the linked issue's key and its priority pill when there is one, and the
+  bold `ref`.
 - Title: the conventional-commit prefix in a code span, then the rest bold;
-  below it, the card's second sentence (Fix, Feature or Change).
+  below it, the card's second summary line (what changes).
 - Touches: the card's areas in its order, bold when the PR card shows them
   bold.
 - Visuals: each of the card's visuals as the PR card writes it, Mermaid
   included, under its heading in italics; Evidence as one line with its link.
   No checks, To lower it steps, folds or footer.
 
-Several PRs get one table, riskiest first, and no visuals; Risk follows the
-header's rule:
+Several PRs get one table, riskiest first, and no visuals; Risk shows the
+meter and level name without `risk`, with the header's `Not rated` and
+`· stale` rules:
 
 ```markdown
 | PR | Title | Lines | Linear | Risk |
