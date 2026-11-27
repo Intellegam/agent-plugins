@@ -27,8 +27,9 @@ launching it.
 
 Use a fresh reviewer for each rating. Give it the mode, the goal, and the task
 source (issue, report, or request text). It never receives the author's
-argument that the change is safe. It cannot fetch CI itself: include check
-results for the assessed commit, when any exist. Its rating is a hand-off to
+argument that the change is safe, the proportionality gate's output or the size
+ledger. It cannot fetch CI itself: include check results for the assessed
+commit, when any exist. Its rating is a hand-off to
 you, never stored as data in the PR.
 
 ## 1. Plan Mode

@@ -7,7 +7,7 @@ description: Keep the prose a change touches lean and accurate — documentation
 
 Review every prose surface the change touches — documentation, folder guides, skills and agent definitions, docstrings, and code comments. Delete what fails the keep test in the canonical contract, condense or move what lives in the wrong place, and fix what the change made false. Prose should shrink or stay flat unless the change needs more; apply clear findings.
 
-This skill follows `dev-check` → `dev-review` and precedes commit/push/PR. Invoke workflow skills through `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
+This skill follows `dev-check` → `dev-review` and precedes `dev-review`'s Proportionality Gate and commit/push/PR. Invoke workflow skills through `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
 ## Repository Guidance
 
@@ -41,6 +41,6 @@ If review or sync changes any file after the last `dev-check`, rerun all Require
 
 ## Commit/Push/PR
 
-Push only to feature branches, never to the default or protected branches;
+Run `dev-review`'s Proportionality Gate first. Push only to feature branches, never to the default or protected branches;
 force-push only with `--force-with-lease`. After creating a PR, handle the top-level Code Tour phase and continue to
 `babysit-pr`; tour publication has its own authorization boundary.

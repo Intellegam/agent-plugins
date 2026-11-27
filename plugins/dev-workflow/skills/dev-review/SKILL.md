@@ -7,7 +7,7 @@ description: Independently review a completed change before pushing or opening a
 
 Run risk-scaled, multi-perspective review. During validation of an authorized implementation, fix verified issues directly. For review-only requests, report findings without editing; the fix actions below apply only within an authorized implementation.
 
-This skill is the middle of `dev-check` → `dev-review` → `dev-sync`. Invoke workflow skills through the host's skill selector: `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
+This skill is the middle of `dev-check` → `dev-review` → `dev-sync`; its Proportionality Gate runs after `dev-sync`. Invoke workflow skills through the host's skill selector: `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
 ## Repository Contract
 
@@ -32,8 +32,29 @@ Prepare only:
 - **Constraints**: hard requirements
 - **Target**: target type/ref, complete changed-file list, diff or inspection instructions, and untracked paths
 - **Review Inputs**: standards/documentation paths from repository guidance
+- **Sibling paths**: the closest existing code paths you know for what the change does, as a codebase fact; reviewers may find closer ones
 
 Do not include solution rationale, rejected alternatives, or the author's expected findings. Preserve independent judgment.
+
+## Size Ledger
+
+For work that will become a PR, record added and removed lines per kind when
+review starts and again at the final head: for each PR and, in a
+stack, for the combined diff from the stack's base. Keep the first record in
+task context with the merge-risk baseline until the PR closes.
+
+Each file belongs to the first kind that matches:
+
+1. **generated**: lockfiles, generated code and snapshots, vendored files
+2. **tests**: tests, fixtures, test harnesses and helpers
+3. **docs**: documentation; agent instructions that define behavior, such as
+   skills and prompts, are source
+4. **source**: everything else
+
+Count with `git diff --numstat -z -M <merge-base> <head>`; for an uncommitted
+target, leave out `<head>` and count each untracked file's lines as added. A
+kind's growth is its added lines at the final head minus those in the first
+record, as a share of the first record.
 
 ## Scale to Risk
 
@@ -84,6 +105,10 @@ Reviewer contracts are non-invokable reference files adjacent to this skill:
 - `references/structural-lean-reviewer.md`
 - `references/quality-reviewer.md`
 - `references/correctness-reviewer.md` (fallback)
+- `references/comparison-bar.md`: the parity bar for every code reviewer in the
+  panel and final gates except structural-and-lean. The correctness and quality
+  contracts load it; paste its content into every other one's prompt
+  (`codex-review` sessions, `$review-agent`, repository-specific reviewers).
 
 Resolve their absolute paths from this skill's directory. Every delegated specialist must read its complete contract before reviewing. Make loading fail closed: if the reference cannot be read, the reviewer must stop and report the path/error instead of performing a generic review.
 
@@ -96,13 +121,13 @@ Read and apply the shared sub-agent model policy at
 
 - Launch the plugin's thin `dev-structural-lean-reviewer` and `dev-quality-reviewer` agents when those focuses are selected; their wrappers load the canonical references through `${CLAUDE_PLUGIN_ROOT}`.
 - Launch applicable project custom reviewers declared by repository guidance.
-- Use independent `codex-review` MCP sessions for broad correctness or additional Codex-focused perspectives. In the pinned MCP contract, typed `uncommitted`/`base`/`commit` modes cannot carry review instructions, so use `mode: "custom"` and put the exact target-inspection instructions, goal, constraints, Review Inputs, untracked paths, and focus in `prompt`. Do not attach a prompt to a typed mode: it is ignored. If Codex MCP is unavailable, state the fallback and give the required broad review and each focused slot without a plugin agent (such as security or observability) its own fresh `dev-correctness-reviewer`, with the focus in its prompt.
+- Use independent `codex-review` MCP sessions for broad correctness or additional Codex-focused perspectives. In the pinned MCP contract, typed `uncommitted`/`base`/`commit` modes cannot carry review instructions, so use `mode: "custom"` and put the exact target-inspection instructions, goal, constraints, Review Inputs, sibling paths, the comparison bar, untracked paths, and focus in `prompt`. Do not attach a prompt to a typed mode: it is ignored. If Codex MCP is unavailable, state the fallback and give the required broad review and each focused slot without a plugin agent (such as security or observability) its own fresh `dev-correctness-reviewer`, with the focus in its prompt.
 - Paste the actual diff into Claude reviewer prompts because the read-only agents may not have shell access. For very large targets, include the complete file list/stat plus risky hunks and require direct reads of every remaining changed file.
 
 ### Codex
 
 - Use `spawn_agent` for the initial fan-out. Keep reviewers read-only and tell them not to delegate.
-- For broad correctness reviews, explicitly require the built-in `$review-agent` contract. Give the exact uncommitted/base/commit target, Review Inputs, and untracked paths.
+- For broad correctness reviews, explicitly require the built-in `$review-agent` contract. Give the exact uncommitted/base/commit target, Review Inputs, sibling paths, the comparison bar, and untracked paths.
 - For structural-and-lean and quality specialists, pass the resolved absolute internal-reference path and require fail-closed loading before inspection.
 - Launch applicable project `.codex/agents/*.toml` reviewers by their declared names. Those wrappers must load their one canonical repository contract.
 - Let reviewers inspect the shared checkout directly; do not paste the full diff unless filesystem access is unavailable.
@@ -117,8 +142,11 @@ Reviewer findings are hypotheses. Before fixing a behavioral claim, prove or dis
 | --- | --- | --- |
 | **already-addressed** | Existing code/test already covers it | Note and skip |
 | **false-alarm** | Claim does not match verified behavior | Skip |
-| **real-fix** | Defect | Fix directly |
+| **real-fix** | Defect | Fix directly; add a regression test only when it passes the repository's testing standards, or the workflow's test bar when it declares none |
+| **accepted-limit** | Real defect whose fix the comparison bar does not require | Leave the code; report the limit and the remedy's cost |
 | **optional** | Subjective trade-off, no defect | Leave the code; report it as optional |
+
+Verify `beyond-parity` tags and sibling and cost claims like any other claim.
 
 ## Root-Cause Reflection
 
@@ -136,4 +164,33 @@ Do not rerun the full panel after every fix.
 
 ## Report and Continue
 
-Report what was fixed, decisions still needed, root-cause concerns, reviewer participation/fallbacks, and whether the final gate passed. Continue to `dev-sync` unless the user requested review only.
+Report what was fixed, decisions still needed, root-cause concerns, reviewer participation/fallbacks, and whether the final gate passed. Continue to `dev-sync`, then the Proportionality Gate, unless the user requested review only.
+
+## Proportionality Gate
+
+After `dev-sync` and before a PR is called ready, make one subtraction pass
+over each PR's final diff and, for a stack, over the combined diff. Review
+rounds only add; this pass takes the excess back out. Its cuts do not reopen
+the review loop.
+
+- **Who**: a self-check against the structural-and-lean contract's Pass 2.
+  Launch an independent structural-and-lean reviewer, as Host Adapters
+  describe, for a stack's combined diff, attributing each finding to its PR,
+  and for a non-tiny PR whose source or tests grew more than about 20% during
+  review.
+- **Test value**: when the final diff adds, changes or removes tests, get the
+  quality contract's test-value verdicts on it, by a bounded follow-up to the
+  panel's quality reviewer or a fresh one when none ran. Fill a missed-risk gap
+  only under the `real-fix` test rule above.
+- **Act**: cut each concrete excess or justify keeping it in one line, fix
+  prose the cuts make false, and rerun the checks the cuts affect. A cut to
+  trust-boundary or security code gets a bounded follow-up from the final-gate
+  reviewer. When a cut changes behavior on an open PR, refresh its card under
+  the `merge-risk` skill's Freshness rule.
+- **Size**: record the final ledger. When test lines exceed source lines, or
+  source or tests grew more than about 20% during review, explain each kind's
+  size in one sentence and justify each test case the PR adds by the failure
+  only it detects. The ratio prompts an explanation; it is not a verdict.
+
+Report the cuts with the lines they removed, what was kept and why, both ledger
+records, and any sentences and test justifications the size rule asked for.

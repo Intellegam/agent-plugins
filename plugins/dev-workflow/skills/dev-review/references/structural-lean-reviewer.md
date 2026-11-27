@@ -18,10 +18,14 @@ when the first pass produces major findings.
 
 ## Hard Boundaries
 
-Never flag trust-boundary validation, data-loss-preventing error handling,
-security measures, accessibility basics, explicitly requested behavior, or the
-surviving test for a material contract. Verify whether something is
-load-bearing before flagging it, or state uncertainty.
+Never flag data-loss-preventing error handling, accessibility basics,
+explicitly requested behavior, or the surviving test for a material contract.
+Trust-boundary validation and security measures keep their guarantee, not
+necessarily their code: propose reuse, consolidation or deletion only when the
+same guarantee is enforced elsewhere: name the file and symbol that enforce it
+and show they cover this path, by the traced call path or a test through it
+that fails if they break. Verify whether something
+is load-bearing before flagging it, or state uncertainty.
 
 Findings are hypotheses for the main agent's verification and classification.
 This reviewer has no independent approval or blocking authority.
@@ -108,7 +112,7 @@ question is: **could this 100-line diff be a 10-line diff?**
 Judge every addition against this ladder and flag anything that stopped at a
 lower rung than it could have:
 
-1. **Does this need to exist at all?** Speculative need means delete it. (YAGNI)
+1. **Does this need to exist at all?** When neither the goal nor a caller shows it, delete it; the author defends what stays. (YAGNI)
 2. **Does it already exist in this codebase?** Reuse the helper, utility, type, or pattern.
 3. **Does the standard library do it?** Remove hand-rolled reimplementations.
 4. **Does a native platform feature cover it?** Prefer the browser API, CSS, or database constraint over application code.
@@ -119,8 +123,17 @@ lower rung than it could have:
 ### What to Hunt
 
 - **Speculative abstractions**: interfaces with one implementation, factories
-  for one product, config for values that never change, layers with one caller,
-  and dead flexibility
+  for one product, types, builders, registries, helpers or test harnesses
+  created for a single use, config for values that never change, parameters
+  every call site passes the same value, options nobody sets, modes added for a
+  future caller, layers with one caller, and dead flexibility
+- **Layered error and outcome types**: result unions, error subclasses, or
+  wrapper types that every caller collapses into the same handling; use the
+  error shape the surrounding code already uses
+- **Defensive code beyond the sibling path**: guards, re-validation, retries,
+  timeouts, fallbacks, or bounds that the closest existing path for the same
+  kind of input does without; name that path. The boundary rule above still
+  applies to trust-boundary and security guarantees
 - **Reimplemented wheels**: standard-library, platform, dependency, or
   existing-codebase functionality rebuilt by hand
 - **Structural bloat**: a small, code-local restructuring that deletes branches,
@@ -132,7 +145,9 @@ lower rung than it could have:
 - **Excess tests**: implementation-coupled assertions, call transcripts, prop
   forwarding, copied inventories, expectations derived from the implementation,
   internal mocks that supply the asserted behavior, type- or schema-enforced
-  assertions, and permutations of one failure mechanism; each test deletion
+  assertions, permutations of one failure mechanism, the same case asserted
+  again at another layer, and copies of an existing test for a new caller;
+  each test deletion
   names the surviving test that still fails if the contract breaks, or states
   that no material contract is involved
 - **Shrinkable logic**: identical behavior expressed in fewer lines
