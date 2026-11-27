@@ -255,8 +255,9 @@ it. Put `> ` before every line, an empty `>` line between paragraphs, and a
   included, under its heading in italics; Evidence as one line with its link.
   No checks, To lower it steps, folds or footer.
 
-Several PRs get one table, riskiest first, and no visuals; Risk follows the
-header's rule:
+Several PRs get one table, riskiest first, and no visuals; Risk shows the
+meter and level name without `risk`, with the header's `Not rated` and
+`· stale` rules:
 
 ```markdown
 | PR | Title | Lines | Linear | Risk |
