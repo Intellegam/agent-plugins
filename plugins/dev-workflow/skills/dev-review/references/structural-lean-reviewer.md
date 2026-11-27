@@ -22,8 +22,9 @@ Never flag data-loss-preventing error handling, accessibility basics,
 explicitly requested behavior, or the surviving test for a material contract.
 Trust-boundary validation and security measures keep their guarantee, not
 necessarily their code: propose reuse, consolidation or deletion only when the
-same guarantee is demonstrably enforced elsewhere, and name the file and symbol
-that enforce it, or the test that fails if it breaks. Verify whether something
+same guarantee is enforced elsewhere: name the file and symbol that enforce it
+and show they cover this path, by the traced call path or a test through it
+that fails if they break. Verify whether something
 is load-bearing before flagging it, or state uncertainty.
 
 Findings are hypotheses for the main agent's verification and classification.
