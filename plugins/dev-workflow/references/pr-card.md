@@ -47,8 +47,8 @@ The card uses only GitHub-flavoured markdown, a little HTML, and Mermaid, so it
 also reads in Linear and in email. It leaves out what GitHub already shows,
 such as the PR's total size and file count. Icons: ✅ `ok`, 👀 `watch`, ⚠️
 `risk`. Pills are code spans, since Linear does not render `<kbd>`; inside
-HTML, such as a fold's summary, they are `<code>` elements, with bold inside
-(`<code><b>…</b></code>`). A `---` line, with a blank line before and after
+HTML, such as a fold's summary, they are `<code>` elements, with `<b>` inside
+when bold (`<code><b>…</b></code>`). A `---` line, with a blank line before and after
 it (without one GitHub turns the paragraph above into a heading), separates
 four parts: header and
 summary; visual and evidence; merge risk through the plan line;
