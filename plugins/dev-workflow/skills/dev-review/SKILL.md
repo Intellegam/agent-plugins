@@ -7,7 +7,7 @@ description: Independently review a completed change before pushing or opening a
 
 Run risk-scaled, multi-perspective review. During validation of an authorized implementation, fix verified issues directly. For review-only requests, report findings without editing; the fix actions below apply only within an authorized implementation.
 
-This skill is the middle of `dev-check` → `dev-review` → `dev-sync`. Invoke workflow skills through the host's skill selector: `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
+This skill is the middle of `dev-check` → `dev-review` → `dev-sync`; its Proportionality Gate runs after `dev-sync`. Invoke workflow skills through the host's skill selector: `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name>` in Codex.
 
 ## Repository Contract
 
@@ -32,7 +32,7 @@ Prepare only:
 - **Constraints**: hard requirements
 - **Target**: target type/ref, complete changed-file list, diff or inspection instructions, and untracked paths
 - **Review Inputs**: standards/documentation paths from repository guidance
-- **Sibling paths**: for finding-producing reviewers, the closest existing code paths you know for what the change does, as a codebase fact; reviewers may find closer ones
+- **Sibling paths**: the closest existing code paths you know for what the change does, as a codebase fact; reviewers may find closer ones
 
 Do not include solution rationale, rejected alternatives, or the author's expected findings. Preserve independent judgment.
 
@@ -41,8 +41,7 @@ Do not include solution rationale, rejected alternatives, or the author's expect
 For work that will become a PR, record added and removed lines per kind when
 review starts and again at the final head: for each PR and, in a
 stack, for the combined diff from the stack's base. Keep the first record in
-task context with the merge-risk baseline until the PR closes. It feeds the PR
-card's Size table and the Proportionality Gate.
+task context with the merge-risk baseline until the PR closes.
 
 Each file belongs to the first kind that matches:
 
@@ -106,11 +105,10 @@ Reviewer contracts are non-invokable reference files adjacent to this skill:
 - `references/structural-lean-reviewer.md`
 - `references/quality-reviewer.md`
 - `references/correctness-reviewer.md` (fallback)
-- `references/comparison-bar.md`: the parity bar for every finding-producing
-  reviewer, which is every reviewer except structural-and-lean. The correctness
-  and quality contracts load it; paste its content into the prompt of every
-  other finding-producing reviewer (`codex-review` sessions, `$review-agent`,
-  repository-specific reviewers, final gates).
+- `references/comparison-bar.md`: the parity bar for every code reviewer in the
+  panel and final gates except structural-and-lean. The correctness and quality
+  contracts load it; paste its content into every other one's prompt
+  (`codex-review` sessions, `$review-agent`, repository-specific reviewers).
 
 Resolve their absolute paths from this skill's directory. Every delegated specialist must read its complete contract before reviewing. Make loading fail closed: if the reference cannot be read, the reviewer must stop and report the path/error instead of performing a generic review.
 
@@ -145,12 +143,10 @@ Reviewer findings are hypotheses. Before fixing a behavioral claim, prove or dis
 | **already-addressed** | Existing code/test already covers it | Note and skip |
 | **false-alarm** | Claim does not match verified behavior | Skip |
 | **real-fix** | Defect | Fix directly; add a regression test only when it passes the repository's testing standards, or the workflow's test bar when it declares none |
-| **accepted-limit** | Real defect whose remedy goes beyond what the sibling path accepts | Leave the code; report the limit and the remedy's cost |
+| **accepted-limit** | Real defect whose fix the comparison bar does not require | Leave the code; report the limit and the remedy's cost |
 | **optional** | Subjective trade-off, no defect | Leave the code; report it as optional |
 
-A fix beyond the sibling path's rigor is `accepted-limit` unless the finding
-names a concrete exploit or harm, an explicit requirement, or a boundary the
-sibling does not cross. Verify sibling and cost claims like any other claim.
+Verify `beyond-parity` tags and sibling and cost claims like any other claim.
 
 ## Root-Cause Reflection
 
@@ -186,14 +182,15 @@ the review loop.
   quality contract's test-value verdicts on it, by a bounded follow-up to the
   panel's quality reviewer or a fresh one when none ran. Fill a missed-risk gap
   only under the `real-fix` test rule above.
-- **Act**: cut each concrete excess or justify keeping it in one line, and
-  rerun the checks the cuts affect. When a cut changes behavior on an open PR,
-  refresh its card under the `merge-risk` skill's Freshness rule.
+- **Act**: cut each concrete excess or justify keeping it in one line, fix
+  prose the cuts make false, and rerun the checks the cuts affect. A cut to
+  trust-boundary or security code gets a bounded follow-up from the final-gate
+  reviewer. When a cut changes behavior on an open PR, refresh its card under
+  the `merge-risk` skill's Freshness rule.
 - **Size**: record the final ledger. When test lines exceed source lines, or
   source or tests grew more than about 20% during review, explain each kind's
   size in one sentence and justify each test case the PR adds by the failure
   only it detects. The ratio prompts an explanation; it is not a verdict.
 
-Never give the gate's output or the ledger to the merge-risk reviewer. Report
-the cuts with the lines they removed, what was kept and why, both ledger
+Report the cuts with the lines they removed, what was kept and why, both ledger
 records, and any sentences and test justifications the size rule asked for.

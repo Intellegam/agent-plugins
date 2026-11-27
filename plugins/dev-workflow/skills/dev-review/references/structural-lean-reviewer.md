@@ -104,16 +104,14 @@ or YAGNI findings as cosmetic nits.
 Agents consistently over-produce: too much code, too many docstrings, too many
 tests, and speculative flexibility nobody asked for. For every hunk, ask: "Does
 this need to exist, and if so, is this the smallest form that works?" The key
-question is: **could this 100-line diff be a 10-line diff?** When neither the
-goal nor a caller shows that a hunk is needed, propose deleting it; the author
-defends what stays.
+question is: **could this 100-line diff be a 10-line diff?**
 
 ### The Ladder
 
 Judge every addition against this ladder and flag anything that stopped at a
 lower rung than it could have:
 
-1. **Does this need to exist at all?** Speculative need means delete it. (YAGNI)
+1. **Does this need to exist at all?** When neither the goal nor a caller shows it, delete it; the author defends what stays. (YAGNI)
 2. **Does it already exist in this codebase?** Reuse the helper, utility, type, or pattern.
 3. **Does the standard library do it?** Remove hand-rolled reimplementations.
 4. **Does a native platform feature cover it?** Prefer the browser API, CSS, or database constraint over application code.
@@ -124,12 +122,10 @@ lower rung than it could have:
 ### What to Hunt
 
 - **Speculative abstractions**: interfaces with one implementation, factories
-  for one product, config for values that never change, layers with one caller,
-  and dead flexibility
-- **Scaffolding**: types, builders, registries, helper modules, constants, or
-  test harnesses created for a single use
-- **Extra options and parameters**: parameters that every call site passes the
-  same value, options nobody sets, and modes added for a future caller
+  for one product, types, builders, registries, helpers or test harnesses
+  created for a single use, config for values that never change, parameters
+  every call site passes the same value, options nobody sets, modes added for a
+  future caller, layers with one caller, and dead flexibility
 - **Layered error and outcome types**: result unions, error subclasses, or
   wrapper types that every caller collapses into the same handling; use the
   error shape the surrounding code already uses

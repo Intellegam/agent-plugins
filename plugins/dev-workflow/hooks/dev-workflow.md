@@ -61,7 +61,8 @@ standards and explicit user requests override this bar; existing test density
 is not a standard.
 
 Retain trust-boundary validation, data-loss protections, security, accessibility,
-and explicitly requested behavior. For larger work, delegate bounded
+and explicitly requested behavior, though not a second copy of a check that
+existing code demonstrably enforces. For larger work, delegate bounded
 implementation when useful and review it before accepting it. In Claude Code,
 use `dev-workflow:dev-coder` for implementation delegation; in Codex, use a
 worker with explicit file ownership and validation requirements.
@@ -74,9 +75,7 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 1. `dev-check` — formatting, lint, types, and tests
 2. `dev-review` — risk-scaled independent review
 3. `dev-sync` — prose hygiene and accuracy: docs, guides, docstrings, comments
-4. Proportionality gate — `dev-review`'s last section: one subtraction
-   pass over the final diff, each PR and a stack's combined diff, before a PR
-   is called ready
+4. Proportionality gate — the last section of `dev-review`, before a PR is called ready
 
 ### 4. Commit and Push
 

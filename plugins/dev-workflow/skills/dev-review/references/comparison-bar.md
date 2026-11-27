@@ -1,22 +1,16 @@
 # Comparison Bar
 
-Every finding-producing reviewer applies this bar, except the
-structural-and-lean reviewer.
-
 Before reporting a finding, find its sibling path: the closest existing code
 path in the repository that handles the same kind of input, operation or
-boundary. When reviewing connector skills, for example, the existing connector
-tool calls are the sibling path. Existing rigor is evidence of what the
-repository accepts. Explicit requirements, stronger boundaries and
-demonstrable harm override it.
+boundary. Existing rigor there is evidence of what the repository accepts.
 
 Keep two questions apart: is the defect real, and is the fix worth it. A real
 defect can still have a remedy that costs more than it protects.
 
-Hardening beyond what the sibling path accepts is optional unless the finding
+A fix beyond what the sibling path accepts is not required unless the finding
 names a concrete exploit or harm, an explicit requirement, or a boundary the
 new path crosses and the sibling does not, such as input from untrusted
-callers. Tag such a finding `beyond-parity`.
+callers. Report a finding whose fix is not required, tagged `beyond-parity`.
 
 Below each finding's paragraph, add three lines:
 

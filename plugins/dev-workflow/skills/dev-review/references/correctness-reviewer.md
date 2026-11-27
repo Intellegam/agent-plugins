@@ -28,12 +28,11 @@ Flag an issue only when all are true:
 
 1. It meaningfully affects correctness, security, performance, or maintainability.
 2. It is discrete and actionable.
-3. It is judged against the comparison bar; a finding beyond it is still reported, tagged `beyond-parity`.
-4. It was introduced by the reviewed change.
-5. The author would likely fix it.
-6. It does not rely on unstated assumptions.
-7. The affected code path or scenario is provable.
-8. It is not clearly an intentional behavior change.
+3. It was introduced by the reviewed change.
+4. The author would likely fix it.
+5. It does not rely on unstated assumptions.
+6. The affected code path or scenario is provable.
+7. It is not clearly an intentional behavior change.
 
 Ignore documentation (agent instructions such as skills, hooks and prompts define behavior and are not documentation), style-only observations, pre-existing bugs, and speculative concerns. Return every qualifying finding rather than stopping after the first. If nothing qualifies, report no findings.
 
