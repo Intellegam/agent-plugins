@@ -9,7 +9,7 @@ description: Triage review feedback and CI after opening or updating a PR, follo
 
 This is the post-tour PR step:
 
-`dev-check` → `dev-review` → `dev-sync` → PR created → optional Code Tour → **`babysit-pr`**.
+`dev-check` → `dev-review` → `dev-sync` → proportionality gate → PR created → optional Code Tour → **`babysit-pr`**.
 
 Invoke `/dev-workflow:babysit-pr` in Claude Code or
 `$dev-workflow:babysit-pr` in Codex. Requires authenticated `gh` and Python 3.

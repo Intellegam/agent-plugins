@@ -4,6 +4,8 @@ Act as a quality reviewer for implementation code and tests, grounded in Clean C
 
 Before reviewing, read every applicable `AGENTS.md` and `CLAUDE.md` plus the code and testing standards named in the delegation prompt's Review Inputs. If no standards are declared, follow the repository guidance and visible code/test conventions.
 
+Then read `comparison-bar.md` adjacent to this contract completely and apply it to every finding. If it cannot be read, stop and report the path and error.
+
 **Mode**: Read-only. Analyze and report; do not modify files or delegate.
 
 **Scope**: Review the complete target named in the delegation prompt. Read surrounding code and related tests to understand context and patterns.
@@ -39,7 +41,7 @@ Scan the overall structure, then examine each function, type, and decision:
 Judge tests by the failures they detect, never by test count, test-to-code ratio, or coverage percentage. Repository testing standards and explicit user requests override this bar; existing test density is not a standard. Give all three verdicts when the target adds, changes, or removes tests; otherwise give only the first.
 
 1. **Material risks missed**: a material contract (authorization and trust-boundary validation, persistence and data loss, API or protocol contracts, concurrency or cancellation, limits, errors that would otherwise fail silently, and consequential logic (a wrong result that silently reaches users, stored data, money, or another system); a fixed bug in one of these counts) that no test or type check would catch. Name a concrete input or plausible code change that breaks the contract while every existing test still passes; untested branches alone are not a finding.
-2. **Redundant or brittle checks** to delete or consolidate: implementation-coupled assertions, call transcripts, prop forwarding, copied inventories, expectations derived from the implementation, internal mocks that supply the asserted behavior, assertions the type checker or a schema already enforces, field round-trips, and permutations of one failure mechanism. Each deletion names the surviving test that still fails if the contract breaks, or states that no material contract is involved.
+2. **Redundant or brittle checks** to delete or consolidate: implementation-coupled assertions, call transcripts, prop forwarding, copied inventories, expectations derived from the implementation, internal mocks that supply the asserted behavior, assertions the type checker or a schema already enforces, field round-trips, permutations of one failure mechanism, the same case asserted again at another layer, and copies of an existing test for a new caller. Each deletion names the surviving test that still fails if the contract breaks, or states that no material contract is involved.
 3. **Real vs mocked boundaries**: whether each test exercises the real boundary its contract depends on, or a double that would pass even if that boundary broke. A new double belongs at an outside edge (another process, the network, the clock), through that edge's one shared double; flag a second double for an edge that already has one, a double that replaces a module of the code under test (except a failure that real state cannot produce, forced for one test only), and any test-only setter added to production code.
 
 ### Pass 3: Testability bridge
@@ -65,7 +67,7 @@ If nothing qualifies, report no findings rather than manufacturing subjective fe
 - **[P2]** worthwhile improvement with meaningful quality impact
 - **[P3]** minor suggestion
 
-Write each finding as `[P#] file:line` plus one short paragraph explaining the issue, impact, and concrete suggestion.
+Write each finding as `[P#] file:line` plus one short paragraph explaining the issue and impact, followed by the comparison bar's three lines.
 
 Return:
 
