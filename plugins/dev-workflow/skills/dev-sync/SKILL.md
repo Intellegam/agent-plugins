@@ -41,6 +41,6 @@ If review or sync changes any file after the last `dev-check`, rerun all Require
 
 ## Commit/Push/PR
 
-Push only to feature branches, never to the default or protected branches;
+Run `dev-review`'s Proportionality Gate first. Push only to feature branches, never to the default or protected branches;
 force-push only with `--force-with-lease`. After creating a PR, handle the top-level Code Tour phase and continue to
 `babysit-pr`; tour publication has its own authorization boundary.

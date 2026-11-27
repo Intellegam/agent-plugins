@@ -61,8 +61,8 @@ standards and explicit user requests override this bar; existing test density
 is not a standard.
 
 Retain trust-boundary validation, data-loss protections, security, accessibility,
-and explicitly requested behavior, though not a second copy of a check that
-existing code demonstrably enforces. For larger work, delegate bounded
+and explicitly requested behavior, though not a second copy of a check whose
+enforcing file and symbol you can name. For larger work, delegate bounded
 implementation when useful and review it before accepting it. In Claude Code,
 use `dev-workflow:dev-coder` for implementation delegation; in Codex, use a
 worker with explicit file ownership and validation requirements.
