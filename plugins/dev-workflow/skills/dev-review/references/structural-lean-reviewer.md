@@ -18,10 +18,13 @@ when the first pass produces major findings.
 
 ## Hard Boundaries
 
-Never flag trust-boundary validation, data-loss-preventing error handling,
-security measures, accessibility basics, explicitly requested behavior, or the
-surviving test for a material contract. Verify whether something is
-load-bearing before flagging it, or state uncertainty.
+Never flag data-loss-preventing error handling, accessibility basics,
+explicitly requested behavior, or the surviving test for a material contract.
+Trust-boundary validation and security measures keep their guarantee, not
+necessarily their code: propose reuse, consolidation or deletion only when the
+same guarantee is demonstrably enforced elsewhere, and name the file and symbol
+that enforce it, or the test that fails if it breaks. Verify whether something
+is load-bearing before flagging it, or state uncertainty.
 
 Findings are hypotheses for the main agent's verification and classification.
 This reviewer has no independent approval or blocking authority.
@@ -101,7 +104,9 @@ or YAGNI findings as cosmetic nits.
 Agents consistently over-produce: too much code, too many docstrings, too many
 tests, and speculative flexibility nobody asked for. For every hunk, ask: "Does
 this need to exist, and if so, is this the smallest form that works?" The key
-question is: **could this 100-line diff be a 10-line diff?**
+question is: **could this 100-line diff be a 10-line diff?** When neither the
+goal nor a caller shows that a hunk is needed, propose deleting it; the author
+defends what stays.
 
 ### The Ladder
 
@@ -121,6 +126,17 @@ lower rung than it could have:
 - **Speculative abstractions**: interfaces with one implementation, factories
   for one product, config for values that never change, layers with one caller,
   and dead flexibility
+- **Scaffolding**: types, builders, registries, helper modules, constants, or
+  test harnesses created for a single use
+- **Extra options and parameters**: parameters that every call site passes the
+  same value, options nobody sets, and modes added for a future caller
+- **Layered error and outcome types**: result unions, error subclasses, or
+  wrapper types that every caller collapses into the same handling; use the
+  error shape the surrounding code already uses
+- **Defensive code beyond the sibling path**: guards, re-validation, retries,
+  timeouts, fallbacks, or bounds that the closest existing path for the same
+  kind of input does without; name that path. The boundary rule above still
+  applies to trust-boundary and security guarantees
 - **Reimplemented wheels**: standard-library, platform, dependency, or
   existing-codebase functionality rebuilt by hand
 - **Structural bloat**: a small, code-local restructuring that deletes branches,
@@ -132,7 +148,9 @@ lower rung than it could have:
 - **Excess tests**: implementation-coupled assertions, call transcripts, prop
   forwarding, copied inventories, expectations derived from the implementation,
   internal mocks that supply the asserted behavior, type- or schema-enforced
-  assertions, and permutations of one failure mechanism; each test deletion
+  assertions, permutations of one failure mechanism, the same case asserted
+  again at another layer, and copies of an existing test for a new caller;
+  each test deletion
   names the surviving test that still fails if the contract breaks, or states
   that no material contract is involved
 - **Shrinkable logic**: identical behavior expressed in fewer lines

@@ -28,9 +28,10 @@ detailed description and is never rewritten by card updates. The region is
 agent-managed: rewrite it whole on every update, and put human notes below
 it. On a refresh, carry over from the old card the ticked steps with the same
 timing and text, each drift item's Kept because reason while its Planned and
-Now are unchanged, and the Linear block's `agent`; everything else comes from
-the new rating. When Freshness moves the card forward without one, keep the
-rating and recount Touches, the footer and the Linear `sha` for the new head.
+Now are unchanged, the Size table's First review row, and the Linear block's
+`agent`; everything else comes from the new rating. When Freshness moves the
+card forward without one, keep the rating and recount Size, Touches, the footer
+and the Linear `sha` for the new head.
 A body with more than one region is
 invalid.
 
@@ -50,7 +51,7 @@ one, so bold goes inside it. A `---` line, with a blank line before and after
 it (without one GitHub turns the paragraph above into a heading), separates
 four parts: header and
 Why / What / How; visual and evidence; merge risk through the plan line;
-Touches and footer. An empty part gets no line.
+Size, Touches and footer. An empty part gets no line.
 
 1. **Header**: the level as a four-dot meter in a pill, then the priority in
    a pill when the PR's linked Linear issue has one, named as Linear names it
@@ -63,7 +64,7 @@ Touches and footer. An empty part gets no line.
    Meters: `low` ●○○○ Low risk, `typical` ●●○○ Typical risk, `high` ●●●○
    High risk, `very_high` ●●●● Very high risk. Without a rating
    the first pill reads `Not rated`, Merge risk holds only the line that no
-   rating was produced, and parts 6 to 10 are left out.
+   rating was produced, and parts 6, 7 and 9 to 11 are left out.
 2. **Why / What / How**: one paragraph each, led by a pill label and a blank
    line between them. Labels follow the PR's conventional-commit type: `fix` →
    Problem / Fix / How; `feat` → Need / Feature / How; any other type → Why /
@@ -126,7 +127,21 @@ Touches and footer. An empty part gets no line.
    `<sub>Matches the planned risk profile.</sub>`, or
    `<sub>No plan baseline for this rating.</sub>` when it was rated without
    one.
-8. **Touches** under `#### Touches <sub>▰ = 100 lines</sub>`: one fold per
+8. **Size** under `#### Size`: added and removed lines per kind, as the
+   `dev-review` skill's Size Ledger counts and assigns them, at this head and
+   at the first review, with each kind's growth since then.
+
+   ```markdown
+   | | Source | Tests | Docs | Generated |
+   | :--- | ---: | ---: | ---: | ---: |
+   | Now | `+875 −40` | `+520 −12` | `+30 −5` | `+0 −0` |
+   | First review | `+700 −40` | `+400 −12` | `+30 −5` | `+0 −0` |
+   | Growth | **+25%** | **+30%** | 0% | – |
+   ```
+
+   Growth above about 20% is bold; a kind with no first-review lines shows
+   `–`. Without a first-review record, leave out its two rows.
+9. **Touches** under `#### Touches <sub>▰ = 100 lines</sub>`: one fold per
    area, in the reviewer's order.
 
    ```markdown
@@ -152,10 +167,10 @@ Touches and footer. An empty part gets no line.
    minor area has neither. The fold holds the line count, the area's `note`,
    and its file names (the last path segment, in code spans, at most five,
    then `+N more`).
-9. **Footer**: `<sub>Overview as of <code>` + the first 7 characters of the
+10. **Footer**: `<sub>Overview as of <code>` + the first 7 characters of the
    start marker's `head` + `</code> · updated after every push</sub>`; leave it out
    without a rating.
-10. The Linear block, only when the reviewer returned a valid rating.
+11. The Linear block, only when the reviewer returned a valid rating.
 
 Escape `|` as `\|` inside table cells, and `"` as `#quot;` inside Mermaid
 labels. Every `<details>` fold has a blank line after `</summary>` and before

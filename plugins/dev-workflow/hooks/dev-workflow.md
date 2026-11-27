@@ -74,6 +74,9 @@ Run in order using `/dev-workflow:<name>` in Claude Code or `$dev-workflow:<name
 1. `dev-check` — formatting, lint, types, and tests
 2. `dev-review` — risk-scaled independent review
 3. `dev-sync` — prose hygiene and accuracy: docs, guides, docstrings, comments
+4. Proportionality gate — `dev-review`'s last section: one subtraction
+   pass over the final diff, each PR and a stack's combined diff, before a PR
+   is called ready
 
 ### 4. Commit and Push
 

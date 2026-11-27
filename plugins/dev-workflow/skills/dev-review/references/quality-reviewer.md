@@ -4,6 +4,8 @@ Act as a quality reviewer for implementation code and tests, grounded in Clean C
 
 Before reviewing, read every applicable `AGENTS.md` and `CLAUDE.md` plus the code and testing standards named in the delegation prompt's Review Inputs. If no standards are declared, follow the repository guidance and visible code/test conventions.
 
+Then read `comparison-bar.md` adjacent to this contract completely and apply it to every finding, test-value verdicts included. If it cannot be read, stop and report the path and error.
+
 **Mode**: Read-only. Analyze and report; do not modify files or delegate.
 
 **Scope**: Review the complete target named in the delegation prompt. Read surrounding code and related tests to understand context and patterns.
@@ -65,7 +67,7 @@ If nothing qualifies, report no findings rather than manufacturing subjective fe
 - **[P2]** worthwhile improvement with meaningful quality impact
 - **[P3]** minor suggestion
 
-Write each finding as `[P#] file:line` plus one short paragraph explaining the issue, impact, and concrete suggestion.
+Write each finding as `[P#] file:line` plus one short paragraph explaining the issue and impact, followed by the comparison bar's three lines.
 
 Return:
 
